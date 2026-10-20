@@ -295,19 +295,19 @@ id: "s2", title: "Looping over a list",
 key: "A **list** holds several items inside square brackets. A for loop visits the items **in order**. Each time round, the loop variable holds the **next item**.",
 example: `planets = ["Mercury", "Venus", "Earth"]
 for planet in planets:
-    print("Hello", planet)`,
+    print("Hello " + planet)`,
 exampleOut: "Hello Mercury\nHello Venus\nHello Earth",
-tip: "Name the list as a plural (`planets`) and the loop variable as the singular (`planet`).",
+tip: "Join text with **+**. Put a **space inside the quotes** so the words don't run together: `\"Hello \" + planet`. Name the list as a plural (`planets`) and the loop variable as the singular (`planet`).",
 tasks: [
 { id: "s2-1", type: "predict", title: "Predict",
   prompt: "What will this program print?",
   code: `snacks = ["crisps", "apple", "toast"]
 for snack in snacks:
-    print("I like", snack)`,
+    print("I like " + snack)`,
   options: [
     { out: "I like snack\nI like snack\nI like snack", fb: "`snack` has no quotes, so it is a **variable**. It holds a different item each time." },
     { out: "I like crisps\nI like apple\nI like toast", fb: "Yes. Three items in the list, so the loop runs three times." },
-    { out: "I like ['crisps', 'apple', 'toast']", fb: "That is what `print(\"I like\", snacks)` would show: the **whole list**. The loop variable holds **one item** at a time." },
+    { out: "I like ['crisps', 'apple', 'toast']", fb: "That would mean printing the **whole list**. The loop variable holds **one item** at a time." },
     { out: "I like crisps", fb: "The loop runs once for **every item** in the list." }
   ], answer: 1 },
 { id: "s2-2", type: "predict", title: "Predict",
@@ -345,10 +345,10 @@ for score in scores:
 `,
   expected: "Colour: red\nColour: orange\nColour: yellow\nColour: green",
   require: [ { re: "colours\\s*=\\s*\\[", msg: "Create a list called `colours` using square brackets [ ]." }, { re: "for\\s+\\w+\\s+in\\s+colours", msg: "Use a for loop over `colours`." } ],
-  hints: ["Start with `colours = [\"red\", ...]`, using quotes around each word.", "Copy the shape of the planets example at the top.", "`print(\"Colour:\", colour)`: the comma adds a space."],
+  hints: ["Start with `colours = [\"red\", ...]`, using quotes around each word.", "Copy the shape of the planets example at the top.", "`print(\"Colour: \" + colour)`: notice the space after the colon, inside the quotes."],
   solution: `colours = ["red", "orange", "yellow", "green"]
 for colour in colours:
-    print("Colour:", colour)` }
+    print("Colour: " + colour)` }
 ]},
 
 {
@@ -356,8 +356,9 @@ id: "s3", title: "Counting with range()",
 key: "**range()** makes a sequence of numbers for the loop to count through. It **stops one before** the end number.",
 table: [ ["range(5)", "0, 1, 2, 3, 4", "starts at 0 if you only give one number"], ["range(1, 6)", "1, 2, 3, 4, 5", "start, stop"], ["range(3, 7)", "3, 4, 5, 6", "7 is never reached"] ],
 example: `for i in range(1, 4):
-    print("Go", i)`,
+    print("Go " + str(i))`,
 exampleOut: "Go 1\nGo 2\nGo 3",
+tip: "`i` is a **number**. To join it to text with **+**, turn it into text first with **str()**: `\"Go \" + str(i)`.",
 tasks: [
 { id: "s3-1", type: "predict", title: "Predict",
   prompt: "What will this program print?",
@@ -401,9 +402,9 @@ tasks: [
 `,
   expected: "Lap 1\nLap 2\nLap 3\nLap 4\nLap 5\nLap 6\nLap 7\nLap 8",
   require: [ { re: "for\\s+\\w+\\s+in\\s+range\\s*\\(", msg: "Use a for loop with range()." } ],
-  hints: ["Look at the Go 1, Go 2, Go 3 example at the top.", "Which start and stop numbers give 1 to 8?", "`print(\"Lap\", i)`: the comma adds a space."],
+  hints: ["Look at the Go 1, Go 2, Go 3 example at the top.", "Which start and stop numbers give 1 to 8?", "`print(\"Lap \" + str(i))`: str() turns the number into text so + can join it."],
   solution: `for i in range(1, 9):
-    print("Lap", i)` }
+    print("Lap " + str(i))` }
 ]},
 
 {
@@ -469,7 +470,7 @@ key: "The loop variable is a number, so you can **calculate** with it. The calcu
 example: `for i in range(1, 6):
     print(i * 7)`,
 exampleOut: "7\n14\n21\n28\n35",
-tip: "`print(i, \"x 7 =\", i * 7)` prints `3 x 7 = 21` when `i` is 3. The commas put spaces between the parts.",
+tip: "`print(str(i) + \" x 7 = \" + str(i * 7))` prints `3 x 7 = 21` when `i` is 3. Each number goes inside **str()**, and the spaces go **inside the quotes**.",
 tasks: [
 { id: "s5-1", type: "predict", title: "Predict",
   prompt: "What will this program print?",
@@ -494,37 +495,37 @@ tasks: [
 { id: "s5-3", type: "gap", title: "Fill the gaps",
   prompt: "Complete the **7 times table** from `1 x 7 = 7` up to `12 x 7 = 84`.",
   code: `for i in range(1, [[0]]):
-    print(i, "x 7 =", [[1]])`,
+    print(str(i) + " x 7 = " + str([[1]]))`,
   gaps: [ { accept: ["13"], w: 3 }, { accept: ["i*7", "7*i"], w: 6 } ],
   output: "1 x 7 = 7\n2 x 7 = 14\n3 x 7 = 21\n4 x 7 = 28\n5 x 7 = 35\n6 x 7 = 42\n7 x 7 = 49\n8 x 7 = 56\n9 x 7 = 63\n10 x 7 = 70\n11 x 7 = 77\n12 x 7 = 84",
-  hints: ["To get up to 12, stop **one past** 12.", "The last gap is a **calculation** using `i`. In Python, × is `*`."] },
+  hints: ["To get up to 12, stop **one past** 12.", "The last gap is a **calculation** using `i`. In Python, × is `*`. It is already inside str()."] },
 { id: "s5-4", type: "code", kind: "Modify", title: "Modify",
   prompt: "Change this program to print the **9 times table** from `1 x 9 = 9` up to `10 x 9 = 90`.",
   starter: `for i in range(1, 13):
-    print(i, "x 7 =", i * 7)`,
+    print(str(i) + " x 7 = " + str(i * 7))`,
   expected: "1 x 9 = 9\n2 x 9 = 18\n3 x 9 = 27\n4 x 9 = 36\n5 x 9 = 45\n6 x 9 = 54\n7 x 9 = 63\n8 x 9 = 72\n9 x 9 = 81\n10 x 9 = 90",
   require: [ { re: "for\\s+\\w+\\s+in\\s+range\\s*\\(", msg: "Keep the for loop with range()." } ],
-  hints: ["There are **three** things to change: the stop number, the text, and the calculation.", "To stop at 10, the stop number must be 11."],
+  hints: ["There are **three** things to change: the stop number, the text inside the quotes, and the calculation.", "To stop at 10, the stop number must be 11."],
   solution: `for i in range(1, 11):
-    print(i, "x 9 =", i * 9)` },
+    print(str(i) + " x 9 = " + str(i * 9))` },
 { id: "s5-5", type: "code", kind: "Make", title: "Make",
   prompt: "Print the **square numbers** from 1 to 6 like the output below. A square number is a number times **itself**.",
   starter: `# Write your program here
 `,
   expected: "1 squared is 1\n2 squared is 4\n3 squared is 9\n4 squared is 16\n5 squared is 25\n6 squared is 36",
   require: [ { re: "for\\s+\\w+\\s+in\\s+range\\s*\\(", msg: "Use a for loop with range()." } ],
-  hints: ["Loop `i` from 1 to 6.", "The square of `i` is `i * i`.", "`print(i, \"squared is\", ...)`"],
+  hints: ["Loop `i` from 1 to 6.", "The square of `i` is `i * i`.", "`print(str(i) + \" squared is \" + str(...))`"],
   solution: `for i in range(1, 7):
-    print(i, "squared is", i * i)` },
-{ id: "s5-6", type: "code", kind: "Make", title: "Ticket prices", plus: true, ignoreSpaces: true,
-  prompt: "A cinema ticket costs **£4**. Print the cost of **1 to 6** tickets like the output below. (Spacing doesn't matter on this one.)",
+    print(str(i) + " squared is " + str(i * i))` },
+{ id: "s5-6", type: "code", kind: "Make", title: "Ticket prices", plus: true,
+  prompt: "A cinema ticket costs **£4**. Print the cost of **1 to 6** tickets like the output below.",
   starter: `# Write your program here
 `,
   expected: "1 ticket(s) cost £4\n2 ticket(s) cost £8\n3 ticket(s) cost £12\n4 ticket(s) cost £16\n5 ticket(s) cost £20\n6 ticket(s) cost £24",
   require: [ { re: "for\\s+\\w+\\s+in\\s+range\\s*\\(", msg: "Use a for loop with range()." } ],
-  hints: ["The cost is the number of tickets × 4.", "`print(n, \"ticket(s) cost £\", n * 4)`"],
+  hints: ["The cost is the number of tickets × 4.", "`print(str(n) + \" ticket(s) cost £\" + str(n * 4))`"],
   solution: `for n in range(1, 7):
-    print(n, "ticket(s) cost £", n * 4)` }
+    print(str(n) + " ticket(s) cost £" + str(n * 4))` }
 ]},
 
 {
@@ -549,7 +550,7 @@ print(total)`,
   hints: ["`range(1, 5)` gives `i` the values 1, 2, 3, 4.", "New total = old total + i. Row 2: 1 + 2."] },
 { id: "s6-2", type: "parsons", title: "Put in order",
   prompt: "Put the lines in order **and** set the indentation with the **→** and **←** buttons, so the program prints the output shown.",
-  lines: [ ["scores = [6, 9, 4]", 0], ["total = 0", 0], ["for s in scores:", 0], ["total = total + s", 1], ["print(\"Total:\", total)", 0] ],
+  lines: [ ["scores = [6, 9, 4]", 0], ["total = 0", 0], ["for s in scores:", 0], ["total = total + s", 1], ["print(\"Total: \" + str(total))", 0] ],
   fixedIndent: false, start: [3, 4, 2, 0, 1],
   solutions: [ [0, 1, 2, 3, 4], [1, 0, 2, 3, 4] ],
   output: "Total: 19",
@@ -560,7 +561,7 @@ print(total)`,
 for p in prices:
     total = 0
     total = total + p
-    print("Total is", total)`,
+    print("Total is " + str(total))`,
   expected: "Total is 14",
   require: [ { re: "for\\s+\\w+\\s+in\\s+prices", msg: "Keep the for loop over `prices`." } ],
   forbid: [ { re: "sum\\s*\\(", msg: "sum() works, but practise the loop pattern here." } ],
@@ -569,7 +570,7 @@ for p in prices:
 total = 0
 for p in prices:
     total = total + p
-print("Total is", total)` },
+print("Total is " + str(total))` },
 { id: "s6-4", type: "code", kind: "Make", title: "Make",
   prompt: "Use a loop to add up **all the whole numbers from 1 to 100**. Print the answer once, like this: `Total: ...`",
   starter: `# Write your program here
@@ -577,11 +578,11 @@ print("Total is", total)` },
   expected: "Total: 5050",
   require: [ { re: "for\\s+\\w+\\s+in\\s+range\\s*\\(", msg: "Use a for loop with range()." }, { re: "\\+", msg: "Add each number to a total inside the loop." } ],
   forbid: [ { re: "sum\\s*\\(", msg: "sum() works, but practise the loop pattern here." } ],
-  hints: ["Use the same three steps as the example at the top.", "To include 100, the stop number is 101.", "`print(\"Total:\", total)` goes after the loop, not indented."],
+  hints: ["Use the same three steps as the example at the top.", "To include 100, the stop number is 101.", "`print(\"Total: \" + str(total))` goes after the loop, not indented."],
   solution: `total = 0
 for i in range(1, 101):
     total = total + i
-print("Total:", total)` }
+print("Total: " + str(total))` }
 ]},
 
 {
@@ -589,7 +590,7 @@ id: "s7", title: "Using if inside a loop",
 key: "An **if** inside a loop is checked **every time round**. Only the items that pass the test run the extra lines. Notice the **two levels** of indentation.",
 example: `for n in range(1, 11):
     if n % 2 == 0:
-        print(n, "is even")`,
+        print(str(n) + " is even")`,
 exampleOut: "2 is even\n4 is even\n6 is even\n8 is even\n10 is even",
 tip: "`%` gives the **remainder** after dividing. `n % 2 == 0` means n divides by 2 exactly, so n is even. Remember: `=` stores a value, `==` compares.",
 tasks: [
@@ -623,7 +624,7 @@ count = 0
 for letter in word:
     [[0]] letter [[1]] "e":
         count = count + 1
-print("Number of e's:", count)`,
+print("Number of e's: " + str(count))`,
   gaps: [ { accept: ["if"], w: 3 }, { accept: ["=="], w: 3 } ],
   output: "Number of e's: 3",
   hints: ["Which keyword makes a decision?", "To **compare** two things, use two equals signs."] },
@@ -632,18 +633,18 @@ print("Number of e's:", count)`,
   starter: `marks = [45, 72, 38, 90]
 for mark in marks:
     if mark => 50:
-    print(mark, "pass")
+    print(str(mark) + " pass")
     else:
-        print(mark, "not yet")`,
+        print(str(mark) + " not yet")`,
   expected: "45 not yet\n72 pass\n38 not yet\n90 pass",
   require: [ { re: "for\\s+\\w+\\s+in\\s+marks", msg: "Keep the for loop over `marks`." }, { re: "if\\s", msg: "Keep the if." } ],
   hints: ["\"Greater than or equal to\" is written `>=` in Python, with the > first.", "The line under an if needs to be indented **further** than the if."],
   solution: `marks = [45, 72, 38, 90]
 for mark in marks:
     if mark >= 50:
-        print(mark, "pass")
+        print(str(mark) + " pass")
     else:
-        print(mark, "not yet")` },
+        print(str(mark) + " not yet")` },
 { id: "s7-5", type: "code", kind: "Make", title: "Make",
   prompt: "Loop through the numbers **1 to 30** and print only the **multiples of 5**. Use an **if** inside the loop this time, not a step.",
   starter: `# Write your program here
@@ -659,7 +660,7 @@ for mark in marks:
 {
 id: "s8", title: "Problem solving",
 key: "Now put it all together. There is **less help** here, so **plan first**, then code. Ask yourself:",
-questions: ["What do I loop over: a string, a list or range()?", "What happens **each time** round?", "Do I need an **if**?", "Do I need a **total** or a **count**?"],
+questions: ["What do I loop over: a string, a list or range()?", "What happens **each time** round?", "Do I need an **if**?", "Do I need a **total** or a **count**?", "When I print, which numbers need **str()**?"],
 tasks: [
 { id: "s8-1", type: "code", kind: "Problem", title: "Vowel counter",
   prompt: "Count the **vowels** (a, e, i, o, u) in the word **programming** and print the result like the output below.",
@@ -674,7 +675,7 @@ vowels = 0
 for letter in word:
     if letter in "aeiou":
         vowels = vowels + 1
-print("Vowels:", vowels)` },
+print("Vowels: " + str(vowels))` },
 { id: "s8-2", type: "code", kind: "Problem", title: "Fizz",
   prompt: "Print the numbers **1 to 15**, but print **Fizz** instead of any number that is a **multiple of 3**.",
   starter: `# Write your program here
@@ -687,7 +688,7 @@ print("Vowels:", vowels)` },
         print("Fizz")
     else:
         print(n)` },
-{ id: "s8-3", type: "code", kind: "Problem", title: "Shopping basket", plus: true, ignoreSpaces: true,
+{ id: "s8-3", type: "code", kind: "Problem", title: "Shopping basket", plus: true,
   prompt: "Work out the **total** of the prices, and **how many** items cost **more than 6**. Print both after the loop, like the output below.",
   starter: `prices = [3, 12, 5, 8, 20]
 `,
@@ -702,8 +703,8 @@ for p in prices:
     total = total + p
     if p > 6:
         expensive = expensive + 1
-print("Total:", total)
-print("Expensive items:", expensive)` },
+print("Total: " + str(total))
+print("Expensive items: " + str(expensive))` },
 { id: "s8-4", type: "code", kind: "Problem", title: "Star triangle", plus: true,
   prompt: "Print a triangle of stars, 5 rows tall, like the output below. Use one for loop. (Remember: `*` with a string repeats it.)",
   starter: `# Write your program here
@@ -861,7 +862,7 @@ const ERRS = [
   [/NameError: name '([^']+)' is not defined/, (m)=>"Python doesn't know the name `"+m[1]+"`. Check the spelling and capital letters, and that you created it **before** using it. If it is meant to be text, put it in \"quotes\"."],
   [/'int' object is not iterable/, "You tried to loop over a **number**. To repeat a number of times, use `range(...)`."],
   [/'(float|int)' object is not callable/, "Did you forget a `*` for multiply? `3(4)` should be `3 * 4`."],
-  [/can only concatenate str|unsupported operand type\(s\) for \+: 'int' and 'str'|unsupported operand type\(s\) for \+: 'str' and 'int'/, "You can't join **text and a number** with `+`. In print, use a **comma** instead."],
+  [/can only concatenate str|unsupported operand type\(s\) for \+: 'int' and 'str'|unsupported operand type\(s\) for \+: 'str' and 'int'/, "You can't join **text and a number** with `+`. Turn the number into text first with **str()**, e.g. `\"Lap \" + str(i)`."],
   [/'str' object cannot be interpreted as an integer/, "range() needs **numbers**, not text."],
   [/takes at most 3 arguments|expected at most 3 arguments/, "range() takes at most **3** numbers: start, stop, step."],
   [/range\(\) arg 3 must not be zero/, "The step in range() can't be **0**."],
@@ -1387,6 +1388,7 @@ function taskCode(card, ctx){
     else { const res = await execute(); if (!res) return; if (res.kind !== "ok"){ attempt(ctx); errorMsg(res); hints.update(); return; } out = res.out; }
     const code = ed.value;
     for (const f of (t.forbid || [])) if (new RegExp(f.re).test(code)){ showMsg(box, "info", "Try another way", "<p>" + md(f.msg) + "</p>"); return; }
+    if (printUsesComma(code)){ showMsg(box, "info", "Use + to join, not commas", "<p>" + md("In our lessons we join the parts of a print with **+**, not commas. Put spaces **inside the quotes**, and turn numbers into text with **str()**: `print(\"Total: \" + str(total))`") + "</p>"); return; }
     const exp = normLines(t.expected, t.ignoreSpaces), got = normLines(out, t.ignoreSpaces);
     const same = exp.length === got.length && exp.every((l, i) => l === got[i]);
     if (same){
@@ -1401,8 +1403,24 @@ function taskCode(card, ctx){
   };
   if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete. You can still run and change your code.</p>");
 }
+function printUsesComma(code){
+  const src = code.replace(/#.*$/gm, "").replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, '""');
+  const re = /\bprint\s*\(/g; let m;
+  while ((m = re.exec(src))){
+    let depth = 1;
+    for (let i = m.index + m[0].length; i < src.length && depth > 0; i++){
+      const c = src[i];
+      if (c === "(" || c === "[") depth++;
+      else if (c === ")" || c === "]") depth--;
+      else if (c === "," && depth === 1) return true;
+    }
+  }
+  return false;
+}
 function diffSummary(exp, got, ig){
   if (!got.length) return "Your program didn't print anything.";
+  const squash = L => L.map(l => l.replace(/\s+/g, ""));
+  if (!ig && exp.length === got.length && squash(exp).every((l, i) => l === squash(got)[i])) return "Nearly! Only the <strong>spaces</strong> are different. Check for a space <strong>inside the quotes</strong>, next to each +.";
   for (let i = 0; i < Math.max(exp.length, got.length); i++){
     if (exp[i] !== got[i]){
       if (i >= got.length) return "Your output stops too early: line " + (i+1) + " is missing.";
