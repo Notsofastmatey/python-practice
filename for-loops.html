@@ -816,6 +816,10 @@ onmessage = async (e) => {
   try { py.runPython(code, { globals: g }); }
   catch (ex) { err = String((ex && ex.message) || ex); }
   try { py.runPython("import sys\\nsys.stdout.flush()"); } catch (_) {}
+  // drain anything still buffered (e.g. after TOO_MUCH_OUTPUT) so it can't leak into the next run
+  const sink = { write: (buf) => buf.length };
+  py.setStdout(sink); py.setStderr(sink);
+  try { py.runPython("import sys\\nsys.stdout.flush()\\nsys.stderr.flush()"); } catch (_) {}
   try { g.destroy(); } catch (_) {}
   postMessage({ type: "result", id, out, err, tooMuch: out.length > 20000 });
 };`;
