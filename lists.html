@@ -1,0 +1,2337 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lists and 2D lists practice</title>
+<meta name="description" content="Scaffolded GCSE Python list exercises: indexes, changing and adding items, looping through a list, 2D lists, updating a grid, and building a quiz.">
+<style>
+:root{
+  color-scheme: light;
+  --surface:#f3f3f3; --surface-card:#d9f3d0; --surface-plain:#ffffff;
+  --ink:#212121; --muted:#4a4a4a; --heading:#00642d; --card-border:#008741;
+  --accent:#008741; --accent-deep:#00642d; --on-accent:#ffffff; --label:#8cc841;
+  --mode:#e05d08; --err-ink:#9b1c1c; --err-bg:#fdecea; --err-line:#c0392b;
+  --ok-bg:#e9f7e4; --gap-bg:#eef9ea;
+  --font: Aptos, "Segoe UI", Arial, sans-serif;
+  --display: "Aptos Display", Aptos, "Segoe UI", Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--surface);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.5}
+b,strong{font-weight:700}
+code{font-family:var(--mono);font-size:.92em;background:#fff;border:1px solid #c9c9c9;border-radius:5px;padding:0 .3em}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+
+/* layout */
+.topbar{position:sticky;top:0;z-index:10;background:var(--surface-plain);border-bottom:2px solid var(--card-border)}
+.topbar-inner{display:flex;align-items:center;gap:16px;padding:10px 20px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:22px;margin:0;white-space:nowrap}
+.progress{flex:1;min-width:160px;display:flex;align-items:center;gap:10px;font-size:15px;color:var(--muted)}
+.bar{flex:1;height:12px;border-radius:6px;background:#e2e2e2;border:1px solid #b9b9b9;overflow:hidden}
+.bar > span{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.pystatus{font-size:15px;padding:4px 10px;border-radius:999px;border:1px solid #9a9a9a;background:#fafafa;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.pystatus .dot{width:10px;height:10px;border-radius:50%;background:#9a9a9a}
+.pystatus.ready .dot{background:var(--accent)}
+.pystatus.offline .dot{background:var(--err-line)}
+.pystatus.loading .dot{background:#d9a400}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0;min-height:calc(100vh - 120px)}
+nav.sections{background:var(--surface-plain);border-right:1px solid #d6d6d6;padding:16px 12px}
+nav.sections ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+nav.sections button{width:100%;text-align:left;background:none;border:2px solid transparent;border-radius:10px;padding:8px 10px;display:flex;gap:10px;align-items:center;color:var(--ink);font-size:16px}
+nav.sections button:hover{background:#f0f7ed}
+nav.sections button[aria-current="true"]{border-color:var(--card-border);background:var(--surface-card);font-weight:700}
+.navnum{flex:none;width:28px;height:28px;border-radius:50%;background:#e2e2e2;display:grid;place-items:center;font-weight:700;font-size:14px}
+.navdone .navnum{background:var(--accent);color:var(--on-accent)}
+.navlabel{flex:1;line-height:1.25}
+.navcount{font-size:13px;color:var(--muted);white-space:nowrap}
+main{padding:24px 32px 48px;max-width:980px;width:100%}
+footer.values{background:var(--accent);color:var(--on-accent);text-align:center;font-size:15px;padding:10px;border-bottom:12px solid var(--label)}
+
+@media (max-width: 880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.sections{border-right:none;border-bottom:1px solid #d6d6d6;padding:8px 12px;overflow-x:auto}
+  nav.sections ol{flex-direction:row;gap:6px}
+  nav.sections button{white-space:nowrap;padding:6px 10px}
+  .navlabel,.navcount{display:none}
+  nav.sections button[aria-current="true"] .navlabel{display:inline}
+  main{padding:16px}
+  .topbar-inner{padding:8px 12px}
+}
+
+/* headings */
+.sechead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+h1.title{font-family:var(--display);font-size:34px;line-height:1.15;margin:0}
+.kicker{color:var(--muted);font-size:15px;margin:0 0 4px}
+.mode{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;border:2px solid var(--mode);border-radius:999px;padding:4px 12px 4px 8px;background:#fff}
+.mode svg{flex:none}
+
+/* cards */
+.card{background:var(--surface-card);border:2px solid var(--card-border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+.card h2,.plain h2{color:var(--heading);font-size:22px;margin:0 0 10px}
+.plain{background:var(--surface-plain);border:2px solid var(--ink);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+.key p{margin:0 0 12px;font-size:19px}
+details.key > summary{cursor:pointer;color:var(--heading);font-weight:700;font-size:22px;list-style:none;display:flex;align-items:center;gap:8px}
+details.key > summary::-webkit-details-marker{display:none}
+details.key > summary::before{content:"▾";display:inline-block;transition:transform .15s}
+details.key:not([open]) > summary::before{transform:rotate(-90deg)}
+details.key[open] > summary{margin-bottom:12px}
+.example{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+.example .lbl,.lbl{font-size:15px;font-weight:700;color:var(--heading);margin:0 0 4px}
+@media (max-width:640px){.example{grid-template-columns:1fr}}
+.parts{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.parts li{background:#fff;border:1px solid #9cc79a;border-radius:10px;padding:8px 12px;font-size:16px}
+.parts code{font-weight:700}
+table.rt{border-collapse:collapse;margin:4px 0 14px;background:#fff;font-size:17px}
+table.rt th,table.rt td{border:1px solid var(--ink);padding:6px 12px;text-align:left}
+table.rt th{background:var(--label)}
+table.rt td.m{font-family:var(--mono)}
+.gridwrap{margin:6px 0 14px;overflow-x:auto}
+.gridwrap .lbl{margin-bottom:4px}
+table.rt.grid{margin-bottom:4px}
+table.rt.grid th{font-size:15px;font-weight:600;white-space:nowrap}
+table.rt.grid td.corner{border:none;background:transparent}
+table.rt.grid td.m{text-align:center;min-width:3.2em}
+table.rt.grid td.hit{background:var(--surface-card);font-weight:700;box-shadow:inset 0 0 0 2px var(--accent)}
+.tip{margin:12px 0 0;padding:10px 14px;background:#fff;border:1px solid #9cc79a;border-radius:10px;font-size:17px}
+ul.qs{margin:6px 0 0;padding-left:1.2em;font-size:19px}
+
+/* code display */
+pre.code,pre.out{font-family:var(--mono);font-size:17px;line-height:1.55;margin:0;padding:12px 16px;border-radius:10px;overflow-x:auto;white-space:pre}
+pre.code{background:#fff;border:1px solid var(--ink)}
+pre.out{background:#1f2a24;color:#f1f7ef;border:1px solid #1f2a24;min-height:2.2em}
+pre.out.empty{color:#b9c7b4}
+.t-kw{color:#00642d;font-weight:700}
+.t-bi{color:#6b21a8}
+.t-str{color:#9a3412}
+.t-num{color:#1d4ed8}
+.t-com{color:#5b6660;font-style:italic}
+
+/* task */
+.taskhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.taskhead h2{margin:0}
+.stepper{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.stepper button{width:34px;height:34px;border-radius:50%;border:2px solid #8a8a8a;background:#fff;font-weight:700;font-size:15px;color:var(--ink);display:grid;place-items:center;padding:0}
+.stepper button.cur{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}
+.stepper button.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.stepper button.helped{background:#fff;border-color:var(--accent);color:var(--heading)}
+.stepper button.plus{border-style:dashed}
+.stepper .stlabel{font-size:15px;color:var(--muted);margin-left:6px}
+.tag{font-size:14px;font-weight:700;border-radius:999px;padding:2px 10px;background:#fff;border:1px solid var(--card-border);color:var(--heading)}
+.plusbadge{display:inline-grid;place-items:center;min-width:40px;height:32px;padding:0 8px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;font-size:18px}
+.prompt{font-size:19px;margin:0 0 14px}
+.subq{font-weight:700;margin:16px 0 8px}
+
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.opt{background:#fff;border:2px solid #8a8a8a;border-radius:12px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.opt:hover{border-color:var(--ink)}
+.opt .olabel{font-size:14px;font-weight:700;color:var(--muted)}
+.opt pre{margin:0;font-family:var(--mono);font-size:16px;white-space:pre-wrap}
+.opt.wrong{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+.opt.wrong .olabel{color:var(--err-ink)}
+.opt.right{border-color:var(--accent);border-width:3px;background:var(--ok-bg)}
+.opt.right .olabel{color:var(--heading)}
+
+.gapcode input{font-family:var(--mono);font-size:17px;padding:1px 4px;border:2px solid var(--card-border);border-radius:5px;background:var(--gap-bg);color:var(--ink);text-align:center;margin:0 1px}
+.gapcode input.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+.gapcode input.good{border-color:var(--accent);background:#d9f3d0}
+
+.parsons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.parsons li{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #8a8a8a;border-radius:10px;padding:6px 8px}
+.parsons li.dragging{opacity:.5}
+.parsons li.over{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.parsons .grip{cursor:grab;color:#6a6a6a;font-size:20px;padding:0 4px;user-select:none}
+.parsons .pline{flex:1;font-family:var(--mono);font-size:17px;white-space:pre;overflow-x:auto}
+.parsons .ind{display:inline-block;border-left:2px dotted #9cc79a}
+.parsons .ctl{display:flex;gap:4px}
+.parsons .ctl button{width:36px;height:34px;border-radius:8px;border:1px solid var(--ink);background:#fafafa;font-size:16px;padding:0}
+.parsons .ctl button:disabled{opacity:.35;cursor:default}
+
+table.trace{border-collapse:collapse;background:#fff;margin:8px 0}
+table.trace th,table.trace td{border:1px solid var(--ink);padding:6px 10px;text-align:center}
+table.trace th{background:var(--label);font-family:var(--mono);font-size:16px}
+table.trace td.pass{font-size:14px;color:var(--muted);text-align:left}
+table.trace input{width:90px;font-family:var(--mono);font-size:17px;text-align:center;border:2px solid var(--card-border);border-radius:5px;background:var(--gap-bg);padding:2px}
+table.trace input.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+table.trace input.good{border-color:var(--accent);background:#d9f3d0}
+table.trace .given{font-family:var(--mono);font-size:17px}
+.traceout{display:flex;gap:10px;align-items:center;margin-top:10px;font-weight:700}
+.traceout input{width:110px;font-family:var(--mono);font-size:17px;border:2px solid var(--card-border);border-radius:5px;background:var(--gap-bg);padding:2px 6px}
+.traceout input.bad{border-color:var(--err-line);border-style:dashed}
+.traceout input.good{border-color:var(--accent);background:#d9f3d0}
+.twocol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:760px){.twocol{grid-template-columns:1fr}}
+
+/* editor */
+.editor{display:flex;border:2px solid var(--ink);border-radius:10px;background:#fff;overflow:hidden}
+.gutter{flex:none;padding:12px 8px 12px 10px;text-align:right;font-family:var(--mono);font-size:17px;line-height:1.55;color:#7a7a7a;background:#f4f4f4;border-right:1px solid #d0d0d0;user-select:none;overflow:hidden;white-space:pre}
+.editor textarea{flex:1;border:none;outline:none;resize:vertical;padding:12px 14px;font-family:var(--mono);font-size:17px;line-height:1.55;color:var(--ink);background:#fff;white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:4;min-height:8em}
+.editor:focus-within{box-shadow:0 0 0 3px #1a5fb4}
+.gutter .errline{color:#fff;background:var(--err-line);border-radius:3px;padding:0 3px}
+.expected{margin-bottom:16px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.btn{border-radius:10px;padding:9px 18px;font-weight:700;border:2px solid var(--ink);background:#fff;color:var(--ink);font-size:17px}
+.btn:hover{background:#f0f0f0}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-deep)}
+.btn.quiet{border-color:#9a9a9a;font-weight:400}
+.btn:disabled{opacity:.5;cursor:default}
+.outwrap .lbl{color:var(--ink)}
+.offline-note{background:#fff8e1;border:2px solid #b58500;border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.paste textarea{width:100%;min-height:6em;font-family:var(--mono);font-size:16px;border:2px solid var(--ink);border-radius:10px;padding:10px}
+
+/* feedback */
+.fb{margin-top:14px}
+.fb:empty{display:none}
+.msg{border-radius:12px;padding:12px 16px;border:2px solid;font-size:18px}
+.msg h3{margin:0 0 4px;font-size:19px;display:flex;align-items:center;gap:8px}
+.msg p{margin:4px 0}
+.msg.ok{background:var(--ok-bg);border-color:var(--accent)}
+.msg.ok h3{color:var(--heading)}
+.msg.bad{background:var(--err-bg);border-color:var(--err-line)}
+.msg.bad h3{color:var(--err-ink)}
+.msg.info{background:#fff;border-color:#8a8a8a}
+.msg .raw{font-family:var(--mono);font-size:14px;color:#5a2a2a;margin-top:6px}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+@media (max-width:640px){.diff{grid-template-columns:1fr}}
+.diff pre{background:#fff;border:1px solid var(--ink);border-radius:8px;padding:8px 10px;margin:0;font-family:var(--mono);font-size:15px;white-space:pre;overflow-x:auto}
+.diff mark{background:#ffe1dc;color:var(--err-ink);font-weight:700}
+.hints{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.hint{background:#fff;border:1px solid #9cc79a;border-left-width:1px;border-radius:10px;padding:8px 12px;font-size:17px}
+.hint b.hl{color:var(--heading)}
+.solution{margin-top:10px}
+.nav-next{display:flex;justify-content:space-between;gap:10px;margin-top:24px;flex-wrap:wrap}
+
+/* intro & summary */
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;font-size:19px}
+.steps li::before{content:counter(s);flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:17px}
+table.summary{border-collapse:collapse;width:100%;background:#fff;font-size:17px}
+table.summary th,table.summary td{border:1px solid var(--ink);padding:8px 12px;text-align:left}
+table.summary th{background:var(--label)}
+table.summary td.n{text-align:center;font-weight:700}
+.bigstat{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0 16px}
+.bigstat div{background:#fff;border:2px solid var(--card-border);border-radius:12px;padding:10px 18px;min-width:150px}
+.bigstat b{display:block;font-size:30px;color:var(--heading);font-family:var(--display)}
+.stamp{font-size:15px;color:var(--muted);margin-top:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.keyhint{font-weight:400;font-size:16px;color:var(--ink)}
+.parsons{max-width:760px}
+pre.out.exp{background:#fff;color:var(--ink);border:2px dashed #6a6a6a}
+h1.title:focus{outline:none}
+.edgrid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:start}
+@media (max-width:760px){.edgrid{grid-template-columns:1fr}}
+.inputs textarea{width:100%;font-family:var(--mono);font-size:17px;line-height:1.55;border:2px solid var(--card-border);border-radius:10px;background:var(--gap-bg);padding:10px 12px;resize:vertical;min-height:7em}
+.inote{font-size:15px;color:var(--muted);margin:6px 0 0}
+.inputs label{display:block}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <p class="brand">Lists</p>
+    <div class="progress"><div class="bar" id="bar" role="progressbar" aria-label="Tasks completed"><span></span></div><span id="progtext"></span></div>
+    <div class="pystatus loading" id="pystatus" role="status"><span class="dot" aria-hidden="true"></span><span id="pytext">Python loading…</span></div>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sections" aria-label="Sections"><ol id="navlist"></ol></nav>
+  <main id="main"></main>
+</div>
+<footer class="values">Aspiration · Respect · Kindness</footer>
+<script>
+/* ===== Lesson content ===== */
+const SECTIONS = [
+{
+id: "s1", title: "Lists and index numbers",
+key: "A **list** stores several items in **one variable**. Every item has an **index**: its position number. Indexes start at **0**, not 1. Put the index in **square brackets** to get one item.",
+example: `towns = ["Norwich", "Wroxham", "Cromer", "Acle"]
+print(towns[0])
+print(towns[2])
+print(len(towns))`,
+exampleOut: "Norwich\nCromer\n4",
+parts: [
+  ["[ ]", "**square brackets** go round the whole list, and round an index."],
+  [",", "a **comma** goes between the items."],
+  ["towns[0]", "the **first** item, because indexes start at 0."],
+  ["len(towns)", "**how many** items are in the list."]
+],
+tip: "The **last** index is always **one less than the length**. A list of 4 items has the indexes 0, 1, 2 and 3.",
+tasks: [
+{ id: "s1-1", type: "predict", title: "Predict",
+  prompt: "What will this program print?",
+  code: `pets = ["cat", "dog", "fish", "hamster"]
+print(pets[1])`,
+  options: [
+    { out: "cat", fb: "Indexes start at **0**. `pets[0]` is cat, so `pets[1]` is the **second** item." },
+    { out: "dog", fb: "Yes. Index 0 is cat, so index 1 is dog." },
+    { out: "pets[1]", fb: "There are no quotes round `pets[1]`, so Python looks up the item and prints that." },
+    { out: "['cat', 'dog']", fb: "An index gives you **one** item, not all the items up to it." }
+  ], answer: 1 },
+{ id: "s1-2", type: "predict", title: "Predict",
+  prompt: "These items are **numbers**. What will this print?",
+  code: `scores = [12, 7, 25, 18]
+print(scores[0] + scores[3])`,
+  options: [
+    { out: "37", fb: "`scores[3]` is the **fourth** item, 18. Count from 0: 12 is index 0, 7 is 1, 25 is 2, 18 is 3." },
+    { out: "1218", fb: "These are numbers, not text, so `+` **adds** them." },
+    { out: "30", fb: "Yes. `scores[0]` is 12 and `scores[3]` is 18. 12 + 18 = 30." },
+    { out: "19", fb: "`scores[0]` is 12, but `scores[3]` is not 7. Count along from 0." }
+  ], answer: 2 },
+{ id: "s1-3", type: "gap", title: "Fill the gaps",
+  prompt: "Complete the program so it prints **Earth**, then **Mercury**, then **how many** planets are in the list.",
+  code: `planets = ["Mercury", "Venus", "Earth", "Mars"]
+print(planets[[[0]]])
+print(planets[[[1]]])
+print([[2]](planets))`,
+  gaps: [ { accept: ["2"], w: 2 }, { accept: ["0"], w: 2 }, { accept: ["len"], w: 4 } ],
+  output: "Earth\nMercury\n4",
+  hints: ["Count from **0**: Mercury is 0, Venus is 1…", "The first item always has index 0.", "The function that tells you the **length** of a list has three letters."] },
+{ id: "s1-4", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "This program should print **Last day: Fri**. Run it to see the error, then fix it.",
+  starter: `days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+print("Last day: " + days[5])`,
+  expected: "Last day: Fri",
+  require: [ { re: "days\\s*\\[", msg: "Use an index to get the item from the list." } ],
+  hints: ["There are 5 items. What are their index numbers? Start counting at 0.", "The last index is **one less** than the length."],
+  solution: `days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+print("Last day: " + days[4])` },
+{ id: "s1-5", type: "code", kind: "Fix", title: "Fix two bugs",
+  prompt: "This program should print **green**. It has **two** bugs. Fix them both.",
+  starter: `colours = ["red", "green" "blue"]
+print(colours(1))`,
+  expected: "green",
+  require: [ { re: "colours\\s*\\[\\s*1\\s*\\]", msg: "Use `colours[1]` to get the item." } ],
+  hints: ["An index goes in **square** brackets, not round ones.", "Look closely between the items in the list. What should separate them?"],
+  solution: `colours = ["red", "green", "blue"]
+print(colours[1])` },
+{ id: "s1-6", type: "code", kind: "Modify", title: "Modify",
+  prompt: "Change this program so it prints the **first** and the **last** town, like the output below.",
+  starter: `towns = ["Norwich", "Wroxham", "Cromer", "Acle"]
+print(towns[0])`,
+  expected: "First: Norwich\nLast: Acle",
+  require: [ { re: "towns\\s*\\[", msg: "Get the towns from the list with an index." } ],
+  forbid: [ { re: "print\\s*\\(\\s*[\"']First: N", msg: "Don't type the town's name in the print. Join the label to the item: `\"First: \" + towns[0]`" } ],
+  hints: ["Join the label to the item with `+`: `print(\"First: \" + towns[0])`", "There are 4 towns, so the last index is 3."],
+  solution: `towns = ["Norwich", "Wroxham", "Cromer", "Acle"]
+print("First: " + towns[0])
+print("Last: " + towns[3])` },
+{ id: "s1-7", type: "code", kind: "Make", title: "Make",
+  prompt: "Make a list called `subjects` holding **Maths**, **English**, **Science**, **Art** and **Computing**, in that order. Then print the **third** subject, and how many subjects there are.",
+  starter: `# Write your program here
+`,
+  expected: "Science\nSubjects: 5",
+  require: [ { re: "subjects\\s*=\\s*\\[", msg: "Make a list called `subjects`." }, { re: "len\\s*\\(", msg: "Use `len()` to count the subjects, instead of typing 5." } ],
+  hints: ["Each subject needs **quote marks**, with **commas** between them.", "The third item has index **2**.", "len gives a number, so use `str(len(subjects))` to join it to the text."],
+  solution: `subjects = ["Maths", "English", "Science", "Art", "Computing"]
+print(subjects[2])
+print("Subjects: " + str(len(subjects)))` },
+{ id: "s1-8", type: "code", kind: "Make", title: "Last item, any length", plus: true,
+  prompt: "Print the **last** stop on this bus route, but **without typing an index number**. Work the index out with `len()`, so the program would still work if more stops were added.",
+  starter: `stops = ["Hoveton", "Salhouse", "Rackheath", "Sprowston", "Norwich"]
+`,
+  expected: "Last stop: Norwich",
+  require: [ { re: "len\\s*\\(", msg: "Use `len(stops)` to work out the last index." } ],
+  forbid: [ { re: "stops\\s*\\[\\s*-?\\d+\\s*\\]", msg: "Don't type the index number. Work it out from `len(stops)`." } ],
+  hints: ["The last index is the length **minus 1**.", "You can do a calculation inside the square brackets: `stops[len(stops) - 1]`"],
+  solution: `stops = ["Hoveton", "Salhouse", "Rackheath", "Sprowston", "Norwich"]
+print("Last stop: " + stops[len(stops) - 1])` }
+]},
+
+{
+id: "s2", title: "Changing and adding items",
+key: "A list can **change** while the program runs. Put an index on the **left of =** to **replace** an item. Use **.append()** to add a new item to the **end**.",
+example: `basket = ["bread", "milk", "eggs"]
+basket[1] = "juice"
+basket.append("jam")
+print(basket)
+print(len(basket))`,
+exampleOut: "['bread', 'juice', 'eggs', 'jam']\n4",
+parts: [
+  ["basket[1] = \"juice\"", "**replaces** the item at index 1."],
+  ["basket.append(\"jam\")", "adds jam to the **end**. Notice the **dot** and the **round** brackets."],
+  ["print(basket)", "printing a **whole list** shows its square brackets and quote marks."]
+],
+tip: "append makes the list **one longer**. Replacing an item does **not** change the length.",
+tasks: [
+{ id: "s2-1", type: "predict", title: "Predict",
+  prompt: "What will this program print?",
+  code: `lights = ["off", "off", "off"]
+lights[2] = "on"
+print(lights)`,
+  options: [
+    { out: "['off', 'on', 'off']", fb: "Index 2 is the **third** item: 0, 1, 2." },
+    { out: "['off', 'off', 'off', 'on']", fb: "That is what **append** would do. `lights[2] = \"on\"` **replaces** an item, so the list stays the same length." },
+    { out: "on", fb: "The program prints the **whole list**, not just the item that changed." },
+    { out: "['off', 'off', 'on']", fb: "Yes. The item at index 2 (the third one) is replaced with on." }
+  ], answer: 3 },
+{ id: "s2-2", type: "predict", title: "Predict",
+  prompt: "Follow each line carefully. What will this print?",
+  code: `nums = [5, 10]
+nums.append(15)
+nums[0] = nums[0] + 1
+print(nums)
+print(len(nums))`,
+  options: [
+    { out: "[6, 10, 15]\n3", fb: "Yes. 15 is added to the end, then the first item goes up from 5 to 6. Three items." },
+    { out: "[5, 10, 15]\n3", fb: "Look at line 3. It takes `nums[0]`, adds 1, and stores the answer **back** in `nums[0]`." },
+    { out: "[6, 10]\n2", fb: "Line 2 **appends** 15, so the list gets one longer." },
+    { out: "[6, 10, 15]\n4", fb: "Only **one** item was appended. Changing `nums[0]` doesn't add an item." }
+  ], answer: 0 },
+{ id: "s2-3", type: "gap", title: "Fill the gaps",
+  prompt: "Complete the program so that **lemonade** is added to the end, and **crisps** is replaced with **pizza**.",
+  code: `party = ["crisps", "cake"]
+party.[[0]]("lemonade")
+party[[[1]]] = "pizza"
+print(party)`,
+  gaps: [ { accept: ["append"], w: 7 }, { accept: ["0"], w: 2 } ],
+  output: "['pizza', 'cake', 'lemonade']",
+  hints: ["The word that adds an item to the end of a list starts with **a**.", "What is the index of crisps?"] },
+{ id: "s2-4", type: "parsons", title: "Put in order",
+  prompt: "Put the lines in order so the program prints the output shown. Drag the lines, or use the arrow buttons.",
+  lines: [ ["scores = [4, 9]", 0], ["scores.append(7)", 0], ["scores[2] = 10", 0], ["print(scores)", 0], ["print(len(scores))", 0] ],
+  fixedIndent: true, start: [3, 2, 4, 0, 1],
+  solutions: [ [0, 1, 2, 3, 4] ],
+  output: "[4, 9, 10]\n3",
+  hints: ["The list must be **made** before anything else can use it.", "At first the list has only indexes 0 and 1. `scores[2]` doesn't exist until something has been **appended**.", "The whole list is printed first, then its length."] },
+{ id: "s2-5", type: "code", kind: "Fix", title: "Fix two bugs",
+  prompt: "This program should replace **wash up** with **tidy room** and add **walk dog** to the end. It has **two** bugs, and both are about **brackets**.",
+  starter: `jobs = ["wash up", "homework"]
+jobs.append["walk dog"]
+jobs(0) = "tidy room"
+print(jobs)`,
+  expected: "['tidy room', 'homework', 'walk dog']",
+  require: [ { re: "\\.append\\s*\\(", msg: "Use `.append( )` to add the new job." } ],
+  hints: ["An **index** always goes in **square** brackets.", "**append** is like print and len: what you give it goes in **round** brackets."],
+  solution: `jobs = ["wash up", "homework"]
+jobs.append("walk dog")
+jobs[0] = "tidy room"
+print(jobs)` },
+{ id: "s2-6", type: "code", kind: "Modify", title: "Modify",
+  prompt: "Add **two lines** between the list and the print. One should replace **Song B** with **Song X**. The other should add **Song D** to the end. Don't change line 1.",
+  starter: `playlist = ["Song A", "Song B", "Song C"]
+
+print(playlist)`,
+  expected: "['Song A', 'Song X', 'Song C', 'Song D']",
+  require: [ { re: "playlist\\s*\\[\\s*1\\s*\\]\\s*=", msg: "Replace Song B with code: `playlist[1] = ...`" }, { re: "\\.append\\s*\\(", msg: "Add Song D with `.append()`." } ],
+  hints: ["Song B is the second item, so its index is 1.", "`playlist.append(\"Song D\")` adds to the end."],
+  solution: `playlist = ["Song A", "Song B", "Song C"]
+playlist[1] = "Song X"
+playlist.append("Song D")
+print(playlist)` },
+{ id: "s2-7", type: "code", kind: "Make", title: "Make",
+  prompt: "The list `bag` starts **empty**. Use a **for loop** to ask `Item: ` **three times**, and append each answer to the list. Then print the list.",
+  starter: `bag = []
+`,
+  tests: [
+    { inputs: ["pen", "ruler", "rubber"], expected: "Item: pen\nItem: ruler\nItem: rubber\n['pen', 'ruler', 'rubber']" },
+    { inputs: ["map", "torch", "snack"], expected: "Item: map\nItem: torch\nItem: snack\n['map', 'torch', 'snack']" }
+  ],
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to repeat three times." }, { re: "\\.append\\s*\\(", msg: "Use `.append()` to add each answer to the list." } ],
+  hints: ["`for i in range(3):` repeats three times.", "Inside the loop: store the input in a variable, then append that variable.", "The print is **not** indented, so it runs once, after the loop."],
+  solution: `bag = []
+for i in range(3):
+    item = input("Item: ")
+    bag.append(item)
+print(bag)` },
+{ id: "s2-8", type: "code", kind: "Make", title: "Shopping list", plus: true,
+  prompt: "Keep asking `Item: ` until the user types **done**. Append every item to a list (but **not** the word done). Then print the list and how many items it has.",
+  starter: `shopping = []
+`,
+  tests: [
+    { inputs: ["rice", "beans", "done"], expected: "Item: rice\nItem: beans\nItem: done\n['rice', 'beans']\nItems: 2" },
+    { inputs: ["done"], expected: "Item: done\n[]\nItems: 0" },
+    { inputs: ["tea", "milk", "jam", "soap", "done"], expected: "Item: tea\nItem: milk\nItem: jam\nItem: soap\nItem: done\n['tea', 'milk', 'jam', 'soap']\nItems: 4" }
+  ],
+  require: [ { re: "while\\s", msg: "You don't know how many items there will be, so use a **while** loop." }, { re: "\\.append\\s*\\(", msg: "Use `.append()` to add each item." } ],
+  hints: ["Ask **once before** the loop, then **again at the end** of the loop, like the stop value tasks on the while loops page.", "The condition is `while item != \"done\":`", "Use `len(shopping)` for the number of items."],
+  solution: `shopping = []
+item = input("Item: ")
+while item != "done":
+    shopping.append(item)
+    item = input("Item: ")
+print(shopping)
+print("Items: " + str(len(shopping)))` }
+]},
+
+{
+id: "s3", title: "Looping through a list",
+key: "A **for loop** visits every item in a list, in order. There are **two ways** to do it. Loop over the **items** when you only need each value. Loop over the **index numbers** with `range(len(...))` when you need to know the **position**, or you want to **change** the items.",
+example: `temps = [14, 9, 17]
+for t in temps:
+    print(t)
+for i in range(len(temps)):
+    print(str(i) + ": " + str(temps[i]))`,
+exampleOut: "14\n9\n17\n0: 14\n1: 9\n2: 17",
+parts: [
+  ["for t in temps", "`t` is each **item** in turn: 14, then 9, then 17."],
+  ["range(len(temps))", "makes **0, 1, 2**: exactly the index numbers of this list."],
+  ["temps[i]", "the item **at** index `i`."]
+],
+tip: "Visiting every item in a list like this is called **traversing** the list.",
+tasks: [
+{ id: "s3-1", type: "predict", title: "Predict",
+  prompt: "What will this program print?",
+  code: `marks = [3, 8, 5]
+for m in marks:
+    print(m * 2)`,
+  options: [
+    { out: "3\n8\n5", fb: "Each item is **multiplied by 2** before it is printed." },
+    { out: "6\n16\n10", fb: "Yes. `m` is 3, then 8, then 5, and each one is doubled." },
+    { out: "0\n2\n4", fb: "`m` is each **item** (3, 8, 5), not each index (0, 1, 2)." },
+    { out: "[6, 16, 10]", fb: "print runs **once for each item**, so each number is on its own line. No list is printed." }
+  ], answer: 1 },
+{ id: "s3-2", type: "predict", title: "Predict",
+  prompt: "This loop goes over the **index numbers**. What will it print?",
+  code: `snacks = ["apple", "nuts", "yoghurt"]
+for i in range(len(snacks)):
+    print(str(i + 1) + ". " + snacks[i])`,
+  options: [
+    { out: "0. apple\n1. nuts\n2. yoghurt", fb: "The program prints `i + 1`, so the numbering starts at 1 even though the indexes start at 0." },
+    { out: "1. nuts\n2. yoghurt", fb: "`snacks[i]` uses `i`, not `i + 1`. When `i` is 0 it prints `1. apple`." },
+    { out: "1. apple\n2. nuts\n3. yoghurt", fb: "Yes. `i` is 0, 1, 2. The number printed is `i + 1`, and the item is `snacks[i]`." },
+    { out: "1. snacks[i]\n2. snacks[i]\n3. snacks[i]", fb: "`snacks[i]` has no quotes round it, so Python looks up the item." }
+  ], answer: 2 },
+{ id: "s3-3", type: "trace", title: "Trace table",
+  prompt: "This program adds up a list of prices. Fill in the trace table, one row for each time round the loop. The first row is done for you.",
+  code: `prices = [4, 10, 6, 5]
+total = 0
+for p in prices:
+    total = total + p
+print(total)`,
+  columns: ["p", "total"],
+  rows: [ [["4", 1], ["4", 1]], [["10"], ["14"]], [["6"], ["20"]], [["5"], ["25"]] ],
+  outputAccept: ["25"],
+  hints: ["`p` is each item in the list, in order.", "Each time round, add `p` to the total from the row above.", "The print is not indented, so it runs once at the end and shows the final total."] },
+{ id: "s3-4", type: "gap", title: "Fill the gaps",
+  prompt: "The speed limit is 30. Complete the program so it **counts** how many speeds are **over** the limit.",
+  code: `speeds = [28, 34, 30, 41, 25]
+count = 0
+for s [[0]] speeds:
+    if s [[1]] 30:
+        count = count + [[2]]
+print("Speeding: " + str(count))`,
+  gaps: [ { accept: ["in"], w: 3 }, { accept: [">"], w: 2 }, { accept: ["1"], w: 2 } ],
+  output: "Speeding: 2",
+  hints: ["`for s ___ speeds:` is the same shape as every for loop over a list.", "Exactly 30 is **not** over the limit.", "Counting means going up by **1** each time."] },
+{ id: "s3-5", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "This program should add a **5 point bonus** to every score. Run it to see the error, then fix it.",
+  starter: `scores = [10, 20, 30]
+for i in range(scores):
+    scores[i] = scores[i] + 5
+print(scores)`,
+  expected: "[15, 25, 35]",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Keep the for loop." } ],
+  hints: ["range() needs a **number**, but it has been given the whole list.", "Which function turns a list into the **number of items** in it?"],
+  solution: `scores = [10, 20, 30]
+for i in range(len(scores)):
+    scores[i] = scores[i] + 5
+print(scores)` },
+{ id: "s3-6", type: "code", kind: "Make", title: "Make",
+  prompt: "Use a for loop to print a packing reminder for **every** item in the list.",
+  starter: `kit = ["boots", "shin pads", "water"]
+`,
+  expected: "Pack: boots\nPack: shin pads\nPack: water",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop, so it would still work with a longer list." } ],
+  hints: ["Start with `for item in kit:`", "Inside the loop, join the label to the item: `\"Pack: \" + item`"],
+  solution: `kit = ["boots", "shin pads", "water"]
+for item in kit:
+    print("Pack: " + item)` },
+{ id: "s3-7", type: "code", kind: "Make", title: "Make",
+  prompt: "These are a runner's lap times in seconds. Use a loop to add them up. Print the **total**, then the **number of laps**.",
+  starter: `laps = [62, 58, 65, 60]
+`,
+  expected: "Total: 245\nLaps: 4",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to add up the laps." }, { re: "len\\s*\\(", msg: "Use `len()` for the number of laps." } ],
+  forbid: [ { re: "sum\\s*\\(", msg: "sum() works, but practise the **running total** loop here." } ],
+  hints: ["Set `total = 0` **before** the loop.", "Inside the loop: `total = total + lap`", "Both numbers need `str()` when you join them to text."],
+  solution: `laps = [62, 58, 65, 60]
+total = 0
+for lap in laps:
+    total = total + lap
+print("Total: " + str(total))
+print("Laps: " + str(len(laps)))` },
+{ id: "s3-8", type: "code", kind: "Make", title: "Tallest", plus: true,
+  prompt: "Find the **biggest** height in the list **without** using max(). Keep a variable for the tallest so far, and use an **if** inside the loop.",
+  starter: `heights = [142, 160, 151, 158]
+`,
+  expected: "Tallest: 160",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop." }, { re: "if\\s", msg: "Use an if inside the loop." } ],
+  forbid: [ { re: "max\\s*\\(|sort", msg: "max() and sort work, but use a loop and an **if** here." } ],
+  hints: ["Start with `tallest = 0`, or with the first item: `tallest = heights[0]`.", "Inside the loop: `if h > tallest:` then store `h` in `tallest`."],
+  solution: `heights = [142, 160, 151, 158]
+tallest = 0
+for h in heights:
+    if h > tallest:
+        tallest = h
+print("Tallest: " + str(tallest))` },
+{ id: "s3-9", type: "code", kind: "Make", title: "Where is it?", plus: true,
+  prompt: "Ask `Find: `. Search the list for what the user typed. If it is there, print its **index** like the output below. If it is not there, print `Not in the list`. This is a **linear search**.",
+  starter: `tools = ["saw", "drill", "hammer", "pliers"]
+`,
+  tests: [
+    { inputs: ["hammer"], expected: "Find: hammer\nFound at index 2" },
+    { inputs: ["spanner"], expected: "Find: spanner\nNot in the list" },
+    { inputs: ["saw"], expected: "Find: saw\nFound at index 0" }
+  ],
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to check each item." } ],
+  forbid: [ { re: "\\.index\\s*\\(", msg: ".index() works, but write the search yourself with a loop." } ],
+  hints: ["You need the position, so loop over the indexes: `for i in range(len(tools)):`", "Before the loop, set `found = False`. Inside, if `tools[i]` matches, print the message and set `found = True`.", "After the loop: `if found == False:` print the other message."],
+  solution: `tools = ["saw", "drill", "hammer", "pliers"]
+target = input("Find: ")
+found = False
+for i in range(len(tools)):
+    if tools[i] == target:
+        print("Found at index " + str(i))
+        found = True
+if found == False:
+    print("Not in the list")` }
+]},
+
+{
+id: "s4", title: "2D lists: rows and items",
+key: "In a **2D list**, every item is **itself a list**. Think of it as a **table**. Each inner list is one **row**, which holds one **record**. You need **two indexes**: the first picks the **row**, the second picks the **item in that row**.",
+example: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+print(pets[1])
+print(pets[1][0])
+print(pets[2][2])`,
+exampleOut: "['Tiddles', 'cat', 12]\nTiddles\n1",
+grid: { name: "pets", rows: [["Rex", "dog", "5"], ["Tiddles", "cat", "12"], ["Bubbles", "fish", "1"]] },
+tip: "Say it out loud: `pets[1][0]` is **row 1, item 0**. Row first, then item. Both start counting at 0. Every row ends with a **comma**, except the last one.",
+tasks: [
+{ id: "s4-1", type: "predict", title: "Predict",
+  prompt: "Each row holds a film's title, the year it came out and its age rating. What will this print?",
+  code: `films = [
+    ["Up", 2009, "U"],
+    ["Coco", 2017, "PG"],
+    ["Shrek", 2001, "U"]
+]
+print(films[2][0])`,
+  grid: { name: "films", rows: [["Up", "2009", "U"], ["Coco", "2017", "PG"], ["Shrek", "2001", "U"]] },
+  options: [
+    { out: "Coco", fb: "Rows count from 0, so `films[2]` is the **third** row." },
+    { out: "U", fb: "That would be `films[0][2]`. The **row** comes first, then the item." },
+    { out: "['Shrek', 2001, 'U']", fb: "That is the whole row, `films[2]`. The second index `[0]` picks one item from it." },
+    { out: "Shrek", fb: "Yes. Row 2 is the Shrek row, and item 0 of that row is the title." }
+  ], answer: 3 },
+{ id: "s4-2", type: "predict", title: "Choose the code",
+  prompt: "Which line prints **2017**?",
+  code: `films = [
+    ["Up", 2009, "U"],
+    ["Coco", 2017, "PG"],
+    ["Shrek", 2001, "U"]
+]`,
+  choose: "Choose the line:", codeOptions: true,
+  options: [
+    { out: "print(films[1][1])", fb: "Yes. Row 1 is the Coco row, and item 1 of that row is the year." },
+    { out: "print(films[2][2])", fb: "Count from **0**. Row 2 is the Shrek row, and item 2 is its rating." },
+    { out: "print(films[1, 1])", fb: "Each index needs its **own** pair of square brackets: `[1][1]`." },
+    { out: "print(films[2017])", fb: "The number in the brackets is a **position**, not the value you are looking for." }
+  ], answer: 0 },
+{ id: "s4-3", type: "gap", title: "Fill the gaps",
+  prompt: "Each row holds a planet's name, its number of moons and its type. Complete the program so it prints **Mars**, then **gas**, then **Earth's number of moons**.",
+  code: `planets = [
+    ["Earth", 1, "rocky"],
+    ["Mars", 2, "rocky"],
+    ["Jupiter", 95, "gas"]
+]
+print(planets[[[0]]][[[1]]])
+print(planets[[[2]]][[[3]]])
+print(planets[0][[[4]]])`,
+  grid: { name: "planets", rows: [["Earth", "1", "rocky"], ["Mars", "2", "rocky"], ["Jupiter", "95", "gas"]] },
+  gaps: [ { accept: ["1"], w: 2 }, { accept: ["0"], w: 2 }, { accept: ["2"], w: 2 }, { accept: ["2"], w: 2 }, { accept: ["1"], w: 2 } ],
+  output: "Mars\ngas\n1",
+  hints: ["Mars is in the second row. What is that row's index?", "The **name** is always item 0 of its row.", "gas is in the **last** row and it is the **last** item. Count both from 0."] },
+{ id: "s4-4", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "Each row holds a dish and its price. This program should print **salad**. Run it to see the error, then fix it.",
+  starter: `menu = [
+    ["soup", 3],
+    ["pasta", 6],
+    ["curry", 7],
+    ["salad", 4]
+]
+print(menu[0][3])`,
+  expected: "salad",
+  require: [ { re: "menu\\s*\\[", msg: "Get the dish from the list with two indexes." } ],
+  hints: ["Which comes first: the row or the item?", "salad is in row 3. It is item 0 of that row."],
+  solution: `menu = [
+    ["soup", 3],
+    ["pasta", 6],
+    ["curry", 7],
+    ["salad", 4]
+]
+print(menu[3][0])` },
+{ id: "s4-5", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "Each row holds a room and how many people it seats. This program should print **200**. The bug is in the **list**, not in the print.",
+  starter: `rooms = [
+    ["Lab 1", 30]
+    ["Lab 2", 28],
+    ["Hall", 200]
+]
+print(rooms[2][1])`,
+  expected: "200",
+  require: [ { re: "rooms\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*1\\s*\\]", msg: "Leave the print line as it was: `print(rooms[2][1])`" } ],
+  hints: ["Look at the **end** of each row.", "Every row except the last needs a **comma** after its closing bracket."],
+  solution: `rooms = [
+    ["Lab 1", 30],
+    ["Lab 2", 28],
+    ["Hall", 200]
+]
+print(rooms[2][1])` },
+{ id: "s4-6", type: "code", kind: "Modify", title: "Modify",
+  prompt: "This program prints a sentence about Rex. Change the print so it is about **Bubbles**, and includes the **age**, like the output below. Get every detail **from the list**.",
+  starter: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+print(pets[0][0] + " is a " + pets[0][1])`,
+  expected: "Bubbles is a fish aged 1",
+  require: [ { re: "pets\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*2\\s*\\]", msg: "Get the age from the list with `pets[2][2]`." }, { re: "pets\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*0\\s*\\]", msg: "Get the name from the list with `pets[2][0]`." } ],
+  hints: ["Bubbles is in row 2, so every first index becomes 2.", "Add `+ \" aged \" +` and then the age.", "The age is a number, so it needs **str()** before it can be joined to text."],
+  solution: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+print(pets[2][0] + " is a " + pets[2][1] + " aged " + str(pets[2][2]))` },
+{ id: "s4-7", type: "code", kind: "Make", title: "Make",
+  prompt: "Each row holds a ride's name, the minimum height in cm, and the queue time in minutes. Print the details of the **Ghost Train** like the output below. Get every detail **from the list**.",
+  starter: `rides = [
+    ["Log Flume", 110, 15],
+    ["Teacups", 90, 5],
+    ["Ghost Train", 120, 25]
+]
+`,
+  expected: "Ghost Train\nMinimum height: 120 cm\nQueue: 25 minutes",
+  require: [ { re: "rides\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*0\\s*\\]", msg: "Get the name from the list with `rides[2][0]`." }, { re: "rides\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*1\\s*\\]", msg: "Get the height from the list with `rides[2][1]`." }, { re: "rides\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*2\\s*\\]", msg: "Get the queue time from the list with `rides[2][2]`." } ],
+  hints: ["The Ghost Train is in row 2. You need three print lines.", "Numbers need **str()**: `\"Minimum height: \" + str(rides[2][1]) + \" cm\"`", "Check the spaces inside your quotes: there is one before `cm` and one before `minutes`."],
+  solution: `rides = [
+    ["Log Flume", 110, 15],
+    ["Teacups", 90, 5],
+    ["Ghost Train", 120, 25]
+]
+print(rides[2][0])
+print("Minimum height: " + str(rides[2][1]) + " cm")
+print("Queue: " + str(rides[2][2]) + " minutes")` },
+{ id: "s4-8", type: "code", kind: "Make", title: "How big is the table?", plus: true,
+  prompt: "`len()` works on a 2D list too. `len(rides)` counts the **rows**. `len(rides[0])` counts the **items in row 0**. Print both, like the output below.",
+  starter: `rides = [
+    ["Log Flume", 110, 15],
+    ["Teacups", 90, 5],
+    ["Ghost Train", 120, 25],
+    ["Vortex", 140, 40]
+]
+`,
+  expected: "Rows: 4\nItems in each row: 3",
+  require: [ { re: "len\\s*\\(\\s*rides\\s*\\)", msg: "Use `len(rides)` to count the rows." }, { re: "len\\s*\\(\\s*rides\\s*\\[", msg: "Use `len(rides[0])` to count the items in a row." } ],
+  hints: ["`print(\"Rows: \" + str(len(rides)))`", "For the second line, give len **one row**: `rides[0]`."],
+  solution: `rides = [
+    ["Log Flume", 110, 15],
+    ["Teacups", 90, 5],
+    ["Ghost Train", 120, 25],
+    ["Vortex", 140, 40]
+]
+print("Rows: " + str(len(rides)))
+print("Items in each row: " + str(len(rides[0])))` }
+]},
+
+{
+id: "s5", title: "Changing a 2D list",
+key: "Put **two indexes on the left of =** to change one item in a 2D list. This is how a program updates a **grid**: a cinema seat becomes taken, or a chess piece moves to a new square. To add a whole new **row**, append a **list**.",
+example: `seats = [
+    ["-", "-", "-", "-"],
+    ["-", "-", "-", "-"],
+    ["-", "-", "-", "-"]
+]
+seats[1][2] = "X"
+print(seats[0])
+print(seats[1])
+print(seats[2])`,
+exampleOut: "['-', '-', '-', '-']\n['-', '-', 'X', '-']\n['-', '-', '-', '-']",
+grid: { name: "seats", item: "seat", rows: [["-", "-", "-", "-"], ["-", "-", "X", "-"], ["-", "-", "-", "-"]], mark: [[1, 2]], caption: "After the change. - is a free seat and X is a taken seat." },
+tip: "`seats[1][2]` is **row 1, seat 2**, counting both from 0. Printing one row at a time, like `print(seats[0])`, makes the grid easy to read.",
+tasks: [
+{ id: "s5-1", type: "predict", title: "Predict",
+  prompt: "A small cinema has 2 rows of 3 seats. Two seats are booked. What will this print?",
+  code: `seats = [
+    ["-", "-", "-"],
+    ["-", "-", "-"]
+]
+seats[0][2] = "X"
+seats[1][0] = "X"
+print(seats[0])
+print(seats[1])`,
+  options: [
+    { out: "['-', '-', 'X']\n['X', '-', '-']", fb: "Yes. Row 0, seat 2 is the last seat in the top row. Row 1, seat 0 is the first seat in the bottom row." },
+    { out: "['X', '-', '-']\n['-', '-', 'X']", fb: "The **row** comes first. `seats[0][2]` is in row 0, the top row." },
+    { out: "['-', 'X', '-']\n['-', '-', '-']", fb: "Count from **0**. Seat 2 is the third seat, and there are two changes, one in each row." },
+    { out: "['-', '-', '-']\n['-', '-', '-']", fb: "The two lines with `=` **change** the list before it is printed." }
+  ], answer: 0 },
+{ id: "s5-2", type: "predict", title: "Predict",
+  prompt: "A king `K` moves on a tiny 3 by 3 chess board. A dot is an empty square. What will this print?",
+  code: `board = [
+    [".", ".", "."],
+    [".", "K", "."],
+    [".", ".", "."]
+]
+board[1][1] = "."
+board[0][1] = "K"
+print(board[0])
+print(board[1])`,
+  options: [
+    { out: "['.', 'K', '.']\n['.', 'K', '.']", fb: "`board[1][1] = \".\"` **empties** the square the king started on." },
+    { out: "['K', '.', '.']\n['.', '.', '.']", fb: "`board[0][1]` is row 0, item **1**: the middle square of the top row." },
+    { out: "['.', 'K', '.']\n['.', '.', '.']", fb: "Yes. The old square is emptied, then the king is placed in the middle of the top row. Moving a piece takes **two** changes." },
+    { out: "['.', '.', '.']\n['.', 'K', '.']", fb: "That is the board **before** the two changes." }
+  ], answer: 2 },
+{ id: "s5-3", type: "gap", title: "Fill the gaps",
+  prompt: "Complete the program. The first change should mark **row 2, seat 0** as taken. The second should make the taken seat in **row 0** free again.",
+  code: `seats = [
+    ["-", "X", "-"],
+    ["-", "-", "-"],
+    ["-", "-", "-"]
+]
+seats[[[0]]][[[1]]] = "X"
+seats[0][[[2]]] = "[[3]]"
+print(seats[0])
+print(seats[2])`,
+  grid: { name: "seats", item: "seat", rows: [["-", "X", "-"], ["-", "-", "-"], ["-", "-", "-"]], caption: "Before the changes." },
+  gaps: [ { accept: ["2"], w: 2 }, { accept: ["0"], w: 2 }, { accept: ["1"], w: 2 }, { accept: ["-"], w: 2 } ],
+  output: "['-', '-', '-']\n['X', '-', '-']",
+  hints: ["Row first, then seat.", "In row 0, which seat number has the X?", "A free seat is shown with a dash."] },
+{ id: "s5-4", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "In this game of noughts and crosses, X can win by going in the **bottom right** corner. Run the program to see the error, then fix it.",
+  starter: `grid = [
+    ["X", "O", "-"],
+    ["-", "X", "-"],
+    ["O", "-", "-"]
+]
+grid[3][3] = "X"
+print(grid[0])
+print(grid[1])
+print(grid[2])`,
+  expected: "['X', 'O', '-']\n['-', 'X', '-']\n['O', '-', 'X']",
+  require: [ { re: "grid\\s*\\[\\s*\\S+\\s*\\]\\s*\\[\\s*\\S+\\s*\\]\\s*=", msg: "Change the grid with code, using two indexes." } ],
+  hints: ["The grid has 3 rows. What are their index numbers?", "The bottom row is row 2, and its last item is item 2."],
+  solution: `grid = [
+    ["X", "O", "-"],
+    ["-", "X", "-"],
+    ["O", "-", "-"]
+]
+grid[2][2] = "X"
+print(grid[0])
+print(grid[1])
+print(grid[2])` },
+{ id: "s5-5", type: "code", kind: "Modify", title: "Move the rook",
+  prompt: "The rook `R` is in the **bottom left** corner. Add **two lines** to move it straight up to the **top left** corner. Don't change the list at the top: change it with code.",
+  starter: `board = [
+    [".", ".", "."],
+    [".", "P", "."],
+    ["R", ".", "."]
+]
+
+print(board[0])
+print(board[1])
+print(board[2])`,
+  grid: { name: "board", rows: [[".", ".", "."], [".", "P", "."], ["R", ".", "."]], caption: "Before the move." },
+  expected: "['R', '.', '.']\n['.', 'P', '.']\n['.', '.', '.']",
+  require: [ { re: "board\\s*\\[\\s*2\\s*\\]\\s*\\[\\s*0\\s*\\]\\s*=", msg: "Empty the old square with code: `board[2][0] = \".\"`" }, { re: "board\\s*\\[\\s*0\\s*\\]\\s*\\[\\s*0\\s*\\]\\s*=", msg: "Put the rook on its new square with code: `board[0][0] = \"R\"`" } ],
+  hints: ["Moving a piece takes **two** changes: empty the old square, then fill the new one.", "The rook starts at row 2, item 0.", "The top left corner is row 0, item 0."],
+  solution: `board = [
+    [".", ".", "."],
+    [".", "P", "."],
+    ["R", ".", "."]
+]
+board[2][0] = "."
+board[0][0] = "R"
+print(board[0])
+print(board[1])
+print(board[2])` },
+{ id: "s5-6", type: "predict", title: "Predict",
+  prompt: "This program **appends a list**. What will it print?",
+  code: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+pets.append(["Nibbles", "hamster", 2])
+print(len(pets))
+print(pets[3][0])`,
+  options: [
+    { out: "3\nNibbles", fb: "append adds a **new row**, so there are now 4 rows." },
+    { out: "6\nNibbles", fb: "The three details went in as **one list**, so they make **one** new row. len counts rows." },
+    { out: "4\nNibbles", fb: "Yes. The new list becomes row 3, so there are 4 rows, and `pets[3][0]` is its first item." },
+    { out: "4\nhamster", fb: "`pets[3][0]` is item **0** of the new row: the name." }
+  ], answer: 2 },
+{ id: "s5-7", type: "code", kind: "Make", title: "Make",
+  prompt: "Each row holds a club and the day it meets. Add **two lines** before the loop: add **Coding** on **Fri** as a new row, and change the day for **Choir** to **Thu**.",
+  starter: `clubs = [
+    ["Chess", "Mon"],
+    ["Choir", "Wed"]
+]
+
+for club in clubs:
+    print(club)`,
+  expected: "['Chess', 'Mon']\n['Choir', 'Thu']\n['Coding', 'Fri']",
+  require: [ { re: "\\.append\\s*\\(\\s*\\[", msg: "Add the new row with `.append([ ... ])`. Notice the square brackets **inside** the round ones." }, { re: "clubs\\s*\\[\\s*1\\s*\\]\\s*\\[\\s*1\\s*\\]\\s*=", msg: "Change the day with code: `clubs[1][1] = ...`" } ],
+  hints: ["A new row is a **list**, so it goes in square brackets inside append's round brackets.", "Choir is row 1, and the day is item 1 of that row."],
+  solution: `clubs = [
+    ["Chess", "Mon"],
+    ["Choir", "Wed"]
+]
+clubs.append(["Coding", "Fri"])
+clubs[1][1] = "Thu"
+for club in clubs:
+    print(club)` },
+{ id: "s5-8", type: "code", kind: "Make", title: "Book a seat",
+  prompt: "Ask `Row: ` and then `Seat: `. Mark that seat as taken with **X**. The three print lines at the bottom then show the cinema.",
+  starter: `seats = [
+    ["-", "-", "-", "-"],
+    ["-", "X", "-", "-"],
+    ["-", "-", "-", "-"]
+]
+# Write your code here
+
+print(seats[0])
+print(seats[1])
+print(seats[2])`,
+  tests: [
+    { inputs: ["1", "2"], expected: "Row: 1\nSeat: 2\n['-', '-', '-', '-']\n['-', 'X', 'X', '-']\n['-', '-', '-', '-']" },
+    { inputs: ["0", "0"], expected: "Row: 0\nSeat: 0\n['X', '-', '-', '-']\n['-', 'X', '-', '-']\n['-', '-', '-', '-']" },
+    { inputs: ["2", "3"], expected: "Row: 2\nSeat: 3\n['-', '-', '-', '-']\n['-', 'X', '-', '-']\n['-', '-', '-', 'X']" }
+  ],
+  require: [ { re: "int\\s*\\(", msg: "An index must be a whole number, so use `int(input(...))`." } ],
+  hints: ["An index must be a **number**, so use `int(input(\"Row: \"))`.", "Store the two answers in variables called `row` and `seat`.", "You can use **variables** as indexes: `seats[row][seat] = \"X\"`"],
+  solution: `seats = [
+    ["-", "-", "-", "-"],
+    ["-", "X", "-", "-"],
+    ["-", "-", "-", "-"]
+]
+row = int(input("Row: "))
+seat = int(input("Seat: "))
+seats[row][seat] = "X"
+print(seats[0])
+print(seats[1])
+print(seats[2])` },
+{ id: "s5-9", type: "code", kind: "Make", title: "Already taken?", plus: true,
+  prompt: "Ask `Row: ` and `Seat: `. If that seat is **already taken**, print `Sorry, that seat is taken`. If it is free, mark it with X and print `Booked`. Then print **that row**.",
+  starter: `seats = [
+    ["-", "-", "X", "-"],
+    ["X", "X", "-", "-"],
+    ["-", "-", "-", "-"]
+]
+`,
+  tests: [
+    { inputs: ["0", "1"], expected: "Row: 0\nSeat: 1\nBooked\n['-', 'X', 'X', '-']" },
+    { inputs: ["1", "0"], expected: "Row: 1\nSeat: 0\nSorry, that seat is taken\n['X', 'X', '-', '-']" },
+    { inputs: ["2", "3"], expected: "Row: 2\nSeat: 3\nBooked\n['-', '-', '-', 'X']" }
+  ],
+  require: [ { re: "if\\s", msg: "Use an if to check the seat first." } ],
+  hints: ["Check the seat **before** you change it: `if seats[row][seat] == \"X\":`", "Use **else** for the free seat: change it, then print Booked.", "`print(seats[row])` prints just the row the user chose."],
+  solution: `seats = [
+    ["-", "-", "X", "-"],
+    ["X", "X", "-", "-"],
+    ["-", "-", "-", "-"]
+]
+row = int(input("Row: "))
+seat = int(input("Seat: "))
+if seats[row][seat] == "X":
+    print("Sorry, that seat is taken")
+else:
+    seats[row][seat] = "X"
+    print("Booked")
+print(seats[row])` }
+]},
+
+{
+id: "s6", title: "Looping through a 2D list",
+key: "A for loop over a 2D list gives you **one whole row** each time round. Inside the loop, **one index** picks an item from that row. This lets you print every **record** neatly, **search** the table, or **add up** a column.",
+example: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+for pet in pets:
+    print(pet[0] + " is a " + pet[1] + " aged " + str(pet[2]))`,
+exampleOut: "Rex is a dog aged 5\nTiddles is a cat aged 12\nBubbles is a fish aged 1",
+parts: [
+  ["for pet in pets", "`pet` is a **whole row** each time, such as `[\"Rex\", \"dog\", 5]`."],
+  ["pet[0]", "item 0 **of this row**. Only **one** index is needed inside the loop."],
+  ["str(pet[2])", "a number needs **str()** before it is joined to text."]
+],
+tip: "Give the loop variable a name that says what **one row** is: `pet`, `book`, `ride` or `row`.",
+tasks: [
+{ id: "s6-1", type: "predict", title: "Predict",
+  prompt: "What will this program print?",
+  code: `menu = [
+    ["soup", 3],
+    ["pasta", 6],
+    ["curry", 7]
+]
+for dish in menu:
+    print(dish[0])`,
+  options: [
+    { out: "soup\npasta\ncurry", fb: "Yes. `dish` is each row in turn, and `dish[0]` is the first item of that row." },
+    { out: "['soup', 3]\n['pasta', 6]\n['curry', 7]", fb: "That is what `print(dish)` would show. `dish[0]` picks **one item** from each row." },
+    { out: "soup\n3", fb: "The loop goes round once for each **row**. It prints item 0 of every row." },
+    { out: "s\np\nc", fb: "`dish` is a **list**, so `dish[0]` is its first **item**, not the first letter." }
+  ], answer: 0 },
+{ id: "s6-2", type: "trace", title: "Trace table",
+  prompt: "Each row holds an item and its price in pounds. This program adds up the **price column**. Fill in the trace table. The first row is done for you.",
+  code: `basket = [
+    ["bread", 2],
+    ["milk", 1],
+    ["jam", 3]
+]
+total = 0
+for item in basket:
+    total = total + item[1]
+print(total)`,
+  columns: ["item[0]", "item[1]", "total"],
+  rows: [ [["bread", 1], ["2", 1], ["2", 1]], [["milk"], ["1"], ["3"]], [["jam"], ["3"], ["6"]] ],
+  outputAccept: ["6"],
+  hints: ["Each time round, `item` is the next **row**.", "`item[0]` is the name in that row. `item[1]` is the price.", "Add the price to the total from the row above."] },
+{ id: "s6-3", type: "parsons", title: "Put in order",
+  prompt: "Put the lines in order **and** set the indentation with **→** and **←**, so the program prints the output shown.",
+  lines: [ ["films = [[\"Up\", 2009], [\"Coco\", 2017]]", 0], ["for film in films:", 0], ["print(film[0] + \" came out in \" + str(film[1]))", 1], ["print(\"End of list\")", 0] ],
+  fixedIndent: false, start: [3, 2, 0, 1],
+  solutions: [ [0, 1, 2, 3] ],
+  output: "Up came out in 2009\nCoco came out in 2017\nEnd of list",
+  hints: ["The list must be made before the loop can use it.", "The line that prints a film runs **once for each row**, so it belongs inside the loop.", "`End of list` prints once, after the loop, so it is **not** indented."] },
+{ id: "s6-4", type: "gap", title: "Fill the gaps",
+  prompt: "Each row holds a ride and its minimum height in cm. Complete the program so it prints the **names** of the rides that someone who is **115 cm** tall can go on.",
+  code: `rides = [
+    ["Log Flume", 110],
+    ["Ghost Train", 120],
+    ["Teacups", 90],
+    ["Vortex", 140]
+]
+for ride [[0]] rides:
+    if ride[[[1]]] <= 115:
+        print(ride[[[2]]])`,
+  gaps: [ { accept: ["in"], w: 3 }, { accept: ["1"], w: 2 }, { accept: ["0"], w: 2 } ],
+  output: "Log Flume\nTeacups",
+  hints: ["Every for loop over a list has the same small word in this gap.", "The if compares the **height**. Which item in each row is the height?", "The program prints the **name**. Which item is that?"] },
+{ id: "s6-5", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "Each row holds a town and its temperature. This program should print one line for each town. Run it to see the error, then fix it. The same mistake appears **twice**.",
+  starter: `towns = [
+    ["Norwich", 23],
+    ["Cromer", 19],
+    ["Acle", 21]
+]
+for town in towns:
+    print(towns[0] + ": " + str(towns[1]) + " degrees")`,
+  expected: "Norwich: 23 degrees\nCromer: 19 degrees\nAcle: 21 degrees",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Keep the for loop." } ],
+  hints: ["Inside the loop, which variable holds **one row**?", "`towns` is the whole table. `town` is the row for this time round."],
+  solution: `towns = [
+    ["Norwich", 23],
+    ["Cromer", 19],
+    ["Acle", 21]
+]
+for town in towns:
+    print(town[0] + ": " + str(town[1]) + " degrees")` },
+{ id: "s6-6", type: "code", kind: "Make", title: "Print each record",
+  prompt: "Here is the book list from the lesson. Use a for loop to print **each record** neatly, like the output below.",
+  starter: `books = [
+    ["The Hobbit", "JRR Tolkien", 1937],
+    ["Wolf Hall", "Hilary Mantel", 2009],
+    ["Macbeth", "William Shakespeare", 1623]
+]
+`,
+  expected: "The Hobbit by JRR Tolkien (1937)\nWolf Hall by Hilary Mantel (2009)\nMacbeth by William Shakespeare (1623)",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop, so it works however many books there are." } ],
+  hints: ["Start with `for book in books:`", "Build the line from five parts: the title, `\" by \"`, the author, `\" (\"`, the year, and `\")\"`.", "The year is a number, so wrap it in **str()**."],
+  solution: `books = [
+    ["The Hobbit", "JRR Tolkien", 1937],
+    ["Wolf Hall", "Hilary Mantel", 2009],
+    ["Macbeth", "William Shakespeare", 1623]
+]
+for book in books:
+    print(book[0] + " by " + book[1] + " (" + str(book[2]) + ")")` },
+{ id: "s6-7", type: "code", kind: "Make", title: "Make",
+  prompt: "Each row holds something from a café order and its price in pounds. Use a loop to add up the prices. Print the number of things ordered, then the total.",
+  starter: `order = [
+    ["tea", 2],
+    ["coffee", 3],
+    ["juice", 2],
+    ["cake", 4]
+]
+`,
+  expected: "Things ordered: 4\nTotal: £11",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to add up the prices." } ],
+  forbid: [ { re: "sum\\s*\\(", msg: "sum() won't work on a 2D list. Use a **running total** loop." } ],
+  hints: ["`len(order)` counts the rows.", "Set `total = 0` before the loop. Inside it, add **item 1** of each row.", "The pound sign goes inside the quotes: `\"Total: £\" + str(total)`"],
+  solution: `order = [
+    ["tea", 2],
+    ["coffee", 3],
+    ["juice", 2],
+    ["cake", 4]
+]
+total = 0
+for thing in order:
+    total = total + thing[1]
+print("Things ordered: " + str(len(order)))
+print("Total: £" + str(total))` },
+{ id: "s6-8", type: "code", kind: "Modify", title: "Happy birthday", plus: true,
+  prompt: "It is everyone's birthday. Add a loop **before** the printing loop that makes every pet **one year older**. Loop over the row numbers with `range(len(pets))`.",
+  starter: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+
+for pet in pets:
+    print(pet[0] + " is now " + str(pet[2]))`,
+  expected: "Rex is now 6\nTiddles is now 13\nBubbles is now 2",
+  require: [ { re: "\\[\\s*2\\s*\\]\\s*=|\\[\\s*2\\s*\\]\\s*\\+=", msg: "Change each age **in the list**: `pets[i][2] = ...`" } ],
+  forbid: [ { re: "pet\\[2\\]\\s*\\+\\s*1\\s*\\)", msg: "Don't just add 1 in the print. Change the ages **in the list** with a loop first." } ],
+  hints: ["`for i in range(len(pets)):` makes `i` go 0, 1, 2: the row numbers.", "Inside the loop: `pets[i][2] = pets[i][2] + 1`"],
+  solution: `pets = [
+    ["Rex", "dog", 5],
+    ["Tiddles", "cat", 12],
+    ["Bubbles", "fish", 1]
+]
+for i in range(len(pets)):
+    pets[i][2] = pets[i][2] + 1
+for pet in pets:
+    print(pet[0] + " is now " + str(pet[2]))` },
+{ id: "s6-9", type: "code", kind: "Make", title: "A loop inside a loop", plus: true,
+  prompt: "Print the cinema **without** the brackets, commas and quotes. You need a **nested loop**: the outer loop takes each row, and the inner loop takes each seat in that row and joins it on to a line of text.",
+  starter: `seats = [
+    ["-", "X", "-", "-"],
+    ["X", "X", "-", "X"],
+    ["-", "-", "-", "-"]
+]
+for row in seats:
+    line = ""
+    # add an inner loop here
+
+    print(line)`,
+  expected: "-X--\nXX-X\n----",
+  require: [ { re: "for[^\\n]*\\n(?:[^\\n]*\\n)*?\\s+for\\s", msg: "Put a second for loop **inside** the first one." } ],
+  forbid: [ { re: "join\\s*\\(", msg: "join() works, but practise the nested loop here." } ],
+  hints: ["The inner loop is `for seat in row:` and it must be **indented** inside the outer loop.", "Inside the inner loop (indented twice): `line = line + seat`", "`print(line)` lines up with the inner **for**, so it runs once for each row."],
+  solution: `seats = [
+    ["-", "X", "-", "-"],
+    ["X", "X", "-", "X"],
+    ["-", "-", "-", "-"]
+]
+for row in seats:
+    line = ""
+    for seat in row:
+        line = line + seat
+    print(line)` }
+]},
+
+{
+id: "s7", title: "Build a quiz",
+key: "A quiz is a 2D list where **each row is one question**. Item 0 is the question, item 1 is the possible answers, and item 2 is the correct answer. Loop through the rows, **ask** with input(), then **compare** the answer with item 2.",
+example: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+exampleIn: ["A", "C"],
+exampleOut: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: C\nWrong",
+tip: "On this page, type what the user would answer in the **Inputs** box, one answer per line. Use **capital letters**, because `\"a\"` is not equal to `\"A\"`.",
+tasks: [
+{ id: "s7-1", type: "predict", title: "Predict",
+  prompt: "What will this program print?",
+  code: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+print(quiz[1][2])`,
+  options: [
+    { out: "A: speaker, B: mouse, C: monitor", fb: "That is item **1** of the row. Count the items from 0." },
+    { out: "A", fb: "That is `quiz[0][2]`. Row 1 is the **second** question." },
+    { out: "mouse", fb: "The whole text `\"A: speaker, B: mouse, C: monitor\"` is **one item**. The program prints item 2." },
+    { out: "B", fb: "Yes. Row 1 is the second question, and item 2 of that row is its correct answer." }
+  ], answer: 3 },
+{ id: "s7-2", type: "gap", title: "Fill the gaps",
+  prompt: "Complete the quiz loop. It should print the **question**, then the **possible answers**, then check against the **correct answer**.",
+  code: `quiz = [
+    ["How many bits are in a byte?", "A: 4, B: 8, C: 16", "B"],
+    ["What is 2 ** 3?", "A: 6, B: 9, C: 8", "C"]
+]
+for q in [[0]]:
+    print(q[[[1]]])
+    print(q[[[2]]])
+    answer = input("Your answer: ")
+    if answer == q[[[3]]]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+  gaps: [ { accept: ["quiz"], w: 5 }, { accept: ["0"], w: 2 }, { accept: ["1"], w: 2 }, { accept: ["2"], w: 2 } ],
+  output: "How many bits are in a byte?\nA: 4, B: 8, C: 16\nYour answer: B\nCorrect\nWhat is 2 ** 3?\nA: 6, B: 9, C: 8\nYour answer: B\nWrong",
+  outputNote: "When the user types B, then B, it prints:", testInputs: ["B", "B"],
+  hints: ["The loop goes through the **whole table**. What is it called?", "The question is the first item in each row.", "The correct answer is the **last** of the three items."] },
+{ id: "s7-3", type: "code", kind: "Fix", title: "Fix the bug",
+  prompt: "This quiz says **Wrong** even when the answer is right. Run it, find the bug and fix it.",
+  starter: `quiz = [
+    ["What does CPU stand for?", "A: Central Processing Unit, B: Computer Power Unit", "A"],
+    ["Which is the smallest?", "A: byte, B: bit, C: nibble", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[1]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+  tests: [
+    { inputs: ["A", "B"], expected: "What does CPU stand for?\nA: Central Processing Unit, B: Computer Power Unit\nYour answer: A\nCorrect\nWhich is the smallest?\nA: byte, B: bit, C: nibble\nYour answer: B\nCorrect" },
+    { inputs: ["B", "C"], expected: "What does CPU stand for?\nA: Central Processing Unit, B: Computer Power Unit\nYour answer: B\nWrong\nWhich is the smallest?\nA: byte, B: bit, C: nibble\nYour answer: C\nWrong" }
+  ],
+  hints: ["Look at the **if** line. Which item is the answer being compared with?", "The correct answer is item **2** of each row."],
+  solution: `quiz = [
+    ["What does CPU stand for?", "A: Central Processing Unit, B: Computer Power Unit", "A"],
+    ["Which is the smallest?", "A: byte, B: bit, C: nibble", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")` },
+{ id: "s7-4", type: "code", kind: "Modify", title: "Add a question",
+  prompt: "Add a **third question** to the quiz as a new row. The question is `How many bits are in a byte?`, the possible answers are `A: 4, B: 8, C: 16` and the correct answer is `B`. Remember the **comma** between rows.",
+  starter: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+  tests: [
+    { inputs: ["A", "B", "B"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: B\nCorrect\nHow many bits are in a byte?\nA: 4, B: 8, C: 16\nYour answer: B\nCorrect" },
+    { inputs: ["C", "A", "A"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: C\nWrong\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: A\nWrong\nHow many bits are in a byte?\nA: 4, B: 8, C: 16\nYour answer: A\nWrong" }
+  ],
+  hints: ["Copy the shape of the row above: three items in quotes, inside square brackets.", "Put a **comma** after the second row's closing bracket, then add your new row on the next line.", "You don't need to change the loop at all. It works for any number of rows."],
+  solution: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"],
+    ["How many bits are in a byte?", "A: 4, B: 8, C: 16", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")` },
+{ id: "s7-5", type: "code", kind: "Modify", title: "Keep score",
+  prompt: "Make the quiz keep **score**. Add 1 for every correct answer. After the last question, print the score like the output below. Use `len(quiz)` for the number of questions.",
+  starter: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"],
+    ["How many bits are in a byte?", "A: 4, B: 8, C: 16", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+  tests: [
+    { inputs: ["A", "C", "B"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: C\nWrong\nHow many bits are in a byte?\nA: 4, B: 8, C: 16\nYour answer: B\nCorrect\nScore: 2 out of 3" },
+    { inputs: ["A", "B", "B"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: B\nCorrect\nHow many bits are in a byte?\nA: 4, B: 8, C: 16\nYour answer: B\nCorrect\nScore: 3 out of 3" },
+    { inputs: ["B", "A", "C"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: B\nWrong\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: A\nWrong\nHow many bits are in a byte?\nA: 4, B: 8, C: 16\nYour answer: C\nWrong\nScore: 0 out of 3" }
+  ],
+  require: [ { re: "len\\s*\\(\\s*quiz\\s*\\)", msg: "Use `len(quiz)` for the number of questions, so it still works when you add more." } ],
+  hints: ["Set `score = 0` **before** the loop.", "Add `score = score + 1` under `print(\"Correct\")`, indented the same.", "The last print is **not** indented. Both numbers need **str()**."],
+  solution: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"],
+    ["How many bits are in a byte?", "A: 4, B: 8, C: 16", "B"]
+]
+score = 0
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+        score = score + 1
+    else:
+        print("Wrong")
+print("Score: " + str(score) + " out of " + str(len(quiz)))` },
+{ id: "s7-6", type: "code", kind: "Modify", title: "Show the right answer", plus: true,
+  prompt: "Make the quiz more helpful. When an answer is wrong, print `Wrong. The answer was ` followed by the correct letter.",
+  starter: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+  tests: [
+    { inputs: ["B", "B"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: B\nWrong. The answer was A\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: B\nCorrect" },
+    { inputs: ["A", "C"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: C\nWrong. The answer was B" }
+  ],
+  hints: ["Only the print under **else** needs to change.", "Join the text to item 2 of the row: `\"Wrong. The answer was \" + q[2]`"],
+  solution: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong. The answer was " + q[2])` },
+{ id: "s7-7", type: "code", kind: "Modify", title: "Only A, B or C", plus: true,
+  prompt: "Add **validation**. If the user types anything other than A, B or C, print `Type A, B or C` and ask again, **until** they give a valid answer. Then mark it as before.",
+  starter: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")`,
+  tests: [
+    { inputs: ["D", "A", "B"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: D\nType A, B or C\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: B\nCorrect" },
+    { inputs: ["C", "mouse", "2", "B"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: C\nWrong\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: mouse\nType A, B or C\nYour answer: 2\nType A, B or C\nYour answer: B\nCorrect" },
+    { inputs: ["A", "C"], expected: "What is 10 % 3?\nA: 1, B: 0, C: 3\nYour answer: A\nCorrect\nWhich is an input device?\nA: speaker, B: mouse, C: monitor\nYour answer: C\nWrong" }
+  ],
+  require: [ { re: "while\\s", msg: "Use a **while** loop to keep asking until the answer is valid." } ],
+  hints: ["Put a while loop straight after the input line, inside the for loop.", "The loop repeats while the answer is wrong: `while answer != \"A\" and answer != \"B\" and answer != \"C\":`", "Inside the while loop: print the message, then ask again."],
+  solution: `quiz = [
+    ["What is 10 % 3?", "A: 1, B: 0, C: 3", "A"],
+    ["Which is an input device?", "A: speaker, B: mouse, C: monitor", "B"]
+]
+for q in quiz:
+    print(q[0])
+    print(q[1])
+    answer = input("Your answer: ")
+    while answer != "A" and answer != "B" and answer != "C":
+        print("Type A, B or C")
+        answer = input("Your answer: ")
+    if answer == q[2]:
+        print("Correct")
+    else:
+        print("Wrong")` }
+]},
+
+{
+id: "s8", title: "Problem solving",
+key: "Now put it all together. There is **less help** here, so **plan first**, then code. Ask yourself:",
+questions: ["Is my data **one list**, or a **table** (a 2D list)?", "Do I need **one item** (use indexes) or **every item** (use a loop)?", "Row first, then item. Do my indexes start at **0**?", "Am I joining a **number** to text? Use **str()**.", "Do I need a **count**, a **total** or an **if** inside the loop?"],
+tasks: [
+{ id: "s8-1", type: "code", kind: "Problem", title: "Free seats",
+  prompt: "This list shows **one row** of a cinema. `-` is a free seat and `X` is a taken seat. Count the **free** seats and the **taken** seats.",
+  starter: `row = ["-", "X", "-", "-", "X", "X", "-", "-"]
+`,
+  expected: "Free: 5\nTaken: 3",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to check each seat." } ],
+  forbid: [ { re: "\\.count\\s*\\(", msg: ".count() works, but practise the loop and if here." } ],
+  hints: ["You need **two** counters that both start at 0.", "Inside the loop, an **if / else** adds 1 to the right counter.", "`if seat == \"-\":` is True for a free seat."],
+  solution: `row = ["-", "X", "-", "-", "X", "X", "-", "-"]
+free = 0
+taken = 0
+for seat in row:
+    if seat == "-":
+        free = free + 1
+    else:
+        taken = taken + 1
+print("Free: " + str(free))
+print("Taken: " + str(taken))` },
+{ id: "s8-2", type: "code", kind: "Problem", title: "Stock check",
+  prompt: "Each row holds an item in the school shop and how many are in stock. Ask `Item: `, find that item in the table, and print how many are in stock.",
+  starter: `stock = [
+    ["pens", 40],
+    ["rulers", 0],
+    ["glue", 12],
+    ["paper", 250]
+]
+`,
+  tests: [
+    { inputs: ["glue"], expected: "Item: glue\nglue: 12 in stock" },
+    { inputs: ["pens"], expected: "Item: pens\npens: 40 in stock" },
+    { inputs: ["rulers"], expected: "Item: rulers\nrulers: 0 in stock" }
+  ],
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to search the table." } ],
+  hints: ["Ask for the item **before** the loop.", "Loop through the rows. Inside, an **if** compares item 0 of the row with what the user typed.", "When it matches, print item 0, then `\": \"`, then item 1 with **str()**, then `\" in stock\"`."],
+  solution: `stock = [
+    ["pens", 40],
+    ["rulers", 0],
+    ["glue", 12],
+    ["paper", 250]
+]
+wanted = input("Item: ")
+for row in stock:
+    if row[0] == wanted:
+        print(row[0] + ": " + str(row[1]) + " in stock")` },
+{ id: "s8-3", type: "code", kind: "Problem", title: "Winning house",
+  prompt: "Each row holds a house and its points. Find the house with the **most** points and print it like the output below. Don't use max() or sort.",
+  starter: `houses = [
+    ["Red", 310],
+    ["Blue", 455],
+    ["Green", 380],
+    ["Gold", 420]
+]
+`,
+  expected: "Winner: Blue with 455 points",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to check each house." }, { re: "if\\s", msg: "Use an if inside the loop." } ],
+  forbid: [ { re: "max\\s*\\(|sort", msg: "max() and sort work, but use a loop and an **if** here." }, { re: "print\\s*\\([^\\n]*Blue", msg: "Don't type the winner's name. Your program should work it out." } ],
+  hints: ["Keep **two** variables: the best points so far (start at 0) and the best house so far (start with `\"\"`).", "Inside the loop: `if house[1] > best:` then update **both** variables.", "Print after the loop, using both variables."],
+  solution: `houses = [
+    ["Red", 310],
+    ["Blue", 455],
+    ["Green", 380],
+    ["Gold", 420]
+]
+best = 0
+winner = ""
+for house in houses:
+    if house[1] > best:
+        best = house[1]
+        winner = house[0]
+print("Winner: " + winner + " with " + str(best) + " points")` },
+{ id: "s8-4", type: "code", kind: "Problem", title: "Whole cinema", plus: true,
+  prompt: "Count the **free** seats (`-`) in the **whole** cinema. You will need a **loop inside a loop**: one for the rows, and one for the seats in each row.",
+  starter: `seats = [
+    ["-", "X", "-", "-"],
+    ["X", "X", "-", "X"],
+    ["-", "-", "-", "-"]
+]
+`,
+  expected: "Free seats: 8",
+  require: [ { re: "for[^\\n]*\\n(?:[^\\n]*\\n)*?\\s+for\\s", msg: "Put a second for loop **inside** the first one." } ],
+  forbid: [ { re: "\\.count\\s*\\(", msg: ".count() works, but practise the nested loop here." } ],
+  hints: ["The outer loop: `for row in seats:`", "The inner loop, indented: `for seat in row:`", "Inside the inner loop, an **if** adds 1 to a counter when the seat is `\"-\"`."],
+  solution: `seats = [
+    ["-", "X", "-", "-"],
+    ["X", "X", "-", "X"],
+    ["-", "-", "-", "-"]
+]
+free = 0
+for row in seats:
+    for seat in row:
+        if seat == "-":
+            free = free + 1
+print("Free seats: " + str(free))` },
+{ id: "s8-5", type: "code", kind: "Problem", title: "Battleships", plus: true,
+  prompt: "`S` is a ship and `~` is sea. Ask `Row: ` and `Column: `. If there is a ship there, change it to `H` and print `Hit`. If not, change it to `M` and print `Miss`. Then print **that row**.",
+  starter: `sea = [
+    ["~", "~", "S", "~"],
+    ["~", "~", "S", "~"],
+    ["S", "~", "~", "~"]
+]
+`,
+  tests: [
+    { inputs: ["0", "2"], expected: "Row: 0\nColumn: 2\nHit\n['~', '~', 'H', '~']" },
+    { inputs: ["2", "1"], expected: "Row: 2\nColumn: 1\nMiss\n['S', 'M', '~', '~']" },
+    { inputs: ["2", "0"], expected: "Row: 2\nColumn: 0\nHit\n['H', '~', '~', '~']" }
+  ],
+  require: [ { re: "if\\s", msg: "Use an if to check for a ship." } ],
+  hints: ["Use `int(input(...))` for both answers.", "`if sea[row][col] == \"S\":` checks for a ship.", "Change the square inside the if, and inside the else."],
+  solution: `sea = [
+    ["~", "~", "S", "~"],
+    ["~", "~", "S", "~"],
+    ["S", "~", "~", "~"]
+]
+row = int(input("Row: "))
+col = int(input("Column: "))
+if sea[row][col] == "S":
+    sea[row][col] = "H"
+    print("Hit")
+else:
+    sea[row][col] = "M"
+    print("Miss")
+print(sea[row])` },
+{ id: "s8-6", type: "code", kind: "Problem", title: "Three in a row", plus: true,
+  prompt: "Check each **row** of this noughts and crosses grid. If all three squares in a row are `X`, print `X wins on row ` and the row number. If no row wins, print `No winning row`.",
+  starter: `grid = [
+    ["O", "X", "O"],
+    ["-", "O", "-"],
+    ["X", "X", "X"]
+]
+`,
+  expected: "X wins on row 2",
+  require: [ { re: "for\\s+\\w+\\s+in", msg: "Use a for loop to check each row." } ],
+  forbid: [ { re: "print\\s*\\([^\\n]*row 2", msg: "Don't type the row number. Your program should find it." } ],
+  hints: ["You need the row **number**, so loop over the indexes: `for i in range(len(grid)):`", "A row wins if `grid[i][0] == \"X\" and grid[i][1] == \"X\" and grid[i][2] == \"X\"`.", "Use a `found` variable, set to False before the loop, to decide whether to print `No winning row` at the end."],
+  solution: `grid = [
+    ["O", "X", "O"],
+    ["-", "O", "-"],
+    ["X", "X", "X"]
+]
+found = False
+for i in range(len(grid)):
+    if grid[i][0] == "X" and grid[i][1] == "X" and grid[i][2] == "X":
+        print("X wins on row " + str(i))
+        found = True
+if found == False:
+    print("No winning row")` }
+]}
+];
+
+/* ===== App ===== */
+(function(){
+"use strict";
+const PYODIDE_BASE = "https://cdn.jsdelivr.net/npm/pyodide@0.26.4/";
+const STORE_KEY = "bhoa-lists-v1";
+const RUN_TIMEOUT = 6000;
+
+/* ---------- helpers ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function md(s){ // tiny markdown: **bold** and `code`
+  return esc(s).replace(/`([^`]+)`/g, (m,c)=>"<code>"+c+"</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+}
+function el(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()){ if (k == null || k === false) continue; e.append(k.nodeType ? k : document.createTextNode(k)); }
+  return e;
+}
+const KW = new Set(["for","in","if","elif","else","while","def","return","and","or","not","True","False","None","import","from","break","continue"]);
+const BI = new Set(["print","range","len","input","str","int","float","sum","reversed","append"]);
+function hl(src){
+  let out = ""; const re = /(#.*$)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)|(\s+)|([^])/gm;
+  let m;
+  while ((m = re.exec(src))){
+    if (m[1]) out += '<span class="t-com">'+esc(m[1])+'</span>';
+    else if (m[2]) out += '<span class="t-str">'+esc(m[2])+'</span>';
+    else if (m[3]) out += '<span class="t-num">'+esc(m[3])+'</span>';
+    else if (m[4]) out += KW.has(m[4]) ? '<span class="t-kw">'+m[4]+'</span>' : BI.has(m[4]) ? '<span class="t-bi">'+m[4]+'</span>' : esc(m[4]);
+    else out += esc(m[0]);
+  }
+  return out;
+}
+function codeBlock(src, label){ const p = el("pre", {class:"code", "aria-label": label || "Python code"}); p.innerHTML = hl(src); return p; }
+function expBlock(text){ const p = el("pre", { class:"out exp" }); p.textContent = text; return p; }
+function outBlock(text){ const p = el("pre", {class:"out" + (text ? "" : " empty")}); p.textContent = text || "(nothing printed)"; return p; }
+function normLines(s, ignoreSpaces){
+  let L = String(s).replace(/\r/g,"").split("\n").map(l => l.replace(/\s+$/,""));
+  while (L.length && L[L.length-1] === "") L.pop();
+  if (ignoreSpaces) L = L.map(l => l.replace(/\s+/g,""));
+  return L;
+}
+function normGap(s){ return String(s).replace(/\s+/g,"").replace(/'/g,'"'); }
+
+/* ---------- state ---------- */
+let state = { tasks:{}, view:{ page:"intro", task:0 }, started:null };
+try { const raw = localStorage.getItem(STORE_KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch(e){}
+let saveTimer = null;
+function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(()=>{ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }, 150); }
+function ts(id){ return state.tasks[id] || (state.tasks[id] = { attempts:0, hints:0 }); }
+function setStatus(id, s){ const t = ts(id); if (t.status === "done") return; if (t.status === "helped" && s === "done") return; t.status = s; save(); refreshChrome(); }
+
+const ALL = []; SECTIONS.forEach((s,si)=> s.tasks.forEach((t,ti)=> ALL.push({s, si, t, ti})));
+const CORE = ALL.filter(x => !x.t.plus);
+function isDone(id){ const s = state.tasks[id]; return !!(s && (s.status === "done" || s.status === "helped")); }
+
+/* ---------- Python (Pyodide in a worker) ---------- */
+const PY = { status:"loading", worker:null, pending:null, seq:0, loadTimer:null };
+const WORKER_SRC = `
+let py = null;
+const ready = (async () => {
+  try {
+    importScripts("${PYODIDE_BASE}pyodide.js");
+    py = await loadPyodide({ indexURL: "${PYODIDE_BASE}" });
+    postMessage({ type: "ready" });
+  } catch (e) { postMessage({ type: "fail", msg: String(e) }); }
+})();
+onmessage = async (e) => {
+  await ready;
+  if (!py) return;
+  const { id, code, inputs } = e.data;
+  let out = "";
+  const dec = new TextDecoder();
+  const write = (buf) => { out += dec.decode(buf, { stream: true }); if (out.length > 20000) throw new Error("TOO_MUCH_OUTPUT"); return buf.length; };
+  py.setStdout({ write }); py.setStderr({ write });
+  const g = py.globals.get("dict")();
+  let err = null;
+  // input() reads from the Inputs list and echoes what was "typed", like Thonny
+  const prelude = "def _make_input(q):\\n    def input(prompt=''):\\n        print(prompt, end='')\\n        if not q:\\n            print()\\n            raise EOFError('NO_MORE_INPUT')\\n        v = q.pop(0)\\n        print(v)\\n        return v\\n    return input\\n";
+  try { py.runPython("exec(compile(" + JSON.stringify(prelude) + ", '<inputs>', 'exec'))\\ninput = _make_input(" + JSON.stringify((inputs || []).map(String)) + ")\\ndel _make_input", { globals: g }); }
+  catch (ex) { postMessage({ type: "result", id, out: "", err: String(ex) }); return; }
+  try { py.runPython(code, { globals: g }); }
+  catch (ex) { err = String((ex && ex.message) || ex); }
+  try { py.runPython("import sys\\nsys.stdout.flush()"); } catch (_) {}
+  // drain anything still buffered (e.g. after TOO_MUCH_OUTPUT) so it can't leak into the next run
+  const sink = { write: (buf) => buf.length };
+  py.setStdout(sink); py.setStderr(sink);
+  try { py.runPython("import sys\\nsys.stdout.flush()\\nsys.stderr.flush()"); } catch (_) {}
+  try { g.destroy(); } catch (_) {}
+  postMessage({ type: "result", id, out, err, tooMuch: out.length > 20000 });
+};`;
+function setPyStatus(s){ PY.status = s; refreshChrome(); document.dispatchEvent(new CustomEvent("pystatus")); }
+function startPy(){
+  try { if (PY.worker) PY.worker.terminate(); } catch(e){}
+  setPyStatus("loading");
+  let w;
+  try {
+    const url = URL.createObjectURL(new Blob([WORKER_SRC], { type:"text/javascript" }));
+    w = new Worker(url);
+  } catch(e){ setPyStatus("offline"); return; }
+  PY.worker = w;
+  w.onmessage = (e) => {
+    const d = e.data;
+    if (d.type === "ready"){ clearTimeout(PY.loadTimer); setPyStatus("ready"); }
+    else if (d.type === "fail"){ clearTimeout(PY.loadTimer); setPyStatus("offline"); }
+    else if (d.type === "result" && PY.pending && PY.pending.id === d.id){ const p = PY.pending; PY.pending = null; clearTimeout(p.timer); p.resolve({ ok: !d.err, out: d.out, err: d.err, tooMuch: d.tooMuch }); }
+  };
+  w.onerror = () => { clearTimeout(PY.loadTimer); if (PY.status === "loading") setPyStatus("offline"); };
+  clearTimeout(PY.loadTimer);
+  PY.loadTimer = setTimeout(()=>{ if (PY.status === "loading"){ try{ w.terminate(); }catch(e){} setPyStatus("offline"); } }, 60000);
+}
+function runPy(code, inputs){
+  return new Promise(resolve => {
+    if (PY.status !== "ready" || !PY.worker){ resolve({ ok:false, offline:true }); return; }
+    const id = ++PY.seq;
+    const timer = setTimeout(()=>{ if (PY.pending && PY.pending.id === id){ PY.pending = null; resolve({ ok:false, timeout:true, out:"" }); startPy(); } }, RUN_TIMEOUT);
+    PY.pending = { id, resolve, timer };
+    PY.worker.postMessage({ id, code, inputs: inputs || [] });
+  });
+}
+
+/* ---------- friendly errors ---------- */
+const ERRS = [
+  [/IndexError: list (assignment )?index out of range/, "That **index doesn't exist**. Indexes start at **0**, so the last one is **one less than the length**. In a 2D list, check that the **row** comes first, then the item."],
+  [/'list' object is not callable/, "Use **square brackets** for an index, like `names[0]`. Round brackets are for functions such as print() and len()."],
+  [/cannot assign to function call/, "To change an item, put the index in **square brackets**: `names[0] = ...`, not round brackets."],
+  [/'builtin_function_or_method' object is not subscriptable/, "**append** needs **round brackets**: `names.append(\"new item\")`."],
+  [/list indices must be integers or slices, not tuple/, "Python thinks two of your lists are one thing. Is a **comma missing** between two rows of the 2D list? If not, check each index has its **own** square brackets: `[1][2]`, not `[1, 2]`."],
+  [/list indices must be integers or slices, not str/, "An index must be a **whole number**. If it came from input(), wrap it in **int()**. If you are inside a loop over a 2D list, use a number like `row[0]`."],
+  [/'list' object cannot be interpreted as an integer/, "range() needs a **number**, but it was given a whole list. Use `range(len(...))` to loop over the index numbers."],
+  [/can only concatenate list/, "You tried to join a **whole list** to something with `+`. Did you mean **one item** from it? Inside a loop, use the loop variable (one row), not the name of the whole table."],
+  [/can only concatenate str \(not "list"\)/, "You tried to join a **whole list** to some text. Pick **one item** with an index, like `row[0]`."],
+  [/'list' object has no attribute '(\w+)'/, (m)=>"A list can't do `." + m[1] + "`. Check the spelling. To add an item, use `.append( )`."],
+  [/'(str|int)' object (is not subscriptable|does not support item assignment)/, "You used square brackets on something that is **not a list**. Check you have the right variable, and the right number of indexes."],
+  [/'\[' was never closed/, "A **square bracket** is missing. Every `[` needs a matching `]`. In a 2D list, each row has its own pair, and so does the whole list."],
+  [/closing parenthesis '[\])]' does not match opening parenthesis '[\[(]'/, "The **brackets don't match**. A `[` must be closed with `]`, and a `(` with `)`."],
+  [/NO_MORE_INPUT/, "Your program asked for **more input** than there was. Add another line to the **Inputs** box, or check that your loop stops when it should."],
+  [/invalid literal for int\(\) with base 10: '([^']*)'/, (m)=>"int() can only turn a **whole number** into a number, but it was given `" + m[1] + "`. Check the **Inputs** box, or don't use int() if the answer is meant to be text."],
+  [/not supported between instances of '(str|int)' and '(str|int)'/, "You compared **text** with a **number**. Did you forget `int()` around `input(...)`?"],
+  [/expected ':'/, "Python expected a **colon** `:` at the end of this line. Lines starting with **for**, **while**, **if** and **else** end with a colon."],
+  [/IndentationError: expected an indented block/, "The line after a colon must be **indented** (4 spaces) so Python knows it belongs inside."],
+  [/IndentationError: unexpected indent/, "This line is **indented** when it shouldn't be. Line it up with the lines around it."],
+  [/unindent does not match|inconsistent use of tabs/, "The indentation doesn't line up. Use exactly 4 spaces for each level."],
+  [/Maybe you meant '=='/, "To **compare** in an if, use `==`. A single `=` stores a value."],
+  [/unterminated string literal|EOL while scanning/, "A piece of text is missing its **closing quote mark**."],
+  [/'\(' was never closed|unexpected EOF|'\[' was never closed/, "A **bracket** is missing. Check every `(` has a matching `)`."],
+  [/unmatched '\)'|unmatched '\]'/, "There is an extra **closing bracket**."],
+  [/NameError: name '([^']+)' is not defined/, (m)=>"Python doesn't know the name `"+m[1]+"`. Check the spelling and capital letters, and that you created it **before** using it. If it is meant to be text, put it in \"quotes\"."],
+  [/'break' outside loop/, "`break` can only be used **inside** a loop. Check its indentation."],
+  [/'(float|int)' object is not callable/, "Did you forget a `*` for multiply? `3(4)` should be `3 * 4`."],
+  [/can only concatenate str|unsupported operand type\(s\) for \+: 'int' and 'str'|unsupported operand type\(s\) for \+: 'str' and 'int'/, "You can't join **text and a number** with `+`. Turn the number into text first with **str()**, e.g. `\"Lap \" + str(i)`."],
+  [/Perhaps you forgot a comma/, "Python couldn't understand this line. Is a **comma missing** between two items, or between two rows?"],
+  [/invalid syntax/, "Python couldn't understand this line. Check **commas**, **colons**, **brackets**, **quote marks**, and `==` versus `=`."],
+  [/invalid character/, "There is a character Python doesn't recognise. Did a curly quote or symbol get pasted in?"],
+  [/ZeroDivisionError/, "Your program divided by **zero**."]
+];
+function explainError(err, code){
+  const lines = String(err).trim().split("\n");
+  let lineNo = null;
+  for (const l of lines){ const m = l.match(/File "<(?:exec|string|code)>", line (\d+)/); if (m) lineNo = +m[1]; }
+  let last = lines[lines.length-1] || "";
+  for (let i = lines.length-1; i >= 0; i--){ if (/^\w*(Error|Exception)\b/.test(lines[i])){ last = lines[i]; break; } }
+  let friendly = "Something went wrong when Python ran your code.";
+  for (const [re, f] of ERRS){ const m = last.match(re) || String(err).match(re); if (m){ friendly = typeof f === "function" ? f(m) : f; break; } }
+  if (lineNo && code){ const src = code.split("\n")[lineNo-1] || ""; if (/=>/.test(src)) friendly = "`=>` isn't Python. For \"greater than or equal to\", write `>=` (the > comes first)."; }
+  return { lineNo, last, friendly };
+}
+
+/* ---------- top chrome ---------- */
+function refreshChrome(){
+  const done = CORE.filter(x => isDone(x.t.id)).length;
+  const bar = $("#bar > span"); if (bar) bar.style.width = (100*done/CORE.length) + "%";
+  const pt = $("#progtext"); if (pt) pt.textContent = done + " of " + CORE.length + " tasks";
+  const ps = $("#pystatus");
+  if (ps){
+    ps.className = "pystatus " + PY.status;
+    $("#pytext").textContent = PY.status === "ready" ? "Python ready" : PY.status === "loading" ? "Python loading…" : "Python offline";
+  }
+  document.querySelectorAll("nav.sections button[data-si]").forEach(b => {
+    const s = SECTIONS[+b.dataset.si];
+    const core = s.tasks.filter(t => !t.plus);
+    const n = core.filter(t => isDone(t.id)).length;
+    b.querySelector(".navcount").textContent = n + "/" + core.length;
+    b.classList.toggle("navdone", n === core.length);
+  });
+}
+function buildNav(){
+  const ol = $("#navlist"); ol.innerHTML = "";
+  ol.append(el("li", null, el("button", { "data-page":"intro", onclick: ()=>go("intro") }, el("span",{class:"navnum"},"▶"), el("span",{class:"navlabel"},"Start here"), el("span",{class:"navcount"},""))));
+  SECTIONS.forEach((s, si) => {
+    ol.append(el("li", null, el("button", { "data-si": si, onclick: ()=>go(s.id, 0) }, el("span",{class:"navnum"}, String(si+1)), el("span",{class:"navlabel"}, s.title), el("span",{class:"navcount"},""))));
+  });
+  ol.append(el("li", null, el("button", { "data-page":"finish", onclick: ()=>go("finish") }, el("span",{class:"navnum"},"✓"), el("span",{class:"navlabel"},"Finish"), el("span",{class:"navcount"},""))));
+}
+function markNav(){
+  document.querySelectorAll("nav.sections button").forEach(b => {
+    const cur = (b.dataset.page && b.dataset.page === state.view.page) || (b.dataset.si != null && SECTIONS[+b.dataset.si].id === state.view.page);
+    b.setAttribute("aria-current", cur ? "true" : "false");
+  });
+}
+function go(page, task){
+  state.view = { page, task: task || 0 }; save();
+  render(); window.scrollTo({ top: 0 });
+  const h = $("main h1"); if (h){ h.setAttribute("tabindex","-1"); h.focus({ preventScroll:true }); }
+}
+
+/* ---------- icons ---------- */
+function modeIcon(){
+  const s = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3.6" fill="#e05d08"/><path d="M5 22c0-5 3-8.5 7-8.5s7 3.5 7 8.5z" fill="#e05d08"/></svg>';
+  const sp = el("span", { html: s }); return sp.firstChild;
+}
+function modeChip(){ return el("div", { class:"mode" }, modeIcon(), "Individual work"); }
+
+/* ---------- pages ---------- */
+function render(){
+  markNav(); refreshChrome();
+  const main = $("main"); main.innerHTML = "";
+  const v = state.view;
+  if (v.page === "intro") return renderIntro(main);
+  if (v.page === "finish") return renderFinish(main);
+  const si = SECTIONS.findIndex(s => s.id === v.page);
+  if (si < 0){ state.view = { page:"intro", task:0 }; return renderIntro(main); }
+  renderSection(main, si, Math.min(v.task || 0, SECTIONS[si].tasks.length-1));
+}
+
+function renderIntro(main){
+  main.append(el("div", { class:"sechead" }, el("div", null, el("p", { class:"kicker" }, "GCSE Computer Science · Programming"), el("h1", { class:"title" }, "Practising lists and 2D lists in Python")), modeChip()));
+  main.append(el("div", { class:"card key" },
+    el("h2", null, "In this lesson you will"),
+    el("ul", { class:"qs" },
+      el("li", { html: md("get items from a list with an **index**, starting at **0**") }),
+      el("li", { html: md("**change** items, and **append** new ones") }),
+      el("li", { html: md("**loop** through a list to print, count, total and search") }),
+      el("li", { html: md("use a **2D list** as a table, with a **row** index and an **item** index") }),
+      el("li", { html: md("update a **grid**, such as cinema seats or a game board") }),
+      el("li", { html: md("build a **quiz** from a 2D list") }))));
+  main.append(el("div", { class:"plain" },
+    el("h2", null, "How it works"),
+    el("ol", { class:"steps" },
+      el("li", { html: md("Read the **key idea** at the top of each section. It stays there while you work. There are 8 sections: you are not expected to finish them all in one lesson.") }),
+      el("li", { html: md("Do the tasks **in order**. Each one is a little harder than the last.") }),
+      el("li", { html: md("Press **Check**. If you're stuck, open a **hint**. After 3 tries you can see an answer.") }),
+      el("li", { html: md("When a program uses **input()**, type what the user would type in the **Inputs** box, one answer per line.") }),
+      el("li", { html: md("Tasks marked **+1** are challenges. Try them if you finish a section early.") }),
+      el("li", { html: md("At the end, open **Finish**, take a screenshot and hand it in on Teams.") }))));
+  const pynote = el("p", { id:"intropy", class:"prompt" });
+  const upd = () => {
+    pynote.innerHTML = PY.status === "ready" ? md("Python is **ready**. You can run code on this page.")
+      : PY.status === "loading" ? md("Python is **loading**. You can start now; it will be ready in a few seconds.")
+      : md("Python **couldn't load** on this computer. You can still do the tasks: for coding tasks, run your code in **Thonny** and paste the output back here.");
+  };
+  upd(); document.addEventListener("pystatus", upd);
+  main.append(pynote);
+  main.append(el("div", { class:"btnrow" }, el("button", { class:"btn primary", onclick: ()=>{ if (!state.started) state.started = new Date().toISOString(); go(SECTIONS[0].id, 0); } }, "Start section 1 →")));
+}
+
+function gridTable(g){
+  const cols = g.rows[0].length, word = g.item || "item";
+  const marked = (r, c) => (g.mark || []).some(m => m[0] === r && m[1] === c);
+  const head = el("tr", null, el("td", { class:"corner" }, ""));
+  for (let c = 0; c < cols; c++) head.append(el("th", { scope:"col" }, word + " " + c));
+  const tb = el("tbody", null, g.rows.map((row, r) => el("tr", null, el("th", { scope:"row" }, "row " + r), row.map((v, c) => el("td", { class: "m" + (marked(r, c) ? " hit" : "") }, v)))));
+  return el("div", { class:"gridwrap" },
+    el("p", { class:"lbl", html: md(g.caption ? g.caption : "`" + g.name + "` as a table") }),
+    el("table", { class:"rt grid" }, el("thead", null, head), tb),
+    el("p", { class:"inote", html: md("Find one item with `" + g.name + "[row][" + word + "]`") }));
+}
+function keyCard(s, ti){
+  state.keyOpen = state.keyOpen || {};
+  const open = ti === 0 ? state.keyOpen[s.id] !== false : state.keyOpen[s.id] === true;
+  const d = el("details", { class:"card key", open: open });
+  const sum = el("summary", null, "Key idea");
+  const hintTxt = el("span", { class:"keyhint" }, "(click to show the example)");
+  sum.append(hintTxt);
+  d.append(sum);
+  d.addEventListener("toggle", ()=>{ hintTxt.hidden = d.open; });
+  sum.addEventListener("click", ()=>{ setTimeout(()=>{ state.keyOpen[s.id] = d.open; save(); }, 0); });
+  hintTxt.hidden = open;
+  d.append(el("p", { html: md(s.key) }));
+  if (s.questions) d.append(el("ul", { class:"qs" }, s.questions.map(q => el("li", { html: md(q) }))));
+  if (s.table){
+    d.append(el("table", { class:"rt" },
+      el("thead", null, el("tr", null, (s.tableHead || ["Code", "Numbers made", "Note"]).map(h => el("th", null, h)))),
+      el("tbody", null, s.table.map(r => el("tr", null, el("td", { class:"m" }, r[0]), el("td", { class:"m" }, r[1]), el("td", null, r[2]))))));
+  }
+  if (s.example){
+    d.append(el("div", { class:"example" },
+      el("div", null, el("p", { class:"lbl" }, "Example"), codeBlock(s.example)),
+      el("div", null, el("p", { class:"lbl" }, s.exampleIn ? "It prints, when the user types " + s.exampleIn.join(", ") : "It prints"), outBlock(s.exampleOut))));
+  }
+  if (s.grid) d.append(gridTable(s.grid));
+  if (s.parts) d.append(el("ul", { class:"parts" }, s.parts.map(p => el("li", { html: "<code>"+esc(p[0])+"</code> " + md(p[1]) }))));
+  if (s.tip) d.append(el("p", { class:"tip", html: "<strong>Tip:</strong> " + md(s.tip) }));
+  return d;
+}
+
+function renderSection(main, si, ti){
+  const s = SECTIONS[si], t = s.tasks[ti];
+  main.append(el("div", { class:"sechead" }, el("div", null, el("p", { class:"kicker" }, "Section " + (si+1) + " of " + SECTIONS.length), el("h1", { class:"title" }, s.title)), modeChip()));
+  main.append(keyCard(s, ti));
+  // stepper
+  const st = el("div", { class:"stepper", role:"navigation", "aria-label":"Tasks in this section" });
+  s.tasks.forEach((tt, i) => {
+    const r = state.tasks[tt.id] || {};
+    const cls = [i === ti ? "cur" : "", r.status === "done" ? "done" : r.status === "helped" ? "helped" : "", tt.plus ? "plus" : ""].join(" ");
+    st.append(el("button", { class: cls, "aria-label": "Task " + (i+1) + (tt.plus ? " (+1 challenge)" : "") + (r.status ? ", done" : ""), "aria-current": i === ti ? "step" : null, onclick: ()=>go(s.id, i) }, tt.plus ? "+1" : String(i+1)));
+  });
+  st.append(el("span", { class:"stlabel" }, "Task " + (ti+1) + " of " + s.tasks.length));
+  main.append(st);
+  // task card
+  const card = el("section", { class:"plain", "aria-labelledby":"taskh" });
+  const head = el("div", { class:"taskhead" });
+  if (t.plus) head.append(el("span", { class:"plusbadge", "aria-hidden":"true" }, "+1"));
+  head.append(el("h2", { id:"taskh" }, t.plus ? "Plus one challenge: " + t.title : t.title));
+  if (t.kind && t.kind !== t.title) head.append(el("span", { class:"tag" }, t.kind));
+  card.append(head);
+  const ctx = { s, si, t, ti, card };
+  ({ predict: taskPredict, gap: taskGap, parsons: taskParsons, trace: taskTrace, code: taskCode })[t.type](card, ctx);
+  if (t.grid){ const p = card.querySelector(".prompt"); if (p) p.after(gridTable(t.grid)); }
+  main.append(card);
+  // prev / next
+  const prev = ti > 0 ? ()=>go(s.id, ti-1) : si > 0 ? ()=>go(SECTIONS[si-1].id, SECTIONS[si-1].tasks.length-1) : ()=>go("intro");
+  main.append(el("div", { class:"nav-next" },
+    el("button", { class:"btn quiet", onclick: prev }, "← Back"),
+    el("button", { class:"btn quiet", id:"skipbtn", onclick: ()=>next(ctx) }, isDone(t.id) ? nextLabel(ctx) : "Skip for now →")));
+}
+function nextLabel(ctx){ return ctx.ti < ctx.s.tasks.length-1 ? "Next task →" : ctx.si < SECTIONS.length-1 ? "Next section →" : "Finish →"; }
+function next(ctx){
+  if (ctx.ti < ctx.s.tasks.length-1) go(ctx.s.id, ctx.ti+1);
+  else if (ctx.si < SECTIONS.length-1) go(SECTIONS[ctx.si+1].id, 0);
+  else go("finish");
+}
+
+/* ---------- shared task bits ---------- */
+function fbBox(){ return el("div", { class:"fb", "aria-live":"polite" }); }
+function showMsg(box, kind, title, bodyHtml, extra){
+  box.innerHTML = "";
+  const m = el("div", { class:"msg " + kind }, el("h3", null, kind === "ok" ? "✓ " + title : kind === "bad" ? "✗ " + title : title));
+  if (bodyHtml) m.append(el("div", { html: bodyHtml }));
+  if (extra) m.append(extra);
+  box.append(m);
+}
+function success(ctx, box, bodyHtml, extra){
+  setStatus(ctx.t.id, "done");
+  const nb = el("button", { class:"btn primary", onclick: ()=>next(ctx) }, nextLabel(ctx));
+  const wrap = el("div", null); if (extra) wrap.append(extra); wrap.append(el("div", { class:"btnrow" }, nb));
+  showMsg(box, "ok", ctx.t.plus ? "Challenge complete!" : pick(["Correct!", "Well done!", "Spot on!", "Nailed it!"]), bodyHtml, wrap);
+  const sk = $("#skipbtn"); if (sk) sk.textContent = nextLabel(ctx);
+  refreshStepper(ctx);
+  setTimeout(()=>nb.focus({ preventScroll:false }), 50);
+}
+function refreshStepper(ctx){
+  const btns = document.querySelectorAll(".stepper button");
+  ctx.s.tasks.forEach((tt, i) => { const r = state.tasks[tt.id] || {}; if (btns[i]){ btns[i].classList.toggle("done", r.status === "done"); btns[i].classList.toggle("helped", r.status === "helped"); } });
+}
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function attempt(ctx){ const r = ts(ctx.t.id); r.attempts = (r.attempts||0) + 1; save(); return r.attempts; }
+function hintArea(ctx, revealFn){
+  const t = ctx.t, r = ts(t.id);
+  const list = el("div", { class:"hints" });
+  const hints = t.hints || [];
+  const hb = el("button", { class:"btn quiet" });
+  const ab = el("button", { class:"btn quiet", hidden: true }, "Show me an answer");
+  function draw(){
+    list.innerHTML = "";
+    for (let i = 0; i < Math.min(r.hints||0, hints.length); i++) list.append(el("div", { class:"hint", html: "<b class='hl'>Hint " + (i+1) + ":</b> " + md(hints[i]) }));
+    hb.textContent = (r.hints||0) < hints.length ? "Show a hint (" + ((r.hints||0)+1) + " of " + hints.length + ")" : "No more hints";
+    hb.disabled = (r.hints||0) >= hints.length;
+    hb.hidden = hints.length === 0;
+    ab.hidden = !(revealFn && (r.attempts||0) >= 3 && !r.revealed);
+  }
+  hb.onclick = () => { r.hints = Math.min((r.hints||0)+1, hints.length); save(); draw(); };
+  ab.onclick = () => { r.revealed = true; setStatus(t.id, "helped"); save(); revealFn(); draw(); refreshStepper(ctx); const sk = $("#skipbtn"); if (sk) sk.textContent = nextLabel(ctx); };
+  draw();
+  return { node: list, buttons: [hb, ab], update: draw };
+}
+
+/* ---------- predict ---------- */
+function taskPredict(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  if (t.code) card.append(codeBlock(t.code));
+  card.append(el("p", { class:"subq" }, t.choose || "Choose the output:"));
+  const box = fbBox();
+  const grid = el("div", { class:"options", role:"group", "aria-label":"Possible outputs" });
+  r.wrong = r.wrong || [];
+  t.options.forEach((o, i) => {
+    const pre = el("pre"); if (t.codeOptions) pre.innerHTML = hl(o.out); else pre.textContent = o.out;
+    const b = el("button", { class:"opt" }, el("span", { class:"olabel" }, "Option " + "ABCD"[i]), pre);
+    if (r.wrong.includes(i)){ b.classList.add("wrong"); b.querySelector(".olabel").textContent = "Option " + "ABCD"[i] + " · not this one"; }
+    if (isDone(t.id) && i === t.answer){ b.classList.add("right"); }
+    b.onclick = () => {
+      if (i === t.answer){
+        b.classList.add("right"); b.querySelector(".olabel").textContent = "Option " + "ABCD"[i] + " · correct";
+        success(ctx, box, md(o.fb));
+      } else {
+        attempt(ctx);
+        if (!r.wrong.includes(i)) r.wrong.push(i); save();
+        b.classList.add("wrong"); b.querySelector(".olabel").textContent = "Option " + "ABCD"[i] + " · not this one";
+        showMsg(box, "bad", "Not this one", md(o.fb) + "<p>Try again.</p>");
+      }
+    };
+    grid.append(b);
+  });
+  card.append(grid, box);
+  if (isDone(t.id)) showMsg(box, "ok", "Done", md(t.options[t.answer].fb));
+}
+
+/* ---------- gap fill ---------- */
+function taskGap(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.gapv = r.gapv || [];
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  const pre = el("pre", { class:"code gapcode" });
+  const inputs = [];
+  t.code.split(/(\[\[\d+\]\])/).forEach(part => {
+    const m = part.match(/^\[\[(\d+)\]\]$/);
+    if (m){
+      const gi = +m[1], g = t.gaps[gi];
+      const inp = el("input", { type:"text", size: g.w || 4, "aria-label": "Gap " + (gi+1), autocomplete:"off", autocapitalize:"off", spellcheck:"false" });
+      inp.value = r.gapv[gi] || "";
+      inp.addEventListener("input", ()=>{ r.gapv[gi] = inp.value; inp.classList.remove("bad","good"); save(); });
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+      inputs[gi] = inp; pre.append(inp);
+    } else { const sp = el("span"); sp.innerHTML = hl(part); pre.append(sp); }
+  });
+  card.append(pre);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ t.gaps.forEach((g, i) => { inputs[i].value = g.accept[0]; r.gapv[i] = g.accept[0]; inputs[i].classList.add("good"); }); save();
+    showMsg(box, "info", "Here is the answer", "<p>Read it through, then try to explain to yourself why each gap is right.</p>", outWith(t.output, t.outputNote)); });
+  function check(){
+    let bad = [];
+    t.gaps.forEach((g, i) => {
+      const ok = g.accept.some(a => normGap(a) === normGap(inputs[i].value));
+      inputs[i].classList.toggle("good", ok); inputs[i].classList.toggle("bad", !ok);
+      if (!ok) bad.push(i+1);
+    });
+    if (!bad.length){ success(ctx, box, "<p>" + esc(t.outputNote || "Your program prints:") + "</p>", outBlock(t.output)); }
+    else {
+      attempt(ctx);
+      const empty = bad.filter(i => !inputs[i-1].value.trim());
+      showMsg(box, "bad", "Not yet", "<p>" + (bad.length === 1 ? "Gap " + bad[0] + " isn't right yet." : "Gaps " + bad.join(", ") + " aren't right yet.") + (empty.length ? " Fill in every gap." : "") + " The dashed boxes need another look.</p>");
+    }
+    hints.update();
+  }
+  card.append(el("div", { class:"btnrow" }, el("button", { class:"btn primary", onclick: check }, "Check"), hints.buttons));
+  card.append(hints.node, box);
+  if (isDone(t.id)){ inputs.forEach(i => i.classList.add("good")); showMsg(box, "ok", "Done", "<p>" + esc(t.outputNote || "Your program prints:") + "</p>", outBlock(t.output)); }
+}
+function outWith(text, note){ const d = el("div"); d.append(el("p", { class:"lbl" }, note || "It prints:"), outBlock(text)); return d; }
+
+/* ---------- parsons ---------- */
+function taskParsons(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  if (!r.order || r.order.length !== t.lines.length) r.order = t.start.slice();
+  if (!r.indent) r.indent = t.lines.map(l => t.fixedIndent ? l[1] : 0);
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  const ul = el("ol", { class:"parsons", "aria-label":"Program lines" });
+  card.append(el("div", { class:"expected" }, el("p", { class:"lbl" }, "The program should print:"), expBlock(t.output)));
+  card.append(el("p", { class:"lbl" }, "Your program"), ul);
+  let dragFrom = null;
+  function draw(){
+    ul.innerHTML = "";
+    r.order.forEach((li, pos) => {
+      const ind = r.indent[li];
+      const line = el("span", { class:"pline" });
+      if (ind) line.append(el("span", { class:"ind", style:"width:" + (ind*2.4) + "em" }));
+      const code = el("span"); code.innerHTML = hl(t.lines[li][0]); line.append(code);
+      const ctl = el("span", { class:"ctl" },
+        el("button", { "aria-label":"Move line up", disabled: pos === 0, onclick: ()=>move(pos, pos-1) }, "▲"),
+        el("button", { "aria-label":"Move line down", disabled: pos === r.order.length-1, onclick: ()=>move(pos, pos+1) }, "▼"));
+      if (!t.fixedIndent){
+        ctl.append(el("button", { "aria-label":"Indent less", disabled: ind === 0, onclick: ()=>{ r.indent[li] = Math.max(0, ind-1); changed(); } }, "←"),
+                   el("button", { "aria-label":"Indent more", disabled: ind >= 2, onclick: ()=>{ r.indent[li] = Math.min(2, ind+1); changed(); } }, "→"));
+      }
+      const item = el("li", { draggable:"true" }, el("span", { class:"grip", "aria-hidden":"true" }, "⠿"), line, ctl);
+      item.addEventListener("dragstart", e => { dragFrom = pos; item.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; try{ e.dataTransfer.setData("text/plain", String(pos)); }catch(_){} });
+      item.addEventListener("dragend", () => { item.classList.remove("dragging"); ul.querySelectorAll(".over").forEach(x=>x.classList.remove("over")); });
+      item.addEventListener("dragover", e => { e.preventDefault(); item.classList.add("over"); });
+      item.addEventListener("dragleave", () => item.classList.remove("over"));
+      item.addEventListener("drop", e => { e.preventDefault(); if (dragFrom != null && dragFrom !== pos) move(dragFrom, pos); dragFrom = null; });
+      ul.append(item);
+    });
+  }
+  function move(a, b){ const [x] = r.order.splice(a, 1); r.order.splice(b, 0, x); changed(b); }
+  function changed(focusPos){
+    save(); draw(); box.innerHTML = "";
+    if (focusPos != null){ const btns = ul.children[focusPos] && ul.children[focusPos].querySelectorAll("button"); if (btns && btns.length){ (btns[0].disabled ? btns[1] : btns[0]).focus(); } }
+  }
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ r.order = t.solutions[0].slice(); r.indent = t.lines.map(l => l[1]); save(); draw(); showMsg(box, "info", "Here is the answer", "<p>Read it through. Notice which line is indented, and why.</p>"); });
+  function check(){
+    const sol = t.solutions.find(s => s.every((v, i) => v === r.order[i]));
+    const indOK = t.lines.every((l, i) => r.indent[i] === l[1]);
+    if (sol && indOK){
+      const prog = r.order.map(i => "    ".repeat(t.lines[i][1]) + t.lines[i][0]).join("\n");
+      success(ctx, box, "<p>Your program:</p>", codeBlock(prog));
+    } else {
+      attempt(ctx);
+      if (sol) showMsg(box, "bad", "Nearly", "<p>The <strong>order</strong> is right. Now check the <strong>indentation</strong>: which line is inside the loop?</p>");
+      else {
+        const best = Math.max(...t.solutions.map(s => s.filter((v, i) => v === r.order[i]).length));
+        showMsg(box, "bad", "Not yet", "<p>" + best + " of " + t.lines.length + " lines are in the right place. Think about what has to happen <strong>first</strong>.</p>");
+      }
+    }
+    hints.update();
+  }
+  draw();
+  card.append(el("div", { class:"btnrow" }, el("button", { class:"btn primary", onclick: check }, "Check"), hints.buttons));
+  card.append(hints.node, box);
+  if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete.</p>");
+}
+
+/* ---------- trace table ---------- */
+function traceOK(given, accept){
+  const v = String(given).trim().toLowerCase().replace(/["']/g, "");
+  const a = String(accept).trim().toLowerCase();
+  if (a === "true") return ["true","t","yes","y"].includes(v);
+  if (a === "false") return ["false","f","no","n"].includes(v);
+  return v.replace(/\s+/g,"") === a;
+}
+function taskTrace(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.cells = r.cells || {};
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  const tw = el("div", { class:"twocol" });
+  const table = el("table", { class:"trace" });
+  table.append(el("thead", null, el("tr", null, el("th", { scope:"col" }, "Time round"), t.columns.map(c => el("th", { scope:"col" }, c)))));
+  const tb = el("tbody"); const inputs = [];
+  t.rows.forEach((row, ri) => {
+    const tr = el("tr", null, el("td", { class:"pass" }, ordinal(ri+1)));
+    row.forEach((cell, ci) => {
+      if (cell[1]) tr.append(el("td", { class:"given" }, cell[0]));
+      else {
+        const key = ri + "-" + ci;
+        const inp = el("input", { type:"text", "aria-label": t.columns[ci] + ", " + ordinal(ri+1) + " time round", autocomplete:"off", spellcheck:"false" });
+        inp.value = r.cells[key] || "";
+        inp.addEventListener("input", ()=>{ r.cells[key] = inp.value; inp.classList.remove("bad","good"); save(); });
+        inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+        inputs.push({ inp, accept: cell[0], key });
+        tr.append(el("td", null, inp));
+      }
+    });
+    tb.append(tr);
+  });
+  table.append(tb);
+  const outInp = el("input", { type:"text", "aria-label":"Final output", autocomplete:"off" });
+  outInp.value = r.cells.out || "";
+  outInp.addEventListener("input", ()=>{ r.cells.out = outInp.value; outInp.classList.remove("bad","good"); save(); });
+  tw.append(el("div", null, el("p", { class:"lbl" }, "Code"), codeBlock(t.code)), el("div", null, el("p", { class:"lbl" }, "Trace table"), table, el("label", { class:"traceout" }, "What is printed at the end?", outInp)));
+  card.append(tw);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ inputs.forEach(x => { x.inp.value = x.accept; r.cells[x.key] = x.accept; x.inp.classList.add("good"); }); outInp.value = t.outputAccept[0]; r.cells.out = outInp.value; outInp.classList.add("good"); save();
+    showMsg(box, "info", "Here is the completed table", "<p>Follow it row by row against the code.</p>"); });
+  function check(){
+    let bad = 0;
+    inputs.forEach(x => { const ok = traceOK(x.inp.value, x.accept); x.inp.classList.toggle("good", ok); x.inp.classList.toggle("bad", !ok); if (!ok) bad++; });
+    const ook = t.outputAccept.some(a => traceOK(outInp.value, a)); outInp.classList.toggle("good", ook); outInp.classList.toggle("bad", !ook); if (!ook) bad++;
+    if (!bad) success(ctx, box, "<p>You traced the loop correctly.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + bad + (bad === 1 ? " box needs" : " boxes need") + " another look (the dashed ones). Work through one row at a time.</p>"); }
+    hints.update();
+  }
+  card.append(el("div", { class:"btnrow" }, el("button", { class:"btn primary", onclick: check }, "Check"), hints.buttons));
+  card.append(hints.node, box);
+  if (isDone(t.id)){ inputs.forEach(x => x.inp.classList.add("good")); outInp.classList.add("good"); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+function ordinal(n){ return ["1st","2nd","3rd"][n-1] || n + "th"; }
+
+/* ---------- code editor ---------- */
+function makeEditor(initial, onChange){
+  const wrap = el("div", { class:"editor" });
+  const gutter = el("div", { class:"gutter", "aria-hidden":"true" });
+  const ta = el("textarea", { spellcheck:"false", autocapitalize:"off", autocomplete:"off", autocorrect:"off", "aria-label":"Python code editor", wrap:"off" });
+  ta.value = initial;
+  wrap.append(gutter, ta);
+  let errLine = null;
+  function size(){
+    const n = ta.value.split("\n").length;
+    ta.rows = Math.max(6, n + 1);
+    let g = ""; for (let i = 1; i <= Math.max(n, ta.rows); i++) g += (i === errLine ? '<span class="errline">'+i+'</span>' : i) + "\n";
+    gutter.innerHTML = g;
+  }
+  function insert(s){
+    ta.focus();
+    let ok = false; try { ok = document.execCommand("insertText", false, s); } catch(e){}
+    if (!ok){ ta.setRangeText(s, ta.selectionStart, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input")); }
+  }
+  ta.addEventListener("keydown", e => {
+    const v = ta.value, a = ta.selectionStart, b = ta.selectionEnd;
+    const lineStart = v.lastIndexOf("\n", a-1) + 1;
+    const lineBefore = v.slice(lineStart, a);
+    if (e.key === "Tab" && !e.ctrlKey && !e.altKey && !e.metaKey){
+      if (e.shiftKey){
+        e.preventDefault();
+        const m = v.slice(lineStart).match(/^ {1,4}/);
+        if (m){ ta.setSelectionRange(lineStart, lineStart + m[0].length); insert(""); ta.setSelectionRange(Math.max(lineStart, a - m[0].length), Math.max(lineStart, b - m[0].length)); }
+      } else if (a === b){ e.preventDefault(); insert("    ".slice((lineBefore.length) % 4)); }
+      else { e.preventDefault(); insert("    "); }
+    } else if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey){
+      e.preventDefault();
+      let ind = (lineBefore.match(/^ */) || [""])[0];
+      if (/:\s*$/.test(lineBefore)) ind += "    ";
+      insert("\n" + ind);
+    } else if (e.key === "Backspace" && a === b && a > lineStart && /^ +$/.test(lineBefore) && lineBefore.length % 4 === 0){
+      e.preventDefault(); ta.setSelectionRange(a-4, a); insert("");
+    }
+  });
+  ta.addEventListener("input", ()=>{ errLine = null; size(); onChange && onChange(ta.value); });
+  ta.addEventListener("scroll", ()=>{ gutter.scrollTop = ta.scrollTop; });
+  size();
+  return { node: wrap, get value(){ return ta.value; }, set value(v){ ta.value = v; errLine = null; size(); onChange && onChange(v); }, markLine(n){ errLine = n; size(); }, focus(){ ta.focus(); } };
+}
+
+/* ---------- code task ---------- */
+function taskTests(t){ return t.tests || [{ inputs: [], expected: t.expected }]; }
+function inputList(a){ return a.map(x => "<code>" + esc(x) + "</code>").join(", "); }
+function taskCode(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  const tests = taskTests(t), usesInput = tests.some(x => x.inputs.length);
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  if (usesInput){
+    card.append(el("div", { class:"expected" },
+      el("p", { class:"lbl", html: "For example, when the user types " + inputList(tests[0].inputs) + ", your program should print:" }),
+      expBlock(tests[0].expected),
+      tests.length > 1 ? el("p", { class:"inote" }, "Check will also try your program with " + (tests.length - 1) + " other set" + (tests.length > 2 ? "s" : "") + " of inputs.") : null));
+  } else card.append(el("div", { class:"expected" }, el("p", { class:"lbl" }, "Your program should print:"), expBlock(tests[0].expected)));
+  const offNote = el("div", { class:"offline-note", hidden: true });
+  card.append(offNote);
+  const ed = makeEditor(r.code != null ? r.code : t.starter, v => { r.code = v; save(); });
+  const inTa = el("textarea", { id: "inputs-" + t.id, spellcheck:"false", autocomplete:"off", autocapitalize:"off", rows: 4 });
+  inTa.value = r.inputs != null ? r.inputs : tests[0].inputs.join("\n");
+  inTa.addEventListener("input", ()=>{ r.inputs = inTa.value; save(); });
+  if (usesInput){
+    card.append(el("div", { class:"edgrid" },
+      el("div", null, el("p", { class:"lbl" }, "Your code"), ed.node),
+      el("div", { class:"inputs" }, el("label", { class:"lbl", for: "inputs-" + t.id }, "Inputs (one per line)"), inTa,
+        el("p", { class:"inote" }, "What the user types, in order. Run uses these."))));
+  } else card.append(el("p", { class:"lbl" }, "Your code"), ed.node);
+  const runBtn = el("button", { class:"btn" }, "▶ Run");
+  const checkBtn = el("button", { class:"btn primary" }, "✓ Check");
+  const resetBtn = el("button", { class:"btn quiet" }, "Reset code");
+  const actionRow = el("div", { class:"btnrow" }, runBtn, checkBtn);
+  card.append(actionRow);
+  const pasteWrap = el("div", { class:"paste", hidden: true });
+  const pasteTa = el("textarea", { "aria-label":"Output from Thonny", spellcheck:"false" });
+  pasteTa.value = r.pasted || "";
+  pasteTa.addEventListener("input", ()=>{ r.pasted = pasteTa.value; save(); });
+  pasteWrap.append(el("p", { class:"lbl" }, "Paste what your program printed in Thonny:"), pasteTa);
+  card.append(pasteWrap);
+  const outLbl = el("p", { class:"lbl" }, "Output");
+  const outWrap = el("div", { class:"outwrap" }, outLbl);
+  const outPre = outBlock(""); outPre.textContent = "Press Run to see what your code prints."; outPre.classList.add("empty");
+  outWrap.append(outPre);
+  card.append(outWrap);
+  const box = fbBox();
+  const solWrap = el("div", { class:"solution" });
+  const hints = hintArea(ctx, ()=>{
+    solWrap.innerHTML = "";
+    solWrap.append(el("p", { class:"lbl" }, "A model answer"), codeBlock(t.solution),
+      el("div", { class:"btnrow" }, el("button", { class:"btn", onclick: ()=>{ ed.value = t.solution; ed.focus(); } }, "Put it in the editor")));
+    box.innerHTML = "";
+  });
+  actionRow.append(...hints.buttons, resetBtn);
+  card.append(hints.node, box, solWrap);
+
+  function modeUpdate(){
+    const off = PY.status === "offline", loading = PY.status === "loading";
+    runBtn.hidden = off; outWrap.hidden = off; pasteWrap.hidden = !off;
+    runBtn.disabled = loading; checkBtn.disabled = loading;
+    offNote.hidden = !(off || loading);
+    if (off){ offNote.innerHTML = md("Python couldn't load on this computer. **Copy your code into Thonny**, run it there, then paste what it printed into the box below and press **Check**. ")
+        + (usesInput ? md("When it asks, type " ) + inputList(tests[0].inputs) + ". " : "");
+      offNote.append(el("button", { class:"btn quiet", onclick: startPy }, "Try loading Python again")); }
+    else if (loading) offNote.innerHTML = md("Python is **loading**… Run and Check will work in a moment.");
+  }
+  modeUpdate();
+  document.addEventListener("pystatus", modeUpdate);
+  // remove listener when card leaves the page
+  const obs = new MutationObserver(()=>{ if (!document.body.contains(card)){ document.removeEventListener("pystatus", modeUpdate); obs.disconnect(); } });
+  obs.observe($("main"), { childList:true });
+
+  function boxInputs(){ const L = inTa.value.replace(/\r/g, "").split("\n"); while (L.length && L[L.length-1] === "") L.pop(); return L; }
+  async function execute(inputs, label){
+    runBtn.disabled = checkBtn.disabled = true;
+    outLbl.textContent = label || "Output";
+    outPre.className = "out empty"; outPre.textContent = "Running…";
+    const res = await runPy(ed.value, inputs);
+    runBtn.disabled = checkBtn.disabled = PY.status !== "ready";
+    if (res.offline){ modeUpdate(); return null; }
+    if (res.timeout){ outPre.className = "out"; outPre.textContent = "(stopped)"; return { kind:"timeout" }; }
+    outPre.className = "out" + (res.out ? "" : " empty");
+    outPre.textContent = res.out || "(nothing printed)";
+    if (res.tooMuch) return { kind:"toomuch" };
+    if (!res.ok){
+      const ex = explainError(res.err, ed.value); if (ex.lineNo) ed.markLine(ex.lineNo);
+      if (/NO_MORE_INPUT/.test(res.err)){ outPre.textContent = (res.out || "").replace(/\n$/, "") + "\n(no more input)"; outPre.className = "out"; return { kind:"noinput", ex }; }
+      outPre.textContent = (res.out || "") + (res.out ? "\n" : "") + ex.last; outPre.className = "out"; return { kind:"error", ex };
+    }
+    return { kind:"ok", out: res.out };
+  }
+  function errorMsg(res, checking){
+    if (res.kind === "timeout") showMsg(box, "bad", "Your program ran for ever", "<p>It ran for more than 6 seconds and was stopped. That usually means an <strong>infinite loop</strong>: does something inside the loop change the variable in the condition, so it can become False? Python is restarting, which takes a few seconds.</p>");
+    else if (res.kind === "toomuch") showMsg(box, "bad", "Too much output", "<p>Your program printed a huge amount, so it was stopped. Is your loop running <strong>for ever</strong>? Check the update line and the condition.</p>");
+    else if (res.kind === "noinput") showMsg(box, "bad", "Your program wanted more input", "<p>" + (checking ? md("Your program kept asking after the last input. Check that your loop **stops** when the user types the stop value, or a valid answer.") : md("Your program asked for more input than there is in the **Inputs** box. Add another line, or check that your loop stops when it should.")) + "</p>");
+    else if (res.kind === "error") showMsg(box, "bad", "Python found an error" + (res.ex.lineNo ? " on line " + res.ex.lineNo : ""), "<p>" + md(res.ex.friendly) + "</p><p class='raw'>" + esc(res.ex.last) + "</p>");
+  }
+  function testLabel(x){ return x.inputs.length ? "Output, when the user types " + x.inputs.join(", ") : "Output"; }
+  runBtn.onclick = async () => { box.innerHTML = ""; const inp = boxInputs(); const res = await execute(inp, usesInput ? testLabel({ inputs: inp }) : "Output"); if (res && res.kind !== "ok") errorMsg(res, false); };
+  resetBtn.onclick = () => { if (ed.value === t.starter || confirm("Put the starting code back? Your changes will be lost.")){ ed.value = t.starter; box.innerHTML = ""; } };
+  checkBtn.onclick = async () => {
+    const code = ed.value;
+    let results = [];
+    if (PY.status === "offline"){
+      if (!pasteTa.value.trim()){ showMsg(box, "bad", "Nothing pasted yet", "<p>Run your code in Thonny, then copy what it printed into the box above.</p>"); return; }
+      results = [{ test: tests[0], out: pasteTa.value }];
+    } else {
+      for (const x of tests){
+        const res = await execute(x.inputs, testLabel(x));
+        if (!res) return;
+        if (res.kind !== "ok"){ attempt(ctx); errorMsg(res, true); if (x.inputs.length) box.querySelector(".msg").append(el("p", { html: "This happened when the user typed " + inputList(x.inputs) + "." })); hints.update(); return; }
+        results.push({ test: x, out: res.out });
+        if (!sameOut(x.expected, res.out, t.ignoreSpaces)) break;
+      }
+    }
+    for (const f of (t.forbid || [])) if (new RegExp(f.re).test(code)){ showMsg(box, "info", "Try another way", "<p>" + md(f.msg) + "</p>"); return; }
+    if (printUsesComma(code)){ showMsg(box, "info", "Use + to join, not commas", "<p>" + md("In our lessons we join the parts of a print with **+**, not commas. Put spaces **inside the quotes**, and turn numbers into text with **str()**: `print(\"Total: \" + str(total))`") + "</p>"); return; }
+    const fail = results.find(x => !sameOut(x.test.expected, x.out, t.ignoreSpaces));
+    if (!fail){
+      const missing = (t.require || []).find(q => !new RegExp(q.re).test(code));
+      if (missing){ showMsg(box, "info", "Right output, but…", "<p>" + md(missing.msg) + "</p>"); return; }
+      success(ctx, box, "<p>" + (tests.length > 1 && PY.status !== "offline" ? "Your program passed all " + tests.length + " tests." : "Your output matches exactly.") + (t.plus ? " That was a real challenge." : "") + "</p>");
+      hints.update(); return;
+    }
+    attempt(ctx);
+    const exp = normLines(fail.test.expected, t.ignoreSpaces), got = normLines(fail.out, t.ignoreSpaces);
+    const which = fail.test.inputs.length ? "<p>" + (tests.length > 1 ? "Test " + (tests.indexOf(fail.test) + 1) + " of " + tests.length + ": " : "") + "the user typed " + inputList(fail.test.inputs) + ".</p>" : "";
+    showMsg(box, "bad", "Not quite", which + "<p>" + diffSummary(exp, got, t.ignoreSpaces) + "</p>", diffView(normLines(fail.test.expected), normLines(fail.out), exp, got));
+    hints.update();
+  };
+  if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete. You can still run and change your code.</p>");
+}
+function sameOut(expected, out, ig){ const a = normLines(expected, ig), b = normLines(out, ig); return a.length === b.length && a.every((l, i) => l === b[i]); }
+function printUsesComma(code){
+  const src = code.replace(/#.*$/gm, "").replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, '""');
+  const re = /\bprint\s*\(/g; let m;
+  while ((m = re.exec(src))){
+    let depth = 1;
+    for (let i = m.index + m[0].length; i < src.length && depth > 0; i++){
+      const c = src[i];
+      if (c === "(" || c === "[") depth++;
+      else if (c === ")" || c === "]") depth--;
+      else if (c === "," && depth === 1) return true;
+    }
+  }
+  return false;
+}
+function diffSummary(exp, got, ig){
+  if (!got.length) return "Your program didn't print anything.";
+  const squash = L => L.map(l => l.replace(/\s+/g, ""));
+  if (!ig && exp.length === got.length && squash(exp).every((l, i) => l === squash(got)[i])) return "Nearly! Only the <strong>spaces</strong> are different. Check for a space <strong>inside the quotes</strong>, next to each +.";
+  for (let i = 0; i < Math.max(exp.length, got.length); i++){
+    if (exp[i] !== got[i]){
+      if (i >= got.length) return "Your output stops too early: line " + (i+1) + " is missing.";
+      if (i >= exp.length) return "Your program prints <strong>too many lines</strong>. Line " + (i+1) + " shouldn't be there.";
+      return "Line " + (i+1) + " is different. Compare the two outputs below.";
+    }
+  }
+  return "Compare the two outputs below.";
+}
+function diffView(expRaw, gotRaw, exp, got){
+  const d = el("div", { class:"diff" });
+  const a = el("pre"), b = el("pre");
+  const n = Math.max(expRaw.length, gotRaw.length);
+  let first = -1; for (let i = 0; i < n; i++) if (exp[i] !== got[i]){ first = i; break; }
+  a.innerHTML = expRaw.map((l, i) => i === first ? "<mark>" + esc(l || " ") + "</mark>" : esc(l)).join("\n");
+  b.innerHTML = gotRaw.map((l, i) => i === first ? "<mark>" + esc(l || " ") + "</mark>" : esc(l)).join("\n") || "(nothing)";
+  if (first >= gotRaw.length && first >= 0) b.innerHTML += "\n<mark>(missing)</mark>";
+  d.append(el("div", null, el("p", { class:"lbl" }, "Should print"), a), el("div", null, el("p", { class:"lbl" }, "Your program printed"), b));
+  return d;
+}
+
+/* ---------- finish ---------- */
+function renderFinish(main){
+  main.append(el("div", { class:"sechead" }, el("div", null, el("p", { class:"kicker" }, "Finish"), el("h1", { class:"title" }, "Your lists summary")), modeChip()));
+  const coreDone = CORE.filter(x => isDone(x.t.id)).length;
+  const plus = ALL.filter(x => x.t.plus), plusDone = plus.filter(x => isDone(x.t.id)).length;
+  const hintsUsed = ALL.reduce((a, x) => a + ((state.tasks[x.t.id] || {}).hints || 0), 0);
+  const helped = ALL.filter(x => (state.tasks[x.t.id] || {}).status === "helped").length;
+  main.append(el("div", { class:"card" },
+    el("h2", null, "Take a screenshot of this page and hand it in on Teams"),
+    el("div", { class:"bigstat" },
+      el("div", null, el("b", null, coreDone + "/" + CORE.length), "tasks done"),
+      el("div", null, el("b", null, plusDone + "/" + plus.length), "+1 challenges"),
+      el("div", null, el("b", null, String(hintsUsed)), "hints used"),
+      el("div", null, el("b", null, String(helped)), "answers shown"))));
+  const tb = el("tbody");
+  SECTIONS.forEach((s, si) => {
+    const core = s.tasks.filter(t => !t.plus), pl = s.tasks.filter(t => t.plus);
+    const d = core.filter(t => isDone(t.id)).length;
+    const h = s.tasks.filter(t => (state.tasks[t.id] || {}).status === "helped").length;
+    tb.append(el("tr", null, el("td", null, (si+1) + ". " + s.title), el("td", { class:"n" }, d + "/" + core.length + (d === core.length ? " ✓" : "")), el("td", { class:"n" }, pl.length ? pl.filter(t => isDone(t.id)).length + "/" + pl.length : "–"), el("td", { class:"n" }, String(h))));
+  });
+  main.append(el("table", { class:"summary" }, el("thead", null, el("tr", null, el("th", null, "Section"), el("th", null, "Tasks"), el("th", null, "+1"), el("th", null, "Answers shown"))), tb));
+  const firstGap = CORE.find(x => !isDone(x.t.id));
+  const row = el("div", { class:"btnrow" });
+  if (firstGap) row.append(el("button", { class:"btn primary", onclick: ()=>go(firstGap.s.id, firstGap.ti) }, "Go to your first unfinished task"));
+  row.append(el("button", { class:"btn quiet", onclick: ()=>{ if (confirm("Clear all your answers on this computer and start again?")){ state = { tasks:{}, view:{ page:"intro", task:0 }, started:null }; try{ localStorage.removeItem(STORE_KEY); }catch(e){} render(); } } }, "Start again"));
+  main.append(row);
+  const now = new Date();
+  main.append(el("p", { class:"stamp" }, "Summary made " + now.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) + " at " + now.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" }) + ". Progress is saved in this browser only."));
+}
+
+/* ---------- boot ---------- */
+buildNav();
+render();
+startPy();
+window.__app = { SECTIONS, get state(){ return state; }, PY, runPy, explainError, go };
+})();
+
+</script>
+</body>
+</html>
