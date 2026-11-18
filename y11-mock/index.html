@@ -1,0 +1,2583 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Y11 Winter Assessment feedback</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface:#f3f3f3; --surface-card:#d9f3d0; --surface-plain:#ffffff;
+  --ink:#212121; --muted:#4a4a4a; --heading:#00642d; --card-border:#008741;
+  --accent:#008741; --accent-deep:#00642d; --on-accent:#ffffff; --label:#8cc841;
+  --mode:#e05d08; --err-ink:#9b1c1c; --err-bg:#fdecea; --err-line:#c0392b;
+  --ok-bg:#e9f7e4; --gap-bg:#eef9ea;
+  --font: Aptos, "Segoe UI", Arial, sans-serif;
+  --display: "Aptos Display", Aptos, "Segoe UI", Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--surface);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.5}
+b,strong{font-weight:700}
+code{font-family:var(--mono);font-size:.92em;background:#fff;border:1px solid #c9c9c9;border-radius:5px;padding:0 .3em}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+
+/* layout */
+.topbar{position:sticky;top:0;z-index:10;background:var(--surface-plain);border-bottom:2px solid var(--card-border)}
+.topbar-inner{display:flex;align-items:center;gap:16px;padding:10px 20px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:22px;margin:0;white-space:nowrap}
+.progress{flex:1;min-width:160px;display:flex;align-items:center;gap:10px;font-size:15px;color:var(--muted)}
+.bar{flex:1;height:12px;border-radius:6px;background:#e2e2e2;border:1px solid #b9b9b9;overflow:hidden}
+.bar > span{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.pystatus{font-size:15px;padding:4px 10px;border-radius:999px;border:1px solid #9a9a9a;background:#fafafa;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.pystatus .dot{width:10px;height:10px;border-radius:50%;background:#9a9a9a}
+.pystatus.ready .dot{background:var(--accent)}
+.pystatus.offline .dot{background:var(--err-line)}
+.pystatus.loading .dot{background:#d9a400}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0;min-height:calc(100vh - 120px)}
+nav.sections{background:var(--surface-plain);border-right:1px solid #d6d6d6;padding:16px 12px}
+nav.sections ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+nav.sections button{width:100%;text-align:left;background:none;border:2px solid transparent;border-radius:10px;padding:8px 10px;display:flex;gap:10px;align-items:center;color:var(--ink);font-size:16px}
+nav.sections button:hover{background:#f0f7ed}
+nav.sections button[aria-current="true"]{border-color:var(--card-border);background:var(--surface-card);font-weight:700}
+.navnum{flex:none;width:28px;height:28px;border-radius:50%;background:#e2e2e2;display:grid;place-items:center;font-weight:700;font-size:14px}
+.navdone .navnum{background:var(--accent);color:var(--on-accent)}
+.navlabel{flex:1;line-height:1.25}
+.navcount{font-size:13px;color:var(--muted);white-space:nowrap}
+main{padding:24px 32px 48px;max-width:980px;width:100%}
+footer.values{background:var(--accent);color:var(--on-accent);text-align:center;font-size:15px;padding:10px;border-bottom:12px solid var(--label)}
+
+@media (max-width: 880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.sections{border-right:none;border-bottom:1px solid #d6d6d6;padding:8px 12px;overflow-x:auto}
+  nav.sections ol{flex-direction:row;gap:6px}
+  nav.sections button{white-space:nowrap;padding:6px 10px}
+  .navlabel,.navcount{display:none}
+  nav.sections button[aria-current="true"] .navlabel{display:inline}
+  main{padding:16px}
+  .topbar-inner{padding:8px 12px}
+}
+
+/* headings */
+.sechead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+h1.title{font-family:var(--display);font-size:34px;line-height:1.15;margin:0}
+.kicker{color:var(--muted);font-size:15px;margin:0 0 4px}
+.mode{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;border:2px solid var(--mode);border-radius:999px;padding:4px 12px 4px 8px;background:#fff}
+.mode svg{flex:none}
+
+/* cards */
+.card{background:var(--surface-card);border:2px solid var(--card-border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+.card h2,.plain h2{color:var(--heading);font-size:22px;margin:0 0 10px}
+.plain{background:var(--surface-plain);border:2px solid var(--ink);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+.key p{margin:0 0 12px;font-size:19px}
+details.key > summary{cursor:pointer;color:var(--heading);font-weight:700;font-size:22px;list-style:none;display:flex;align-items:center;gap:8px}
+details.key > summary::-webkit-details-marker{display:none}
+details.key > summary::before{content:"▾";display:inline-block;transition:transform .15s}
+details.key:not([open]) > summary::before{transform:rotate(-90deg)}
+details.key[open] > summary{margin-bottom:12px}
+.example{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+.example .lbl,.lbl{font-size:15px;font-weight:700;color:var(--heading);margin:0 0 4px}
+@media (max-width:640px){.example{grid-template-columns:1fr}}
+.parts{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.parts li{background:#fff;border:1px solid #9cc79a;border-radius:10px;padding:8px 12px;font-size:16px}
+.parts code{font-weight:700}
+table.rt{border-collapse:collapse;margin:4px 0 14px;background:#fff;font-size:17px}
+table.rt th,table.rt td{border:1px solid var(--ink);padding:6px 12px;text-align:left}
+table.rt th{background:var(--label)}
+table.rt td.m{font-family:var(--mono)}
+.gridwrap{margin:6px 0 14px;overflow-x:auto}
+.gridwrap .lbl{margin-bottom:4px}
+table.rt.grid{margin-bottom:4px}
+table.rt.grid th{font-size:15px;font-weight:600;white-space:nowrap}
+table.rt.grid td.corner{border:none;background:transparent}
+table.rt.grid td.m{text-align:center;min-width:3.2em}
+table.rt.grid td.hit{background:var(--surface-card);font-weight:700;box-shadow:inset 0 0 0 2px var(--accent)}
+.tip{margin:12px 0 0;padding:10px 14px;background:#fff;border:1px solid #9cc79a;border-radius:10px;font-size:17px}
+ul.qs{margin:6px 0 0;padding-left:1.2em;font-size:19px}
+
+/* code display */
+pre.code,pre.out{font-family:var(--mono);font-size:17px;line-height:1.55;margin:0;padding:12px 16px;border-radius:10px;overflow-x:auto;white-space:pre}
+pre.code{background:#fff;border:1px solid var(--ink)}
+pre.out{background:#1f2a24;color:#f1f7ef;border:1px solid #1f2a24;min-height:2.2em}
+pre.out.empty{color:#b9c7b4}
+.t-kw{color:#00642d;font-weight:700}
+.t-bi{color:#6b21a8}
+.t-str{color:#9a3412}
+.t-num{color:#1d4ed8}
+.t-com{color:#5b6660;font-style:italic}
+
+/* task */
+.taskhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.taskhead h2{margin:0}
+.stepper{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.stepper button{width:34px;height:34px;border-radius:50%;border:2px solid #8a8a8a;background:#fff;font-weight:700;font-size:15px;color:var(--ink);display:grid;place-items:center;padding:0}
+.stepper button.cur{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}
+.stepper button.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.stepper button.helped{background:#fff;border-color:var(--accent);color:var(--heading)}
+.stepper button.plus{border-style:dashed}
+.stepper .stlabel{font-size:15px;color:var(--muted);margin-left:6px}
+.tag{font-size:14px;font-weight:700;border-radius:999px;padding:2px 10px;background:#fff;border:1px solid var(--card-border);color:var(--heading)}
+.plusbadge{display:inline-grid;place-items:center;min-width:40px;height:32px;padding:0 8px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;font-size:18px}
+.prompt{font-size:19px;margin:0 0 14px}
+.subq{font-weight:700;margin:16px 0 8px}
+
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.opt{background:#fff;border:2px solid #8a8a8a;border-radius:12px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.opt:hover{border-color:var(--ink)}
+.opt .olabel{font-size:14px;font-weight:700;color:var(--muted)}
+.opt pre{margin:0;font-family:var(--mono);font-size:16px;white-space:pre-wrap}
+.opt.wrong{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+.opt.wrong .olabel{color:var(--err-ink)}
+.opt.right{border-color:var(--accent);border-width:3px;background:var(--ok-bg)}
+.opt.right .olabel{color:var(--heading)}
+
+.gapcode input{font-family:var(--mono);font-size:17px;padding:1px 4px;border:2px solid var(--card-border);border-radius:5px;background:var(--gap-bg);color:var(--ink);text-align:center;margin:0 1px}
+.gapcode input.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+.gapcode input.good{border-color:var(--accent);background:#d9f3d0}
+
+.parsons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.parsons li{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #8a8a8a;border-radius:10px;padding:6px 8px}
+.parsons li.dragging{opacity:.5}
+.parsons li.over{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.parsons .grip{cursor:grab;color:#6a6a6a;font-size:20px;padding:0 4px;user-select:none}
+.parsons .pline{flex:1;font-family:var(--mono);font-size:17px;white-space:pre;overflow-x:auto}
+.parsons .ind{display:inline-block;border-left:2px dotted #9cc79a}
+.parsons .ctl{display:flex;gap:4px}
+.parsons .ctl button{width:36px;height:34px;border-radius:8px;border:1px solid var(--ink);background:#fafafa;font-size:16px;padding:0}
+.parsons .ctl button:disabled{opacity:.35;cursor:default}
+
+table.trace{border-collapse:collapse;background:#fff;margin:8px 0}
+table.trace th,table.trace td{border:1px solid var(--ink);padding:6px 10px;text-align:center}
+table.trace th{background:var(--label);font-family:var(--mono);font-size:16px}
+table.trace td.pass{font-size:14px;color:var(--muted);text-align:left}
+table.trace input{width:90px;font-family:var(--mono);font-size:17px;text-align:center;border:2px solid var(--card-border);border-radius:5px;background:var(--gap-bg);padding:2px}
+table.trace input.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+table.trace input.good{border-color:var(--accent);background:#d9f3d0}
+table.trace .given{font-family:var(--mono);font-size:17px}
+.traceout{display:flex;gap:10px;align-items:center;margin-top:10px;font-weight:700}
+.traceout input{width:110px;font-family:var(--mono);font-size:17px;border:2px solid var(--card-border);border-radius:5px;background:var(--gap-bg);padding:2px 6px}
+.traceout input.bad{border-color:var(--err-line);border-style:dashed}
+.traceout input.good{border-color:var(--accent);background:#d9f3d0}
+.twocol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:760px){.twocol{grid-template-columns:1fr}}
+
+/* editor */
+.editor{display:flex;border:2px solid var(--ink);border-radius:10px;background:#fff;overflow:hidden}
+.gutter{flex:none;padding:12px 8px 12px 10px;text-align:right;font-family:var(--mono);font-size:17px;line-height:1.55;color:#7a7a7a;background:#f4f4f4;border-right:1px solid #d0d0d0;user-select:none;overflow:hidden;white-space:pre}
+.editor textarea{flex:1;border:none;outline:none;resize:vertical;padding:12px 14px;font-family:var(--mono);font-size:17px;line-height:1.55;color:var(--ink);background:#fff;white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:4;min-height:8em}
+.editor:focus-within{box-shadow:0 0 0 3px #1a5fb4}
+.gutter .errline{color:#fff;background:var(--err-line);border-radius:3px;padding:0 3px}
+.expected{margin-bottom:16px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.btn{border-radius:10px;padding:9px 18px;font-weight:700;border:2px solid var(--ink);background:#fff;color:var(--ink);font-size:17px}
+.btn:hover{background:#f0f0f0}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-deep)}
+.btn.quiet{border-color:#9a9a9a;font-weight:400}
+.btn:disabled{opacity:.5;cursor:default}
+.outwrap .lbl{color:var(--ink)}
+.offline-note{background:#fff8e1;border:2px solid #b58500;border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.paste textarea{width:100%;min-height:6em;font-family:var(--mono);font-size:16px;border:2px solid var(--ink);border-radius:10px;padding:10px}
+
+/* feedback */
+.fb{margin-top:14px}
+.fb:empty{display:none}
+.msg{border-radius:12px;padding:12px 16px;border:2px solid;font-size:18px}
+.msg h3{margin:0 0 4px;font-size:19px;display:flex;align-items:center;gap:8px}
+.msg p{margin:4px 0}
+.msg.ok{background:var(--ok-bg);border-color:var(--accent)}
+.msg.ok h3{color:var(--heading)}
+.msg.bad{background:var(--err-bg);border-color:var(--err-line)}
+.msg.bad h3{color:var(--err-ink)}
+.msg.info{background:#fff;border-color:#8a8a8a}
+.msg .raw{font-family:var(--mono);font-size:14px;color:#5a2a2a;margin-top:6px}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+@media (max-width:640px){.diff{grid-template-columns:1fr}}
+.diff pre{background:#fff;border:1px solid var(--ink);border-radius:8px;padding:8px 10px;margin:0;font-family:var(--mono);font-size:15px;white-space:pre;overflow-x:auto}
+.diff mark{background:#ffe1dc;color:var(--err-ink);font-weight:700}
+.hints{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.hint{background:#fff;border:1px solid #9cc79a;border-left-width:1px;border-radius:10px;padding:8px 12px;font-size:17px}
+.hint b.hl{color:var(--heading)}
+.solution{margin-top:10px}
+.nav-next{display:flex;justify-content:space-between;gap:10px;margin-top:24px;flex-wrap:wrap}
+
+/* intro & summary */
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;font-size:19px}
+.steps li::before{content:counter(s);flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:17px}
+table.summary{border-collapse:collapse;width:100%;background:#fff;font-size:17px}
+table.summary th,table.summary td{border:1px solid var(--ink);padding:8px 12px;text-align:left}
+table.summary th{background:var(--label)}
+table.summary td.n{text-align:center;font-weight:700}
+.bigstat{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0 16px}
+.bigstat div{background:#fff;border:2px solid var(--card-border);border-radius:12px;padding:10px 18px;min-width:150px}
+.bigstat b{display:block;font-size:30px;color:var(--heading);font-family:var(--display)}
+.stamp{font-size:15px;color:var(--muted);margin-top:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.keyhint{font-weight:400;font-size:16px;color:var(--ink)}
+.parsons{max-width:760px}
+pre.out.exp{background:#fff;color:var(--ink);border:2px dashed #6a6a6a}
+h1.title:focus{outline:none}
+.edgrid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:start}
+@media (max-width:760px){.edgrid{grid-template-columns:1fr}}
+.inputs textarea{width:100%;font-family:var(--mono);font-size:17px;line-height:1.55;border:2px solid var(--card-border);border-radius:10px;background:var(--gap-bg);padding:10px 12px;resize:vertical;min-height:7em}
+.inote{font-size:15px;color:var(--muted);margin:6px 0 0}
+.inputs label{display:block}
+
+
+/* ===== additions for the mock feedback site ===== */
+.navnum.q{width:auto;min-width:28px;padding:0 6px;border-radius:14px;font-size:12px}
+.mt{margin-top:18px}
+.asked{background:#fff;border:1px solid #9cc79a;border-radius:10px;padding:10px 14px}
+.asked .mx{font-weight:700;color:var(--heading)}
+.teacher{background:#fff4ec;border:2px solid var(--mode);border-radius:12px;padding:10px 16px;margin:14px 0}
+.teacher .tlab{margin:0 0 4px;font-weight:800;color:#a3410a;font-size:16px;text-transform:uppercase;letter-spacing:.04em}
+.teacher p{margin:0}
+.marksbox{background:#fff;border:1px solid #9cc79a;border-radius:10px;padding:10px 16px;margin:14px 0}
+.marksbox ul{margin:4px 0 0;padding-left:1.2em}
+.model{margin:14px 0}
+pre.model-text{font-family:var(--font);white-space:pre-wrap;background:#fff;border:2px dashed var(--card-border);border-radius:10px;padding:12px 16px;margin:0;font-size:18px}
+table.ideas td,table.ideas th{vertical-align:top;font-size:16px}
+.erlwrap{margin:0 0 12px}
+.erlwrap .lbl{font-size:14px}
+.tag.help{background:#fff}
+.tag.own{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tag.plus{background:#fff;border-style:dashed}
+.stepper button{width:auto;min-width:54px;padding:0 10px;border-radius:999px;font-size:14px}
+
+/* results page */
+.prio{margin:6px 0 0;padding-left:1.4em;font-size:19px}
+.prio li{margin:4px 0}
+.linkbtn{background:none;border:none;color:var(--heading);font-weight:700;text-decoration:underline;padding:0;font-size:inherit}
+table.qla td,table.qla th{padding:6px 10px}
+table.qla tr.full td{color:#555}
+table.qla tr.low td:nth-child(3){background:#fde2dc;font-weight:800}
+table.qla tr.part td:nth-child(3){background:#fff2cc;font-weight:800}
+table.qla tr.full td:nth-child(3){background:var(--ok-bg)}
+.fulltag{font-size:15px;color:var(--heading)}
+
+/* choices */
+.options.text{grid-template-columns:1fr}
+.options.text .opt{flex-direction:row;align-items:center;gap:12px;font-size:18px}
+.options.text .olabel{flex:none;width:30px;height:30px;border-radius:50%;background:#eee;display:grid;place-items:center;color:var(--ink)}
+.options.text .opt.right .olabel{background:var(--accent);color:#fff}
+.options.text .opt.wrong .olabel{background:#fbd5cf}
+.checks{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+label.check{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid #8a8a8a;border-radius:12px;padding:10px 14px;cursor:pointer;font-size:18px}
+label.check input{width:22px;height:22px;flex:none;margin-top:3px;accent-color:var(--accent)}
+label.check.wrong{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+label.check.right{border-color:var(--accent);border-width:3px;background:var(--ok-bg)}
+table.matcht{border-collapse:separate;border-spacing:0 8px;width:100%}
+table.matcht td{background:#fff;padding:8px 12px;border-top:1px solid #c9c9c9;border-bottom:1px solid #c9c9c9;font-size:18px}
+table.matcht td:first-child{border-left:1px solid #c9c9c9;border-radius:10px 0 0 10px}
+table.matcht td:last-child{border-right:1px solid #c9c9c9;border-radius:0 10px 10px 0;width:1%;white-space:nowrap}
+select{font:inherit;font-size:17px;padding:5px 8px;border:2px solid var(--card-border);border-radius:8px;background:var(--gap-bg);color:var(--ink)}
+select.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+select.good{border-color:var(--accent);background:#d9f3d0}
+p.gapprose{font-size:19px;line-height:2.1;background:#fff;border:1px solid var(--ink);border-radius:10px;padding:12px 16px}
+p.gapprose input{font:inherit;font-size:18px;padding:1px 6px;border:2px solid var(--card-border);border-radius:6px;background:var(--gap-bg)}
+p.gapprose input.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+p.gapprose input.good{border-color:var(--accent);background:#d9f3d0}
+
+/* tables */
+table.trace input.sm{width:56px}
+table.trace input.wide{width:150px}
+table.trace.exam th{font-family:var(--font)}
+table.trace.exam td{padding:4px 6px}
+.tracewrap{overflow-x:auto}
+
+/* gates */
+.circwrap{max-width:620px;background:#fff;border:1px solid var(--ink);border-radius:10px;padding:8px;margin:8px 0}
+svg.circuit{width:100%;height:auto;display:block}
+svg .wire{stroke:#212121;stroke-width:2.5}
+svg .gate{fill:#fff;stroke:#212121;stroke-width:3}
+svg .emptybox{fill:#eef9ea;stroke:#008741;stroke-width:2;stroke-dasharray:6 4}
+svg .qmark{font:700 28px var(--font);fill:#008741}
+svg .lab{font:700 22px var(--font);fill:#212121}
+.gatesel{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0}
+.gatesel label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:16px}
+.gatekey{display:flex;gap:18px;flex-wrap:wrap;margin:6px 0 14px}
+.gatekey figure{margin:0;background:#fff;border:1px solid #9cc79a;border-radius:10px;padding:6px 10px;text-align:center}
+.gatekey figcaption{font-size:15px;font-weight:700}
+
+/* merge sort */
+.merge{display:flex;flex-direction:column;gap:12px;margin:8px 0 14px;overflow-x:auto}
+.mrow{display:flex;gap:12px;align-items:center;flex-wrap:nowrap}
+.mlab{flex:none;width:110px;font-size:15px;font-weight:700;color:var(--heading)}
+.mlist{display:inline-flex;border:3px solid var(--ink);border-radius:6px;background:#fff}
+.mcell{display:inline-grid;place-items:center;min-width:46px;height:40px;font-family:var(--mono);font-size:17px;border-right:1px solid #9a9a9a;padding:0 4px}
+.mlist .mcell:last-child{border-right:none}
+input.mcell{width:52px;border:none;border-right:1px solid #9a9a9a;background:var(--gap-bg);text-align:center;border-radius:0}
+input.mcell.bad{background:#fde2dc;outline:2px dashed var(--err-line)}
+input.mcell.good{background:#d9f3d0}
+
+/* sql, essay */
+.sqlout{margin-top:10px;overflow-x:auto}
+.examq{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:10px 16px;margin-bottom:12px}
+textarea.essay{width:100%;min-height:20em;font-family:var(--font);font-size:18px;line-height:1.5;border:2px solid var(--ink);border-radius:10px;padding:12px}
+.levels{display:flex;flex-direction:column;gap:8px}
+label.lvl{display:flex;gap:12px;align-items:center;background:#fff;border:2px solid #8a8a8a;border-radius:12px;padding:8px 14px;cursor:pointer}
+label.lvl b{flex:none;width:100px}
+label.lvl input{width:20px;height:20px;accent-color:var(--accent)}
+
+/* finish */
+.ccode{font-family:var(--mono);font-size:30px;font-weight:700;letter-spacing:.06em;background:#fff;border:3px solid var(--accent);border-radius:12px;padding:12px 18px;display:inline-block;margin:6px 0;user-select:all;word-break:break-all}
+
+/* login */
+body.loggedout nav.sections,body.loggedout .progress{visibility:hidden}
+body.loggedout .layout{grid-template-columns:minmax(0,1fr)}
+body.loggedout nav.sections{display:none}
+.login{max-width:560px;margin:40px auto}
+.lbl.big{font-size:20px}
+#codein{font-family:var(--mono);font-size:30px;width:4.5em;text-transform:uppercase;text-align:center;letter-spacing:.2em;border:3px solid var(--card-border);border-radius:10px;padding:4px 8px}
+
+@media print{ nav.sections,.topbar,footer{display:none} }
+
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack .erlwrap{max-width:640px}
+.twocol > div{min-width:0}
+@media (max-width:640px){
+  table.matcht td:last-child{white-space:normal}
+  table.matcht select{max-width:9.5em}
+  table.trace input{width:70px} table.trace input.sm{width:40px} table.trace input.wide{width:110px}
+}
+
+/* hex grid */
+.hexwrap{background:#fff;border:1px solid var(--ink);border-radius:10px;padding:10px 14px;margin:8px 0;overflow-x:auto}
+.hexq{margin:0 0 6px;font-size:19px}
+table.hexg{border-collapse:collapse;font-family:var(--mono)}
+table.hexg th,table.hexg td{width:46px;text-align:center;padding:2px}
+table.hexg tr.hh th{background:var(--label);border:1px solid #6a6a6a;font-size:15px;padding:4px 0}
+table.hexg td{border:1px solid #6a6a6a;height:40px}
+table.hexg tr.arrows td{border:none;height:18px;color:var(--heading);font-weight:700;font-size:14px}
+table.hexg tr.digits td{border:none;font-family:var(--font);font-weight:800;font-size:17px;color:var(--heading);border-top:3px solid var(--heading)}
+table.hexg .split{border-left:6px solid #fff}
+table.hexg tr.digits td.split{border-left:6px solid #fff}
+.bit{font-size:19px;font-weight:700}
+.bit.one{background:#d9f3d0;display:block;line-height:36px}
+input.bitin{width:38px;height:34px;text-align:center;font-family:var(--mono);font-size:19px;border:2px solid var(--card-border);border-radius:6px;background:var(--gap-bg)}
+input.bitin.bad,input.hexans.bad{border-color:var(--err-line);border-style:dashed;background:#fff7f6}
+input.bitin.good,input.hexans.good{border-color:var(--accent);background:#d9f3d0}
+input.hexans{width:80px;font-family:var(--mono);font-size:19px;padding:3px 6px;border:2px solid var(--card-border);border-radius:6px;background:var(--gap-bg)}
+.hexsum{margin:8px 0 0;font-size:18px}
+.altbox{background:#fff;border:2px dashed var(--accent);border-radius:12px;padding:8px 14px;margin:10px 0}
+.altbox .tlab{margin:0 0 2px;font-weight:800;color:var(--heading)}
+.altbox p{margin:0}
+</style>
+</head>
+<body class="loggedout">
+<header class="topbar">
+  <div class="topbar-inner">
+    <p class="brand">Y11 mock feedback</p>
+    <div class="progress"><div class="bar" id="bar" role="progressbar" aria-label="Tasks completed"><span></span></div><span id="progtext"></span></div>
+    <div class="pystatus" id="pystatus" role="status" hidden><span class="dot" aria-hidden="true"></span><span id="pytext"></span></div>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sections" aria-label="Questions"><ol id="navlist"></ol></nav>
+  <main id="main"></main>
+</div>
+<footer class="values">Aspiration · Respect · Kindness</footer>
+<script>
+const DATA = {"bounds": [[0, "U"], [12, 1], [21, 2], [29, 3], [37, 4], [45, 5], [52, 6], [59, 7], [65, 8], [72, 9]], "students": {"ibtwr6humq": {"m": [2, 2, 1, 2, 1, 3, 4, 3, 2, 2, 4, 2, 6, 3, 0, 0, 2, 4, 1, 1, 4, 5, 1, 4, 3, 1, 4]}, "14us9q4sbvf": {"m": [2, 0, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 4, 3, 1, 0, 0, 2, 2, 0, 3, 5, 0, 0, 3, 1, 1]}, "21l9goo1odn": {"m": [2, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 5, 3, 1, 0, 2, 1, 2, 1, 4, 6, 1, 0, 3, 0, 4]}, "1hnbduj492h": {"m": [2, 1, 1, 1, 1, 2, 0, 3, 0, 0, 0, 0, 5, 3, 0, 0, 0, 2, 1, 0, 1, 3, 1, 2, 3, 0, 0]}, "1xtd5qrskj7": {"m": [2, 1, 1, 2, 1, 3, 4, 1, 3, 1, 4, 2, 4, 3, 0, 1, 2, 2, 2, 1, 2, 3, 1, 2, 3, 2, 0]}, "m88my3y9ee": {"m": [2, 2, 1, 2, 1, 3, 4, 3, 3, 2, 0, 2, 7, 3, 0, 0, 2, 3, 2, 1, 2, 6, 0, 0, 3, 1, 2]}, "plm5ppwr3e": {"m": [2, 2, 1, 2, 1, 3, 3, 3, 3, 1, 4, 3, 7, 3, 1, 1, 2, 3, 2, 1, 4, 6, 1, 2, 3, 4, 4]}, "114p6ar2c9c": {"m": [2, 1, 1, 1, 1, 0, 3, 1, 3, 1, 2, 0, 4, 3, 0, 0, 2, 1, 2, 1, 4, 4, 1, 2, 3, 0, 0]}, "p4fr08wt93": {"m": [2, 2, 1, 2, 2, 3, 4, 3, 2, 2, 3, 2, 6, 3, 1, 1, 2, 3, 2, 1, 4, 4, 1, 4, 3, 5, 4]}, "24vzkhz0day": {"m": [1, 0, 1, 2, 1, 0, 2, 1, 0, 0, 0, 1, 2, 0, 0, 0, 1, 2, 2, 0, 2, 2, 0, 0, 0, 0, 0]}, "1rshd1nwk3d": {"m": [1, 1, 1, 1, 1, 0, 4, 3, 1, 0, 0, 0, 5, 3, 0, 1, 1, 2, 1, 1, 3, 2, 1, 2, 3, 0, 0]}, "26t1jggogc8": {"m": [2, 1, 1, 1, 2, 1, 4, 2, 1, 2, 2, 2, 5, 3, 0, 0, 1, 1, 2, 1, 1, 4, 1, 0, 3, 0, 0]}, "hu2xm6fd4m": {"m": [2, 2, 1, 2, 2, 1, 2, 3, 1, 0, 3, 2, 5, 3, 0, 0, 2, 3, 2, 1, 3, 4, 1, 1, 3, 4, 4]}, "tkgylvfysg": {"m": [2, 2, 1, 2, 1, 3, 4, 3, 1, 2, 3, 1, 4, 3, 1, 1, 2, 3, 2, 1, 4, 4, 1, 0, 3, 0, 0]}}};
+/* ===== Mock feedback content: one entry per question part ===== */
+const GENERAL = {
+  tips: [
+    "**Stay inside the lines.** Exam papers are scanned. The examiner only sees what is inside the answer area, so anything written outside the lines or box can't get marks.",
+    "**Read the command word.** *State*, *identify* and *give* need short answers. *Describe* needs detail. *Explain* needs a reason: say **why** or **how**, using words like *because* or *so*.",
+    "**Make every answer specific.** \"Size\" or \"it's faster\" on its own is usually not enough. Say what is bigger or faster, and why."
+  ],
+  codes: [
+    ["NE", "Not enough", "the right idea, but too vague or missing a detail, so no mark."],
+    ["BOD", "Benefit of the doubt", "the answer was borderline, but the examiner gave the mark."],
+    ["FT", "Follow through", "you made a mistake earlier, but you still get marks for later steps that correctly use your earlier answer."]
+  ]
+};
+
+/* ERL code from the paper style is shown with line numbers; students answer in Python. */
+const PARTS = [
+/* ---------------------------------------------------------------- 1a */
+{ id:"1a", q:"1(a)", title:"Hexadecimal to denary", group:"Number systems", topic:"1.2.4 Numbers", max:2,
+  asked:"Convert the hex number 3E into denary, showing your working.",
+  how:[
+    "**Step 1:** write each hex digit as a **nibble** (4 bits) under the headings **8 4 2 1**. The letters are numbers: **A=10, B=11, C=12, D=13, E=14, F=15**. So 3 = 0011 and E = 14 = 1110.",
+    "**Step 2:** copy the 1s and 0s **straight up** into one 8-bit row under **128 64 32 16 8 4 2 1**.",
+    "**Step 3:** add the headings that have a **1** under them. For 3E: 32 + 16 + 8 + 4 + 2 = **62**.",
+    "Your grid is your working, so it earns the working mark even if the final adding goes wrong."
+  ],
+  marks:["1 mark for valid working, e.g. the binary 0011 1110, or (3 × 16) + 14", "1 mark for the answer: 62"],
+  teacher:"Always show your working. The working is worth a mark on its own, even if the final answer goes wrong.",
+  visual:"hexMethod",
+  tasks:[
+  { id:"1a-h", role:"help", type:"hexgrid", title:"Convert 4B",
+    prompt:"The nibbles for **4B** are done for you (4 = 0100, B = 11 = 1011). Copy the bits **up** into the 8-bit row, then add the headings that have a 1 under them.",
+    items:[{ hex:"4B", given:true }],
+    hints:["Copy each bit straight up: the left nibble goes under 128 64 32 16.", "The 1s are under 64, 8, 2 and 1."] },
+  { id:"1a-o", role:"own", type:"hexgrid", title:"Convert three on your own",
+    prompt:"Convert each hex number into denary. Fill in **both nibbles**, copy them up into the 8-bit row, then write the answer.",
+    items:[{ hex:"C5" },{ hex:"2F" },{ hex:"9A" }],
+    hints:["C is 12, which is 8 + 4: 1100.", "F is 15: 1111. A is 10: 1010.", "Check with the other method: left digit × 16 + right digit."] },
+  { id:"1a-p", role:"plus", type:"gap", title:"The other method",
+    prompt:"Some people prefer this method: **left digit × 16, plus the right digit**. Use it to check **D7**.",
+    code:`D7
+D = [[0]]
+[[1]] × 16 = [[2]]
+[[3]] + 7 = [[4]]`,
+    gaps:[{accept:["13"],w:3},{accept:["13"],w:3},{accept:["208"],w:4},{accept:["208"],w:4},{accept:["215"],w:4}],
+    output:"D7 in denary is 215", outputNote:"So:",
+    hints:["D comes after A, B, C: 10, 11, 12, 13."] }
+  ]},
+/* ---------------------------------------------------------------- 1bi */
+{ id:"1bi", q:"1(b)(i)", title:"Binary addition (8 bits)", group:"Number systems", topic:"1.2.4 Numbers", max:2,
+  asked:"Add 01101010 and 10010110, giving the answer as an 8-bit binary number.",
+  how:[
+    "Work from the **right** to the left, one column at a time, and write the carries above.",
+    "**0+0 = 0**. **1+0 = 1**. **1+1 = 10**: write 0, carry 1. **1+1+1 = 11**: write 1, carry 1.",
+    "If a carry comes out of the **left-most** column, there is no ninth box for it: it is lost. Your answer must still be **8 bits**."
+  ],
+  marks:["1 mark for each correct nibble (group of 4 bits)", "The correct answer was 0000 0000"],
+  teacher:"The answer must be written as 8 bits. 100000000 is 9 bits, so it is marked wrong, even though the adding is right.",
+  visual:"binaryAdd",
+  tasks:[
+  { id:"1bi-h", role:"help", type:"gap", title:"Add with the carries shown",
+    prompt:"Add these two 8-bit numbers. The carries are shown for you in the top row.",
+    code:`carry    1111 1000
+         0011 0101
+       + 0100 1110
+         ---------
+         [[0]] [[1]]`,
+    gaps:[{accept:["1000"],w:5},{accept:["0011"],w:5}],
+    output:"0011 0101 + 0100 1110 = 1000 0011", outputNote:"Answer:",
+    hints:["Start on the right: 1 + 0 = 1.", "Columns where both bits are 1 give 0, carry 1."] },
+  { id:"1bi-o", role:"own", type:"gap", title:"Add on your own",
+    prompt:"Add **1100 1100** and **0110 1010**. Give your answer as **8 bits**, one nibble in each box.",
+    code:`  1100 1100
++ 0110 1010
+  ---------
+  [[0]] [[1]]`,
+    gaps:[{accept:["0011"],w:5},{accept:["0110"],w:5}],
+    output:"1100 1100 + 0110 1010 = 0011 0110 (the carry out of the left column is lost: overflow)", outputNote:"Answer:",
+    hints:["Write the carries on paper above each column.", "There is a carry out of the left-most column. It doesn't fit in 8 bits, so leave it off."] },
+  { id:"1bi-p", role:"plus", type:"choice", title:"Which answer gets the marks?",
+    prompt:"A student adds 1001 0000 and 1000 0001. Which written answer would get **both** marks?",
+    options:[
+      { t:"1 0001 0001", fb:"That is 9 bits. The question asks for 8 bits, so this is marked wrong." },
+      { t:"0001 0001", fb:"Yes. The ninth bit is lost, and the answer is written as 8 bits." },
+      { t:"1111 0001", fb:"Check the left-most column: 1 + 1 = 10." }
+    ], answer:1 }
+  ]},
+/* ---------------------------------------------------------------- 1bii */
+{ id:"1bii", q:"1(b)(ii)", title:"Overflow", group:"Number systems", topic:"1.2.4 Numbers", max:1,
+  asked:"Identify the problem the addition created.",
+  how:[
+    "**Overflow** happens when the result of a calculation needs **more bits** than are available.",
+    "With 8 bits the biggest number is 255. If two numbers add up to more than 255, the extra bit is lost and the stored answer is wrong."
+  ],
+  marks:["1 mark: overflow (that word only)"],
+  tasks:[
+  { id:"1bii-h", role:"help", type:"choice", title:"Name the problem",
+    prompt:"An 8-bit addition gives a carry out of the left-most column. What is this problem called?",
+    options:[{t:"Underflow", fb:"Underflow is not what happens here. The answer is too **big** for 8 bits."},{t:"Overflow", fb:"Yes. The result needs a 9th bit, which doesn't exist."},{t:"A syntax error", fb:"This is about binary numbers, not code."},{t:"Truncation", fb:"Close in meaning, but the mark scheme only accepts the word **overflow**."}], answer:1 },
+  { id:"1bii-o", role:"own", type:"multi", title:"Spot the overflows",
+    prompt:"Which of these 8-bit additions cause **overflow**? Select all that do. (Hint: convert to denary and see if the total is over 255.)",
+    options:[
+      { t:"1000 0000 + 1000 0000", ok:true, fb:"128 + 128 = 256, which is more than 255." },
+      { t:"0111 1111 + 0000 0001", ok:false, fb:"127 + 1 = 128, which fits in 8 bits." },
+      { t:"1111 1111 + 0000 0001", ok:true, fb:"255 + 1 = 256: overflow." },
+      { t:"0101 0101 + 0010 1010", ok:false, fb:"85 + 42 = 127, which fits." }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 2 */
+{ id:"2", q:"2", title:"Sample rate", group:"Sound and images", topic:"1.2.4 Sound", max:2,
+  asked:"The sample rate is increased. Give two effects on the recording.",
+  how:[
+    "The **sample rate** is how many samples of the sound are taken **each second**.",
+    "More samples per second means the digital recording is **closer to the original sound**, so the **quality is better**.",
+    "More samples also means more data to store, so the **file size gets bigger**."
+  ],
+  marks:["1 mark: the quality improves", "1 mark: the file size increases"],
+  teacher:"Mark schemes word the first mark differently in different years, so hedge your bets: write that the quality improves **and** the sound is closer to the original. Then give the second, separate effect: the file is bigger.",
+  model:{ label:"A full-mark answer", text:"1. The quality is better, because the recording is closer to the original sound.\n2. The file size is larger." },
+  tasks:[
+  { id:"2-h", role:"help", type:"multi", title:"Which effects score?",
+    prompt:"The sample rate of a recording is **increased**. Select the **two** answers that together would get both marks.",
+    options:[
+      { t:"The sound quality improves, because it is closer to the original", ok:true, fb:"This covers the first mark however it is worded." },
+      { t:"The file size increases", ok:true, fb:"This is the second, separate effect." },
+      { t:"The sound is louder", ok:false, fb:"Sample rate doesn't change the volume." },
+      { t:"The recording plays faster", ok:false, fb:"It plays at the same speed; there are just more samples each second." }
+    ]},
+  { id:"2-o", role:"own", type:"multi", title:"Now the other way",
+    prompt:"A recording is saved with a **lower** sample rate. Select **all** the effects this would have.",
+    options:[
+      { t:"The file size is smaller", ok:true, fb:"Fewer samples each second means less data." },
+      { t:"The sound is less like the original, so the quality is worse", ok:true, fb:"Fewer samples, so the shape of the sound wave is captured less accurately." },
+      { t:"The bit depth goes down", ok:false, fb:"Bit depth is a separate setting from sample rate." },
+      { t:"The recording is shorter", ok:false, fb:"It lasts just as long; it has fewer samples per second." }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 3 */
+{ id:"3", q:"3", title:"Characters in ASCII", group:"Sound and images", topic:"1.2.4 Characters", max:2,
+  asked:"Explain how the word MOP will be represented in ASCII.",
+  how:[
+    "**Explain** means more than giving the numbers. Say **what happens** to each character.",
+    "Each character is looked up in the ASCII table and replaced by its **code**, in the same order as the word.",
+    "Each code is then stored as a **binary number** (8 bits)."
+  ],
+  marks:["1 mark: each character's ASCII code is stored, in order: 77 79 80", "1 mark: each code is converted to an 8-bit binary number"],
+  teacher:"EXPLAIN means you have to explain to get all the marks. Just writing 77 79 80 only gets one of the two.",
+  model:{ label:"A full-mark answer", text:"Each letter of MOP is replaced by its ASCII code, in order: M = 77, O = 79, P = 80. Each code is stored as an 8-bit binary number, e.g. 77 is 01001101." },
+  tasks:[
+  { id:"3-h", role:"help", type:"gap", title:"LOP in ASCII", prose:true,
+    prompt:"Use the table from the paper (L=76, M=77, N=78, O=79, P=80) to complete the explanation for the word **LOP**.",
+    code:"Each character is replaced by its ASCII [[0]], in order: L = [[1]], O = [[2]], P = [[3]]. Each code is stored as an 8-bit [[4]] number, so L is stored as 0100 [[5]].",
+    gaps:[{accept:["code","number","value"],w:7,ci:true},{accept:["76"],w:3},{accept:["79"],w:3},{accept:["80"],w:3},{accept:["binary"],w:7,ci:true},{accept:["1100"],w:5}],
+    hints:["The table gives one number for each letter.", "76 = 64 + 8 + 4."] },
+  { id:"3-o", role:"own", type:"multi", title:"Pick the explanation",
+    prompt:"A student is asked to **explain** how the word **CAB** is represented in ASCII (C=67, A=65, B=66). Select the **two** sentences that together would get **both** marks.",
+    options:[
+      { t:"Each character is replaced by its ASCII code in order: 67, 65, 66.", ok:true, fb:"This gets the first mark: codes, in order." },
+      { t:"Each code is stored as an 8-bit binary number.", ok:true, fb:"This gets the second mark." },
+      { t:"CAB is stored as C, A, B.", ok:false, fb:"That just repeats the word: no explanation." },
+      { t:"ASCII is a character set.", ok:false, fb:"True, but it doesn't explain how CAB is stored." }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 4 */
+{ id:"4", q:"4", title:"File management", group:"Systems software", topic:"1.5.1 Operating systems", max:3,
+  asked:"Identify three ways the user can use the operating system's file management.",
+  how:[
+    "File management is the **operating system** letting the user **organise** their files.",
+    "Learn the list: **create, name/rename, move, copy, delete** files and folders; **put files into folders**; **search** for files; **sort** files; **set access rights** (permissions).",
+    "Say what is being acted on: \"rename **files**\", not just \"rename\"."
+  ],
+  marks:["1 mark for each correct way, up to 3", "Not accepted: compression, defragmentation, encryption, downloading, previewing, editing files", "\"Organise files\" without saying how is NE", "Only the **first** answer on each line is marked"],
+  teacher:"This is an easy 3 marks, but you have to know the list. Some people got confused with **utility software**: compression, defragmentation, encryption and backup are utility programs (see question 9), not file management.",
+  tasks:[
+  { id:"4-h", role:"help", type:"match", title:"File management or utility software?",
+    prompt:"Sort each task: is it part of the operating system's **file management**, or is it done by **utility software**?",
+    choices:["File management","Utility software"],
+    rows:[["Moving a file into a folder",0],["Compressing a file",1],["Renaming a folder",0],["Defragmenting the hard drive",1],["Deleting a file",0],["Encrypting a file",1],["Searching for a file",0],["Backing up files",1]],
+    hints:["File management is about **organising**: where files are, what they are called, who can use them.", "Utility software **maintains** or **protects** the computer."] },
+  { id:"4-o", role:"own", type:"multi", title:"Which answers score?",
+    prompt:"A student wrote these answers to \"Identify three ways you can use file management\". Select **all** the answers that would get a mark.",
+    options:[
+      { t:"Copy files to another folder", ok:true, fb:"Copying files is file management." },
+      { t:"Organise files", ok:false, fb:"NE: organise them **how**? E.g. into folders." },
+      { t:"Set permissions so only you can open a file", ok:true, fb:"Access rights are file management." },
+      { t:"Compress files", ok:false, fb:"That's utility software." },
+      { t:"Create a new folder", ok:true, fb:"Creating folders is file management." },
+      { t:"Open it", ok:false, fb:"Open **what**? Answers must say what they apply to." }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 5 */
+{ id:"5", q:"5", title:"Choosing secondary storage", group:"Memory and storage", topic:"1.2.2 Secondary storage", max:4,
+  asked:"State four characteristics to consider when choosing a secondary storage device.",
+  how:[
+    "There are **six** characteristics to learn: **capacity**, **speed**, **portability**, **durability**, **reliability** and **cost**.",
+    "A **state** question only needs the word. Learn all six so you can always give four."
+  ],
+  marks:["1 mark each for four of: capacity, speed, portability, durability, reliability, cost"],
+  tasks:[
+  { id:"5-h", role:"help", type:"match", title:"Match the characteristic",
+    prompt:"Match each question someone might ask about a storage device to the **characteristic** it is about.",
+    choices:["Capacity","Speed","Portability","Durability","Reliability","Cost"],
+    rows:[["How much data will it hold?",0],["How quickly can I copy my photos onto it?",1],["Can I carry it around easily?",2],["Will it survive being dropped?",3],["Will it keep working for years without losing data?",4],["How much does it cost per gigabyte?",5]] },
+  { id:"5-o", role:"own", type:"multi", title:"Four characteristics",
+    prompt:"Select **all** the answers that are characteristics of secondary storage to consider.",
+    options:[
+      { t:"Capacity", ok:true }, { t:"Colour", ok:false, fb:"The colour of the device isn't a storage characteristic." },
+      { t:"Durability", ok:true }, { t:"Clock speed", ok:false, fb:"Clock speed is about the CPU." },
+      { t:"Portability", ok:true }, { t:"Reliability", ok:true },
+      { t:"Volatility", ok:false, fb:"All secondary storage is non-volatile, so this isn't a choice you make." }, { t:"Cost", ok:true }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 6 */
+{ id:"6", q:"6", title:"Image metadata", group:"Sound and images", topic:"1.2.4 Images", max:3,
+  asked:"Identify three pieces of metadata often stored with an image.",
+  how:[
+    "**Metadata** is data **about** the file, stored with it.",
+    "For images: **height**, **width**, **colour depth** (bit depth), **date** taken, **geolocation**, **file size**, **file type**, **compression type**, **author**.",
+    "Be exact: \"size\" on its own is NE; write **file size**. \"Colour\" on its own is NE; write **colour depth**."
+  ],
+  marks:["1 mark each, up to 3", "No more than 2 marks for resolution / dimensions / height / width together", "\"Colour\" or \"size\" alone is NE"],
+  tasks:[
+  { id:"6-h", role:"help", type:"multi", title:"NE or a mark?",
+    prompt:"Select the answers that **would** get a mark.",
+    options:[
+      { t:"Size", ok:false, fb:"NE: write **file size**, or height/width." },
+      { t:"Colour depth", ok:true }, { t:"Colour", ok:false, fb:"NE: write **colour depth**." },
+      { t:"Date the photo was taken", ok:true }, { t:"Geolocation", ok:true },
+      { t:"The names of the people in the photo", ok:false, fb:"That's a feature of the image, not metadata stored with it." }
+    ]},
+  { id:"6-o", role:"own", type:"multi", title:"Choose three that score 3",
+    prompt:"Choose exactly **three** answers that would get **3 marks** together. Watch the rule about dimensions!",
+    exact:3,
+    options:[
+      { t:"Height", ok:"dim" }, { t:"Width", ok:"dim" }, { t:"Resolution", ok:"dim" },
+      { t:"File type", ok:true }, { t:"Author", ok:true }, { t:"File size", ok:true }
+    ],
+    dimRule:2,
+    hints:["Height, width and resolution are all about the dimensions. Together they can only get 2 marks."] }
+  ]},
+/* ---------------------------------------------------------------- 7a */
+{ id:"7a", q:"7(a)", title:"CPU and RAM working together", group:"CPU and memory", topic:"1.1.1 / 1.2.1 CPU and RAM", max:3,
+  asked:"Describe how the CPU and RAM work together.",
+  how:[
+    "The mark scheme wants a **chain** of three linked steps, not separate facts about each part.",
+    "1. The programs and data that are **running** are **stored in RAM**.",
+    "2. The CPU **fetches** the instructions and data **from RAM**.",
+    "3. The CPU then **executes** (processes) them."
+  ],
+  marks:["1: instructions / data (of running programs) are stored in RAM", "2: these are fetched from RAM by the CPU", "3: the CPU executes / processes them (mentioning the fetch-execute cycle counts)", "If you describe RAM and the CPU separately, you only get mark 2 if you clearly say the instructions are fetched **from RAM**."],
+  teacher:"The mark scheme is very specific here and it can feel a little unfair, but it's better to know now exactly what's expected: stored in RAM → fetched from RAM → executed by the CPU.",
+  model:{ label:"A full-mark answer", text:"The instructions and data of the programs that are running are stored in RAM. The CPU fetches each instruction from RAM, then executes it." },
+  tasks:[
+  { id:"7a-h", role:"help", type:"gap", title:"Complete the chain", prose:true,
+    prompt:"Complete the answer with one word in each gap.",
+    code:"The instructions and data of programs that are running are stored in [[0]]. The CPU [[1]] each instruction from [[2]] and then [[3]] it.",
+    gaps:[{accept:["RAM","memory","main memory"],w:6,ci:true},{accept:["fetches","gets","reads"],w:8,ci:true},{accept:["RAM","memory","main memory"],w:6,ci:true},{accept:["executes","processes","runs","carries out"],w:9,ci:true}],
+    hints:["The last word is the second half of the fetch-…… cycle."] },
+  { id:"7a-o", role:"own", type:"multi", title:"Which sentences get the 3 marks?",
+    prompt:"Select the **three** sentences that together would get all **3 marks**.",
+    options:[
+      { t:"Programs and data that are currently running are stored in RAM.", ok:true },
+      { t:"RAM is volatile, so it loses its data when the power is off.", ok:false, fb:"True, but it doesn't describe how they work together." },
+      { t:"The CPU fetches the instructions from RAM.", ok:true },
+      { t:"The CPU executes the instructions.", ok:true },
+      { t:"The CPU is the brain of the computer.", ok:false, fb:"Too vague to get a mark." }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 7b */
+{ id:"7b", q:"7(b)", title:"Cache memory", group:"CPU and memory", topic:"1.1.2 CPU performance", max:2,
+  asked:"Describe the purpose of cache memory.",
+  how:[
+    "Cache is a small, very fast memory **inside or next to the CPU**.",
+    "It **stores instructions and data that are used often** (or will be needed next)…",
+    "…so the CPU **doesn't need to fetch them from RAM**, which **speeds up** access."
+  ],
+  marks:["1: stores frequently used / recently used / next instructions or data", "1: so they don't need to be fetched from RAM // speeds up access"],
+  model:{ label:"A full-mark answer", text:"Cache stores instructions and data that are used frequently, so the CPU doesn't have to fetch them from RAM. This makes access faster." },
+  tasks:[
+  { id:"7b-h", role:"help", type:"gap", title:"Complete the description", prose:true,
+    prompt:"Fill each gap with one word.",
+    code:"Cache stores instructions and data that are used [[0]], so the CPU does not have to fetch them from [[1]]. This makes access [[2]].",
+    gaps:[{accept:["frequently","often","regularly"],w:10,ci:true},{accept:["RAM","memory","main memory"],w:6,ci:true},{accept:["faster","quicker"],w:7,ci:true}] },
+  { id:"7b-o", role:"own", type:"multi", title:"Two marks",
+    prompt:"Select the **two** sentences that would get both marks.",
+    options:[
+      { t:"Cache stores the data and instructions that are used most often.", ok:true },
+      { t:"Cache stores all the files on the computer.", ok:false, fb:"That's secondary storage." },
+      { t:"The CPU doesn't have to fetch them from RAM, so access is faster.", ok:true },
+      { t:"Cache makes the computer better.", ok:false, fb:"Too vague: better how?" }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 8 */
+{ id:"8", q:"8", title:"Registers", group:"CPU and memory", topic:"1.1.1 Von Neumann architecture", max:4,
+  asked:"Describe the purpose of two registers in Von Neumann architecture.",
+  how:[
+    "You get 1 mark for **naming** a register and 1 for **describing** its purpose, twice.",
+    "**MAR** (memory address register): holds the **address** of the data or instruction **to be fetched from or written to** memory.",
+    "**MDR** (memory data register): holds the **data or instruction that has been fetched** from memory, or is **to be written** to memory.",
+    "**PC** (program counter): holds the **address of the next instruction** to be run.",
+    "**Accumulator**: holds the **result** of calculations."
+  ],
+  marks:["2 marks per register: name + purpose", "\"The MAR stores the address\" is NE: the address **of what**?", "\"The MDR stores the data\" is NE: **which** data?"],
+  tasks:[
+  { id:"8-h", role:"help", type:"match", title:"Match the register",
+    prompt:"Match each register to its purpose.",
+    choices:["MAR","MDR","Program counter","Accumulator"],
+    rows:[["Holds the address of the next instruction to be run",2],["Holds the result of a calculation",3],["Holds the address of the data or instruction to be fetched from memory",0],["Holds the data or instruction that has just been fetched from memory",1]] },
+  { id:"8-o", role:"own", type:"multi", title:"Description mark or NE?",
+    prompt:"Select **all** the descriptions that would get the description mark.",
+    options:[
+      { t:"MAR: stores the address", ok:false, fb:"NE: the address of what?" },
+      { t:"MAR: stores the address of the instruction or data to be fetched from memory", ok:true },
+      { t:"PC: counts the programs", ok:false, fb:"Wrong: it holds the address of the next instruction." },
+      { t:"PC: stores the address of the next instruction to be run", ok:true },
+      { t:"MDR: stores the data", ok:false, fb:"NE: which data?" },
+      { t:"MDR: stores the data or instruction that has been fetched from memory", ok:true }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 9 */
+{ id:"9", q:"9", title:"Defragmentation", group:"Systems software", topic:"1.5.2 Utility software", max:3,
+  asked:"Explain why the computer is more efficient after defragmentation.",
+  how:[
+    "Over time, parts of files get split up and stored in different places on a hard disk.",
+    "Defragmentation moves the parts of each file **next to each other** (contiguous), and puts the **free space together**.",
+    "**Reading:** the read head doesn't have to move as far between parts of a file, so **files open faster**.",
+    "**Writing:** there are large blocks of free space, so new files **don't need to be split**, so **saving is faster**."
+  ],
+  marks:["Read: less time to read/access a file because its parts are contiguous… so the head moves less", "Write: less time to save because free space is together… so files don't need splitting", "Up to 3 marks"],
+  teacher:"EXPLAIN means explain: say **why** it is faster, not just that it is. You get marks for the effect on **read** speed **and** on **write** speed, so cover both.",
+  model:{ label:"A full-mark answer", text:"The parts of each file are moved next to each other, so the read head doesn't need to move as far, which makes files faster to open. The free space is also grouped together, so new files don't need to be split up, which makes saving faster." },
+  tasks:[
+  { id:"9-h", role:"help", type:"gap", title:"Read and write", prose:true,
+    prompt:"Complete the explanation. Notice it covers **reading** and **writing**.",
+    code:"Parts of each file are moved so they are [[0]] (next to each other). This means the read head doesn't have to move as [[1]], so files are [[2]] to read. The free space is also grouped together, so new files don't need to be [[3]], so they are faster to [[4]].",
+    gaps:[{accept:["contiguous","together"],w:10,ci:true},{accept:["far","much"],w:5,ci:true},{accept:["faster","quicker"],w:7,ci:true},{accept:["split","split up","fragmented"],w:9,ci:true},{accept:["save","write","store"],w:6,ci:true}] },
+  { id:"9-o", role:"own", type:"multi", title:"Full marks for an explain",
+    prompt:"Select the **three** sentences that together would get **3 marks**.",
+    exact:3,
+    options:[
+      { t:"Files are faster to open because the parts of each file are now stored next to each other…", ok:true },
+      { t:"…so the read head doesn't need to move as far to read the next part.", ok:true },
+      { t:"New files are quicker to save because the free space is together, so they don't need to be split.", ok:true },
+      { t:"The computer is faster.", ok:false, fb:"This doesn't explain why." },
+      { t:"Defragmentation deletes files you don't need.", ok:false, fb:"It doesn't delete anything." }
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 10 */
+{ id:"10", q:"10", title:"Extended answer: AI monitoring posts", group:"Ethics, law and privacy", topic:"1.6.1 Ethical, legal and privacy issues", max:8,
+  asked:"Discuss the positive and negative uses of AI by social networking websites to monitor users' posts, including legal, ethical and privacy issues.",
+  how:[
+    "Stay on the question: **AI monitoring posts on a social network**. Not AI in general, robots or self-driving cars.",
+    "Use the three headings from the question: **Legal**, **Ethical**, **Privacy**. Under **each** one, give a **positive** and a **negative**, and explain each point.",
+    "Don't repeat yourself: each point should be a new idea. Bullet points with explanations are fine; the examiner likes a clear structure."
+  ],
+  marks:["Levels marking: 6–8 needs a wide range of points, applied to the context, balanced (positives and negatives), covering all three areas", "3–5: reasonable range, some missed opportunities", "1–2: basic points, little explanation"],
+  teacher:"Your answer must be about AI **monitoring posts**, not AI use in general. There was quite a lot of repetition, and some people didn't cover all three areas. Use the headings so you can see you've covered legal, ethical **and** privacy.",
+  ideas:[
+    ["Legal", "+ AI can spot posts that break copyright (e.g. stolen videos or images) and remove them quickly.", "− The site must follow the Data Protection Act when the AI processes users' posts."],
+    ["Legal", "+ Illegal content can be found and removed before many people see it.", "− Users agreed to the terms when signing up, but may not know the AI is reading their posts."],
+    ["Ethical", "+ Users may feel safer because inappropriate posts are blocked.", "− The AI may wrongly block posts or users, which is unfair."],
+    ["Ethical", "+ It can check far more posts than human moderators.", "− Records of what was flagged could be kept and used for other purposes."],
+    ["Privacy", "+ Some people prefer a computer checking their posts to a person reading them.", "− Users may feel they are being watched all the time."],
+    ["Privacy", "", "− The terms and conditions may sign away some of their right to privacy."]
+  ],
+  tasks:[
+  { id:"10-h", role:"help", type:"multi", title:"On the question or off it?",
+    prompt:"Select **all** the points that are **in the context** of AI monitoring posts on a social network.",
+    options:[
+      { t:"AI can quickly find and hide abusive comments before many people see them.", ok:true },
+      { t:"AI robots might take over the world.", ok:false, fb:"Off the question: this isn't about monitoring posts." },
+      { t:"The AI might wrongly flag a joke as abuse and ban the user unfairly.", ok:true },
+      { t:"Self-driving cars may crash.", ok:false, fb:"Off the question." },
+      { t:"Users may not like the idea that every post they write is being analysed.", ok:true },
+      { t:"AI can write homework for students.", ok:false, fb:"Off the question." }
+    ]},
+  { id:"10-o", role:"own", type:"essay", title:"Write it, then mark it",
+    prompt:"Write a full answer to the question below, using the structure. Then tick the checklist honestly and choose the level you think it reaches.",
+    question:"Social networking websites use artificial intelligence (AI) to monitor posts from users. Discuss the positive and negative uses of AI by social networking websites including: legal issues, ethical issues, privacy issues. [8]",
+    frame:"LEGAL\n+ \n− \n\nETHICAL\n+ \n− \n\nPRIVACY\n+ \n− \n",
+    checklist:[
+      "Every point is about AI **monitoring posts** on a social network",
+      "I have at least one point under **Legal**",
+      "I have at least one point under **Ethical**",
+      "I have at least one point under **Privacy**",
+      "I have **positives and negatives**, not just negatives",
+      "Each point is **explained** (what happens, and why it matters), not one word",
+      "I haven't **repeated** the same idea under different headings"
+    ],
+    levels:[["1–2","Basic points, little explanation, some off the question"],["3–5","A reasonable range, mostly explained, one or two areas thin"],["6–8","All three areas, balanced, every point explained and on the question"]] }
+  ]},
+/* ---------------------------------------------------------------- 11ai */
+{ id:"11ai", q:"11(a)(i)", title:"Drawing logic diagrams", group:"Boolean logic", topic:"2.4.1 Boolean logic", max:3,
+  asked:"Complete the logic diagram for P = (A OR B) AND NOT C.",
+  how:[
+    "Work from the **inside out**: brackets first, then NOT, then the gate that joins them.",
+    "For P = (A OR B) AND NOT C: A and B go into an **OR** gate; C goes into a **NOT** gate; both results go into an **AND** gate.",
+    "Draw the shapes carefully. **NOT** has a circle on its point. **AND** and **OR** have **no** circle (a circle would make them NAND/NOR). Writing the name inside a box gets no mark."
+  ],
+  marks:["1 mark per correct gate symbol", "The shape is marked, not any name you write"],
+  visual:"gates",
+  tasks:[
+  { id:"11ai-h", role:"help", type:"gates", title:"Build (A AND B) OR NOT C",
+    prompt:"Choose the gate for each box so the circuit matches **P = (A AND B) OR NOT C**.",
+    boxes:[{ins:["A","B"], ans:"AND"},{ins:["C"], ans:"NOT"}], final:"OR",
+    hints:["The brackets tell you A and B are joined first.", "The two halves are joined by the word in the middle of the expression."] },
+  { id:"11ai-o", role:"own", type:"gates", title:"Build NOT A AND (B OR C)",
+    prompt:"Choose the gate for each box so the circuit matches **P = NOT A AND (B OR C)**.",
+    boxes:[{ins:["A"], ans:"NOT"},{ins:["B","C"], ans:"OR"}], final:"AND" }
+  ]},
+/* ---------------------------------------------------------------- 11aii */
+{ id:"11aii", q:"11(a)(ii)", title:"Purpose of a truth table", group:"Boolean logic", topic:"2.4.1 Boolean logic", max:2,
+  asked:"Describe the purpose of a truth table.",
+  how:[
+    "Learn this definition word for word: **a truth table shows all the possible inputs to a logic circuit, and the output for each input**.",
+    "The second mark needs the **link**: the output that goes with **each** input."
+  ],
+  marks:["1: to show all possible inputs (to the logic circuit)…", "1: …and the output for each input", "\"All possible combinations of inputs and outputs\" only gets the first mark", "\"The output for each possible input\" gets both"],
+  teacher:"You must learn the definition from the mark scheme, shown above.",
+  tasks:[
+  { id:"11aii-h", role:"help", type:"choice", title:"Which gets 2 marks?",
+    prompt:"Which answer gets **both** marks?",
+    options:[
+      { t:"It shows all possible combinations of inputs and outputs.", fb:"This only gets 1 mark: it doesn't link each output to its input." },
+      { t:"It shows the output for each possible input to the circuit.", fb:"Yes. All possible inputs, and the output for each." },
+      { t:"It shows if the circuit is true or false.", fb:"Too vague." }
+    ], answer:1 },
+  { id:"11aii-o", role:"own", type:"gap", title:"Write the definition", prose:true,
+    prompt:"Write the definition from memory: one word in each gap.",
+    code:"A truth table shows [[0]] the possible [[1]] to a logic circuit, and the [[2]] for [[3]] input.",
+    gaps:[{accept:["all"],w:4,ci:true},{accept:["inputs","input combinations"],w:7,ci:true},{accept:["output"],w:7,ci:true},{accept:["each","every"],w:6,ci:true}] }
+  ]},
+/* ---------------------------------------------------------------- 11aiii */
+{ id:"11aiii", q:"11(a)(iii)", title:"Rows in a truth table", group:"Boolean logic", topic:"2.4.1 Boolean logic", max:1,
+  asked:"How many rows are needed in a truth table for P = (A OR B) AND NOT C?",
+  how:[
+    "Count the **inputs** (the letters going in: A, B, C), not the gates.",
+    "The number of rows is **2 to the power of the number of inputs**: 2 inputs → 4 rows, 3 inputs → 8 rows, 4 inputs → 16 rows.",
+    "The answer was **8**."
+  ],
+  marks:["1 mark: 8"],
+  teacher:"There are always 2 to the power of the number of inputs, so 2³ = 8 rows. If you have time in the exam, write the truth table out to check.",
+  tasks:[
+  { id:"11aiii-h", role:"help", type:"gap", title:"Count the rows",
+    prompt:"How many rows (not counting the heading) does each truth table need?",
+    code:`P = A AND B                 → [[0]] rows
+P = (A OR B) AND NOT C      → [[1]] rows
+P = (A AND B) OR (C AND D)  → [[2]] rows`,
+    gaps:[{accept:["4"],w:3},{accept:["8"],w:3},{accept:["16"],w:3}],
+    hints:["Count the different letters.", "2 × 2 × 2 for three inputs."] },
+  { id:"11aiii-o", role:"own", type:"table", title:"Write out the truth table",
+    prompt:"Complete the **P** column for **P = (A OR B) AND NOT C**. All 8 input rows are given.",
+    columns:["A","B","C","P"],
+    rows:[["0","0","0","0"],["0","0","1","0"],["0","1","0","1"],["0","1","1","0"],["1","0","0","1"],["1","0","1","0"],["1","1","0","1"],["1","1","1","0"]],
+    blanks:[3],
+    hints:["If C is 1, NOT C is 0, so P must be 0.", "If C is 0, P is just A OR B."] }
+  ]},
+/* ---------------------------------------------------------------- 11bi */
+{ id:"11bi", q:"11(b)(i)", title:"Casting", group:"Data types and casting", topic:"2.2.2 Data types", max:2,
+  asked:"Define casting and give the line number where casting is used.",
+  how:[
+    "**Casting** is **changing a value from one data type to another**, e.g. an integer into a string.",
+    "Look for `str(…)`, `int(…)`, `float(…)` or `real(…)`. In the paper it was line 03: `str(year)`."
+  ],
+  marks:["1: definition: converting data from one data type to another", "1: line 03"],
+  tasks:[
+  { id:"11bi-h", role:"help", type:"choice", title:"The definition",
+    prompt:"Which is the best definition of **casting**?",
+    options:[
+      { t:"Joining two strings together", fb:"That is concatenation." },
+      { t:"Changing a value from one data type to another", fb:"Yes. E.g. str(2021) turns the integer 2021 into the string \"2021\"." },
+      { t:"Storing a value in a variable", fb:"That is assignment." },
+      { t:"Checking that an input is sensible", fb:"That is validation." }
+    ], answer:1 },
+  { id:"11bi-o", role:"own", type:"gap", title:"Find the casting",
+    prompt:"Which **two** lines use casting? Put the smaller line number first.",
+    erl:true,
+    pre:`01 name = input("Enter name")
+02 age = int(input("Enter age"))
+03 nextAge = age + 1
+04 message = name + " will be " + str(nextAge)
+05 print(message)`,
+    code:"Line [[0]] and line [[1]]",
+    gaps:[{accept:["02","2"],w:3},{accept:["04","4"],w:3}],
+    hints:["Look for int( ) and str( )."] }
+  ]},
+/* ---------------------------------------------------------------- 11bii */
+{ id:"11bii", q:"11(b)(ii)", title:"Trace tables", group:"Trace tables", topic:"2.1.2 Designing algorithms", max:4,
+  asked:"Complete the trace table for the staff ID algorithm with surname \"Kofi\" and year 2021.",
+  how:[
+    "Make **one new row each time a variable changes** or something is printed, with the **line number** it happens on.",
+    "Only fill the column that **changes** on that line; leave the others blank.",
+    "When you reach a loop, **check the condition every time**. In the paper, `staffID.length < 10` was checked again after each \"x\" was added: Kofi2021 (8) → Kofi2021x (9) → Kofi2021xx (10), then stop.",
+    "**Spaces matter.** `\"ID \" + staffID` prints ID Kofi2021xx, with one space. IDKofi2021xx is a different string."
+  ],
+  marks:["1: Kofi2021 on line 03", "1: Kofi2021x on line 05", "1: Kofi2021xx on line 05", "1: ID Kofi2021xx output on line 07, once only"],
+  teacher:"This was badly done. Most people got Kofi2021 but didn't keep going round the loop. Practise on the tables below until you can do it without hints.",
+  model:{ label:"The completed table from the paper", table:{ cols:["Line","surname","year","staffID","Output"], rows:[["01","Kofi","","",""],["02","","2021","",""],["03","","","Kofi2021",""],["05","","","Kofi2021x",""],["05","","","Kofi2021xx",""],["07","","","","ID Kofi2021xx"]] } },
+  tasks:[
+  { id:"11bii-h", role:"help", type:"trace2", title:"Trace with line numbers given",
+    prompt:"The user enters **Sam** then **42**. The line numbers are given. Fill in the value that changes on each row.",
+    code:`01 name = input("Enter name")
+02 num = input("Enter number")
+03 user = name + str(num)
+04 while user.length < 7
+05     user = user + "0"
+06 endwhile
+07 print("User " + user)`,
+    columns:["Line","name","num","user","Output"],
+    rows:[
+      [["01",1],["Sam",1],["",1],["",1],["",1]],
+      [["02",1],["",1],["42",1],["",1],["",1]],
+      [["03",1],["",1],["",1],["Sam42"],["",1]],
+      [["05",1],["",1],["",1],["Sam420"],["",1]],
+      [["05",1],["",1],["",1],["Sam4200"],["",1]],
+      [["07",1],["",1],["",1],["",1],["User Sam4200"]]
+    ],
+    hints:["Sam42 has 5 characters, so the loop runs.", "After each \"0\" is added, count the characters again. Stop when it reaches 7.", "Look at the print: there is a space inside the quotes after User."] },
+  { id:"11bii-o", role:"own", type:"trace2", title:"Trace it all yourself",
+    prompt:"The user enters **1111**, then **2222**, then **1234**. Fill in the whole table, including the line numbers. Leave a box **empty** if nothing changes in that column on that row. There are 7 rows.",
+    code:`01 pin = input("Enter PIN")
+02 tries = 1
+03 while pin != "1234" AND tries < 3
+04     tries = tries + 1
+05     pin = input("Enter PIN")
+06 endwhile
+07 print("Tries: " + str(tries))`,
+    columns:["Line","pin","tries","Output"],
+    rows:[
+      [["01"],["1111"],[""],[""]],
+      [["02"],[""],["1"],[""]],
+      [["04"],[""],["2"],[""]],
+      [["05"],["2222"],[""],[""]],
+      [["04"],[""],["3"],[""]],
+      [["05"],["1234"],[""],[""]],
+      [["07"],[""],[""],["Tries: 3"]]
+    ],
+    hints:["Line 03 is the condition: it changes nothing, so it gets no row.", "After the second time round, tries is 3, so the loop stops even though the PIN is right.", "The output has a space after the colon."] },
+  { id:"11bii-p", role:"plus", type:"trace2", title:"One more loop",
+    prompt:"The user enters **Jo**. Fill in the whole table, including line numbers. Leave boxes empty where nothing changes.",
+    code:`01 word = input("Enter word")
+02 count = 0
+03 while word.length < 5
+04     word = word + "!"
+05     count = count + 1
+06 endwhile
+07 print(word + " " + str(count))`,
+    columns:["Line","word","count","Output"],
+    rows:[
+      [["01"],["Jo"],[""],[""]],
+      [["02"],[""],["0"],[""]],
+      [["04"],["Jo!"],[""],[""]],
+      [["05"],[""],["1"],[""]],
+      [["04"],["Jo!!"],[""],[""]],
+      [["05"],[""],["2"],[""]],
+      [["04"],["Jo!!!"],[""],[""]],
+      [["05"],[""],["3"],[""]],
+      [["07"],[""],[""],["Jo!!! 3"]]
+    ]}
+  ]},
+/* ---------------------------------------------------------------- 12ai */
+{ id:"12ai", q:"12(a)(i)", title:"Choosing data types", group:"Data types and casting", topic:"2.2.2 Data types", max:2,
+  asked:"State the most appropriate data type for nights and room.",
+  how:[
+    "The five data types: **integer** (whole number), **real/float** (decimal), **Boolean** (True/False), **character** (one character), **string** (text).",
+    "Write the **name** of the data type. \"Whole number\" or \"text\" is a description, and gets no mark."
+  ],
+  marks:["nights: integer", "room: string", "Descriptions are not accepted; \"character\" is not accepted for string"],
+  tasks:[
+  { id:"12ai-h", role:"help", type:"match", title:"Match the data type",
+    prompt:"Choose the best data type for each field of a cinema booking.",
+    choices:["Integer","Real","Boolean","Character","String"],
+    rows:[["seats (e.g. 3)",0],["price (e.g. 8.50)",1],["paid (yes or no)",2],["row letter (e.g. F)",3],["film title (e.g. Wicked)",4]] },
+  { id:"12ai-o", role:"own", type:"gap", title:"Name the data types",
+    prompt:"Type the name of the best data type for each field in a library record.",
+    code:`bookTitle    "The Hobbit"   → [[0]]
+pages        310            → [[1]]
+fine         1.25           → [[2]]
+onLoan       True           → [[3]]`,
+    gaps:[{accept:["string","str"],w:8,ci:true},{accept:["integer","int"],w:8,ci:true},{accept:["real","float"],w:8,ci:true},{accept:["boolean","bool"],w:8,ci:true}] }
+  ]},
+/* ---------------------------------------------------------------- 12aii */
+{ id:"12aii", q:"12(a)(ii)", title:"Boolean fields", group:"Data types and casting", topic:"2.2.2 Data types", max:1,
+  asked:"Give the name of one field that could be stored as a Boolean.",
+  how:["A **Boolean** can only be **True** or **False**. Look for a field that is yes/no. In the paper it was **stayComplete**."],
+  marks:["1: stayComplete"],
+  tasks:[
+  { id:"12aii-h", role:"help", type:"choice", title:"Which could be Boolean?",
+    prompt:"A gym member record has these fields. Which one could be stored as a **Boolean**?",
+    options:[{t:"memberName", fb:"A name is text: string."},{t:"age", fb:"Age is a whole number: integer."},{t:"hasPaid", fb:"Yes: it is either True or False."},{t:"joinDate", fb:"A date has many possible values."}], answer:2 },
+  { id:"12aii-o", role:"own", type:"multi", title:"Select all the Booleans",
+    prompt:"Select **all** the fields that could be stored as a Boolean.",
+    options:[{t:"isMember", ok:true},{t:"surname", ok:false},{t:"overEighteen", ok:true},{t:"score", ok:false},{t:"gameOver", ok:true},{t:"lives", ok:false}] }
+  ]},
+/* ---------------------------------------------------------------- 12aiii */
+{ id:"12aiii", q:"12(a)(iii)", title:"SQL", group:"SQL", topic:"2.2.3 SQL", max:4,
+  asked:"Rewrite the incorrect SQL statement so it displays all bookings that stay more than one night.",
+  how:[
+    "Every SQL query you need has three parts, in this order: **SELECT** the fields, **FROM** the table, **WHERE** the condition.",
+    "To show every field, use `SELECT *` or list the fields separated by commas.",
+    "More than one night is `Nights > 1`. Check the direction of the symbol."
+  ],
+  marks:["1: SELECT * (or all the fields listed)", "1: FROM TblBookings", "1: WHERE", "1: Nights > 1 (or >= 2)", "Max 3 if in the wrong order or with extra invalid code"],
+  teacher:"Lots of people used SELECT ALL or IF. Neither is allowed in SQL: use SELECT * and WHERE.",
+  model:{ label:"A full-mark answer", code:"SELECT *\nFROM TblBookings\nWHERE Nights > 1" },
+  tasks:[
+  { id:"12aiii-h", role:"help", type:"gap", title:"Fill in the SQL",
+    prompt:"Complete the query to show **all fields** for bookings in a **Premium** room.",
+    code:`[[0]] *
+[[1]] TblBookings
+[[2]] Room = "Premium"`,
+    gaps:[{accept:["SELECT"],w:7,ci:true},{accept:["FROM"],w:5,ci:true},{accept:["WHERE"],w:6,ci:true}] },
+  { id:"12aiii-o", role:"own", type:"sql", title:"Fix the SQL",
+    prompt:"A club has a table called **TblMembers**. This SQL should show **all fields** for members aged **18 or over**, but it is wrong:",
+    wrong:"SELECT ALL\nFROM TblMembers\nIF Age < 18",
+    table:{ name:"TblMembers", cols:["FirstName","Surname","Age","Team"], rows:[["Ava","Shaw",17,"Red"],["Ben","Okafor",18,"Blue"],["Cara","Reid",21,"Red"],["Dan","Hall",15,"Blue"],["Eli","Moss",30,"Green"]] },
+    expect:{ cols:4, rows:[1,2,4] },
+    hints:["SELECT ALL isn't SQL. What symbol means every field?", "IF isn't SQL. Which keyword sets the condition?", "18 or over: >= 18."] }
+  ]},
+/* ---------------------------------------------------------------- 12b */
+{ id:"12b", q:"12(b)", title:"Writing an algorithm with a loop", group:"Writing algorithms", topic:"2.2.1 Programming fundamentals", max:6,
+  asked:"Car park: £4 per hour, £2 if electric. Input hours and electric, output the price, repeat until 0 hours is entered.",
+  how:[
+    "Plan the marks: **two inputs**; an **if** for electric; the **two calculations** with output; a **loop** around all of that; which **stops when 0 is entered**.",
+    "The **inputs must be inside the loop**, so new values are asked for each time. Calculating again with the same hours doesn't count.",
+    "Stop on 0 exactly: use `while hours != 0`. `while hours > 0` is not accepted (it would also stop on -1)."
+  ],
+  marks:["1: input hours and electric", "1: if to check electric", "1: hours × 2 output for electric", "1: hours × 4 output otherwise", "1: repeats the inputs and calculation", "1: stops when 0 hours is entered"],
+  model:{ label:"A full-mark answer in Python", code:`hours = int(input("Hours: "))
+while hours != 0:
+    electric = input("Electric? Y/N: ")
+    if electric == "Y":
+        price = hours * 2
+    else:
+        price = hours * 4
+    print("Price: £" + str(price))
+    hours = int(input("Hours: "))` },
+  tasks:[
+  { id:"12b-h", role:"help", type:"gap", title:"Boat hire",
+    prompt:"Boat hire costs **£10 per hour**, or **£5 per hour** for members. Complete the program so it repeats until **0** hours is entered.",
+    code:`hours = int(input("Hours: "))
+while hours [[0]] 0:
+    member = input("Member? Y/N: ")
+    [[1]] member == "Y":
+        price = hours * [[2]]
+    else:
+        price = hours * [[3]]
+    print("Price: £" + str(price))
+    hours = [[4]](input("Hours: "))`,
+    gaps:[{accept:["!="],w:3},{accept:["if"],w:3},{accept:["5"],w:3},{accept:["10"],w:3},{accept:["int"],w:4}],
+    hints:["Keep going while hours is **not equal** to 0.", "The member price is the cheaper one.", "Hours is a number, so cast the input."] },
+  { id:"12b-o", role:"own", type:"code", title:"Swimming pool tickets",
+    prompt:"A pool charges **£5** per swim, or **£3** per swim with a leisure card. Write a program that asks `Swims: ` and `Card? Y/N: `, prints the price like `Price: £15`, and **repeats until 0 swims** is entered.",
+    starter:"",
+    tests:[
+      { inputs:["3","N","2","Y","0"], expected:"Swims: 3\nCard? Y/N: N\nPrice: £15\nSwims: 2\nCard? Y/N: Y\nPrice: £6\nSwims: 0" },
+      { inputs:["0"], expected:"Swims: 0" },
+      { inputs:["1","Y","4","N","0"], expected:"Swims: 1\nCard? Y/N: Y\nPrice: £3\nSwims: 4\nCard? Y/N: N\nPrice: £20\nSwims: 0" }
+    ],
+    require:[{re:"while", msg:"Use a **while** loop so it repeats until 0 is entered."},{re:"if", msg:"Use **if** to check for a leisure card."}],
+    forbid:[{re:"while\\s+\\w+\\s*>\\s*0", msg:"`while swims > 0` would also stop on -1. Use `!= 0` so it stops on exactly 0."}],
+    hints:["Copy the shape of the boat hire program.", "Ask for swims once before the loop, and again at the end of the loop.", "print(\"Price: £\" + str(price))"],
+    solution:`swims = int(input("Swims: "))
+while swims != 0:
+    card = input("Card? Y/N: ")
+    if card == "Y":
+        price = swims * 3
+    else:
+        price = swims * 5
+    print("Price: £" + str(price))
+    swims = int(input("Swims: "))` }
+  ]},
+/* ---------------------------------------------------------------- 13i */
+{ id:"13i", q:"13(i)", title:"Logic errors", group:"Testing", topic:"2.3.2 Testing", max:1,
+  asked:"Define the term logic error.",
+  how:["A **logic error** is an error that **doesn't stop the program running** (it doesn't crash), but it **gives the wrong or unexpected output**.","Compare: a **syntax error** breaks the rules of the language, so the program won't run."],
+  marks:["1: an error that does not cause the program to crash // produces unexpected output"],
+  tasks:[
+  { id:"13i-h", role:"help", type:"choice", title:"Which is a logic error?",
+    prompt:"Which of these is a **logic error**?",
+    options:[{t:"Missing a colon after if", fb:"That's a syntax error: Python won't run it."},{t:"Using > instead of >= so 18-year-olds are rejected", fb:"Yes. The program runs, but gives the wrong result."},{t:"Spelling print as pritn", fb:"That stops the program: not a logic error."}], answer:1 },
+  { id:"13i-o", role:"own", type:"choice", title:"The definition",
+    prompt:"Which definition would get the mark?",
+    options:[{t:"An error that makes the program crash", fb:"That's the opposite: logic errors don't crash."},{t:"An error that breaks the rules of the language", fb:"That's a syntax error."},{t:"An error that doesn't stop the program running but gives an unexpected output", fb:"Yes."}], answer:2 }
+  ]},
+/* ---------------------------------------------------------------- 13ii */
+{ id:"13ii", q:"13(ii)", title:"Finding logic errors", group:"Testing", topic:"2.3.2 Testing", max:4,
+  asked:"Identify the line numbers of two logic errors in the counting algorithm and explain each.",
+  how:[
+    "Trace the code in your head with the example data. Where does it go wrong?",
+    "In the paper: **line 02** `empty = 0` is **inside** the loop, so the count resets to 0 every time round. It should be before the loop.",
+    "**Line 07** `print(\"empty\")` has quotes, so it prints the word *empty* instead of the **value** of the variable."
+  ],
+  marks:["Mark in pairs: line number + explanation", "Line 02: resets empty to 0 each time round the loop", "Line 07: prints the string \"empty\", not the variable's value"],
+  tasks:[
+  { id:"13ii-h", role:"help", type:"choice", title:"Spot the first error",
+    prompt:"This should count the **passes** (scores of 50 or more). Which line has a logic error that makes the count wrong?",
+    erl:true,
+    code:`01 for i = 0 to 4
+02     passes = 0
+03     if scores[i] >= 50 then
+04         passes = passes + 1
+05     endif
+06 next i
+07 print(passes)`,
+    options:[{t:"Line 01", fb:"0 to 4 covers all five scores."},{t:"Line 02", fb:"Yes. passes is reset to 0 every time round, so it can only ever end at 0 or 1. It should be before the loop."},{t:"Line 03", fb:"50 or more is >= 50, which is right."},{t:"Line 07", fb:"No quotes, so it prints the value. That's right."}], answer:1 },
+  { id:"13ii-o", role:"own", type:"code", kind:"Fix", title:"Fix two logic errors",
+    prompt:"This Python program should count how many temperatures are **below 0** and print `Frosty days: 2`. It runs, but the output is wrong. Fix the **two** logic errors.",
+    starter:`temps = [3, -2, 5, -1, 4]
+for t in temps:
+    frosty = 0
+    if t < 0:
+        frosty = frosty + 1
+print("Frosty days: " + "frosty")`,
+    expected:"Frosty days: 2",
+    require:[{re:"str\\s*\\(\\s*frosty\\s*\\)", msg:"Print the **value** of frosty with `str(frosty)`, not the word in quotes."}],
+    hints:["Where is frosty set to 0? What happens to it each time round the loop?", "\"frosty\" in quotes is just the word frosty."],
+    solution:`temps = [3, -2, 5, -1, 4]
+frosty = 0
+for t in temps:
+    if t < 0:
+        frosty = frosty + 1
+print("Frosty days: " + str(frosty))` }
+  ]},
+/* ---------------------------------------------------------------- 14 */
+{ id:"14", q:"14", title:"Merge sort", group:"Sorting", topic:"2.1.3 Sorting algorithms", max:3,
+  asked:"Complete the merge sort of 45, 12, -99, 100, -13, 0, 17, -27.",
+  how:[
+    "After splitting into single items, **merge pairs of lists**. Each time you merge, the new list must already be **in order**.",
+    "Show **one row for each stage**, with the **sizes clear**: 8 lists of 1 → 4 lists of 2 → 2 lists of 4 → 1 list of 8.",
+    "Draw a box (or a clear gap) round each list so the examiner can see the size. Never merge first and sort afterwards: that gets no credit."
+  ],
+  marks:["1: correct sorted lists of size 2", "1: correct sorted lists of size 4", "1: correct sorted list of size 8", "Sizes must be clear; showing only the final sorted list gets nothing"],
+  teacher:"The main issue was a clear layout showing the sizes of the lists. Lay it out like the example: one row per stage, with each list in its own box.",
+  visual:"merge",
+  tasks:[
+  { id:"14-h", role:"help", type:"merge", title:"Merge four numbers",
+    prompt:"Merge sort **9, 3, 7, 1**. Fill in each box. Each list must be in order.",
+    levels:[[[9],[3],[7],[1]],[[3,9],[1,7]],[[1,3,7,9]]], given:[0] },
+  { id:"14-o", role:"own", type:"merge", title:"Merge eight numbers",
+    prompt:"Merge sort **23, 8, -4, 15, 0, 31, -12, 6**. Fill in every box.",
+    levels:[[[23],[8],[-4],[15],[0],[31],[-12],[6]],[[8,23],[-4,15],[0,31],[-12,6]],[[-4,8,15,23],[-12,0,6,31]],[[-12,-4,0,6,8,15,23,31]]], given:[0] }
+  ]},
+/* ---------------------------------------------------------------- 15a */
+{ id:"15a", q:"15(a)", title:"2D arrays: total and average", group:"Arrays and sub programs", topic:"2.2.3 Arrays", max:6,
+  asked:"Use the 2D array of minutes (30 students × 5 days) to output the average minutes per day for the class.",
+  how:[
+    "This is a horrible, wordy question, but the marks follow a pattern you can learn: **nested loops**, **add every item to a total**, then **work out the average after the loops**.",
+    "Set `total = 0` **before** the loops. Loop through every student (30), and inside that, every day (5). Add each value to the total.",
+    "**After** both loops: average = total ÷ (30 × 5). Then print it.",
+    "In OCR Exam Reference Language an item is `hoursPlayed[x, y]`; in Python it is `minutes[x][y]`. You can also loop straight through: `for student in minutes:` then `for m in student:`."
+  ],
+  marks:["1: loop through the 30 students", "1: loop through the 5 days (nested)", "1: access each item, e.g. minutes[x][y]", "1: add it to a total", "1: calculate the average correctly, outside the loops", "1: output the result"],
+  teacher:"It's fine to use Python `for student in minutes:` rather than `for i in range`, but almost nobody got the nesting, the totalling and the average right. Those three things are worth practising.",
+  model:{ label:"A full-mark answer in Python", code:`total = 0
+for student in minutes:
+    for m in student:
+        total = total + m
+average = total / (30 * 5)
+print(average)` },
+  tasks:[
+  { id:"15a-h", role:"help", type:"parsons", title:"Put the lines in order",
+    prompt:"`minutes` holds 3 students × 3 days. Put the lines in order (and indent them) to print the average.",
+    pre:"minutes = [[30, 45, 20],\n           [15, 60, 25],\n           [40, 10, 25]]",
+    lines:[["total = 0",0],["for student in minutes:",0],["for m in student:",1],["total = total + m",2],["average = total / (3 * 3)",0],["print(\"Average: \" + str(average))",0]],
+    start:[4,2,0,5,3,1], solutions:[[0,1,2,3,4,5]],
+    output:"Average: 30.0" },
+  { id:"15a-o", role:"own", type:"code", title:"Average steps",
+    prompt:"`steps` holds the step counts (in hundreds) for **4 people over 5 days**. Write code to print the **average** for every value in the table, like `Average: 28.75`. Use nested loops and a total.",
+    starter:`steps = [[20, 35, 15, 40, 30],
+         [45, 50, 25, 10, 20],
+         [30, 30, 35, 15, 40],
+         [10, 25, 20, 45, 35]]
+`,
+    expected:"Average: 28.75",
+    require:[{re:"for[^\\n]*:\\s*\\n\\s+for", msg:"Use **nested loops**: one loop for each person, and a loop inside it for each day."},{re:"total", msg:"Keep a running **total**."}],
+    forbid:[{re:"\\bsum\\s*\\(", msg:"In the exam you need the loops and a total, so don't use sum() here."}],
+    hints:["Set total = 0 before the loops.", "Inside the inner loop: total = total + value.", "There are 4 × 5 values. Divide after the loops."],
+    solution:`steps = [[20, 35, 15, 40, 30],
+         [45, 50, 25, 10, 20],
+         [30, 30, 35, 15, 40],
+         [10, 25, 20, 45, 35]]
+total = 0
+for person in steps:
+    for s in person:
+        total = total + s
+average = total / (4 * 5)
+print("Average: " + str(average))` },
+  { id:"15a-p", role:"plus", type:"code", title:"Average for each day",
+    prompt:"Using the same `steps` table, print the average for **each day**, one per line, like `Day 0: 26.25`.",
+    starter:`steps = [[20, 35, 15, 40, 30],
+         [45, 50, 25, 10, 20],
+         [30, 30, 35, 15, 40],
+         [10, 25, 20, 45, 35]]
+`,
+    expected:"Day 0: 26.25\nDay 1: 35.0\nDay 2: 23.75\nDay 3: 27.5\nDay 4: 31.25",
+    hints:["Loop over the days on the outside this time: for d in range(5):", "Inside, loop over the people and add person[d]."],
+    solution:`steps = [[20, 35, 15, 40, 30],
+         [45, 50, 25, 10, 20],
+         [30, 30, 35, 15, 40],
+         [10, 25, 20, 45, 35]]
+for d in range(5):
+    total = 0
+    for person in steps:
+        total = total + person[d]
+    print("Day " + str(d) + ": " + str(total / 4))` }
+  ]},
+/* ---------------------------------------------------------------- 15b */
+{ id:"15b", q:"15(b)", title:"Functions with selection", group:"Arrays and sub programs", topic:"2.2.3 Sub programs", max:5,
+  asked:"Write a sub-program that takes a day number (0 = Monday, 1 = Tuesday…) as a parameter and returns the day as a string.",
+  how:[
+    "The definition mark needs **both** a **parameter** and a **return**: `def get_day(day_num):` … `return \"Monday\"`.",
+    "The simple way is **selection**: `if day_num == 0:` return \"Monday\", `elif day_num == 1:` … up to 4 (Friday).",
+    "Finish with `else: return \"Invalid\"`. This is the **default case**, and it is worth a mark. Everyone missed it."
+  ],
+  marks:["1: a function with a parameter that returns the day", "1: uses selection (if / switch)", "1: correct comparisons", "1: correct day for each number", "1: a default case (else) for any other number"],
+  teacher:"No need to write out a list. You must have a return statement and a parameter to get the definition mark. Lots of people returned an item from a list instead of using if; if you do that, check the number is between 0 and 4 first and return \"Invalid\" otherwise. The final mark, for the default case, was missed by everyone.",
+  model:{ label:"A full-mark answer in Python", code:`def get_day(day_num):
+    if day_num == 0:
+        return "Monday"
+    elif day_num == 1:
+        return "Tuesday"
+    elif day_num == 2:
+        return "Wednesday"
+    elif day_num == 3:
+        return "Thursday"
+    elif day_num == 4:
+        return "Friday"
+    else:
+        return "Invalid"` },
+  tasks:[
+  { id:"15b-h", role:"help", type:"gap", title:"Star ratings",
+    prompt:"Complete the function. It takes a number of stars and returns **Poor** (1), **OK** (2) or **Good** (3), and **Invalid** for anything else.",
+    code:`def rating([[0]]):
+    if stars == 1:
+        [[1]] "Poor"
+    elif stars [[2]] 2:
+        return "OK"
+    elif stars == 3:
+        return "Good"
+    [[3]]:
+        return "[[4]]"`,
+    gaps:[{accept:["stars"],w:6},{accept:["return"],w:7},{accept:["=="],w:3},{accept:["else"],w:5},{accept:["Invalid"],w:8}],
+    hints:["The parameter's name is used in the if lines.", "The last branch catches everything else."] },
+  { id:"15b-o", role:"own", type:"code", title:"Write get_day",
+    prompt:"Write a function `get_day(day_num)` that **returns** `Monday` for 0, `Tuesday` for 1 … `Friday` for 4, and `Invalid` for any other number. Use **if/elif/else**. Check runs it with several numbers.",
+    starter:`def get_day(day_num):
+    `,
+    harness:`print(get_day(0))
+print(get_day(2))
+print(get_day(4))
+print(get_day(7))
+print(get_day(-1))`,
+    expected:"Monday\nWednesday\nFriday\nInvalid\nInvalid",
+    require:[{re:"return", msg:"The function must **return** the day, not print it."},{re:"\\bif\\b", msg:"Use **if / elif / else** (selection) for this task."},{re:"\\belse\\s*:", msg:"Add an **else** for the default case."}],
+    forbid:[{re:"print\\s*\\(", msg:"Don't print inside the function: **return** the day. Check prints it for you."}],
+    hints:["Start each branch with return.", "The default case is else: return \"Invalid\"."],
+    solution:`def get_day(day_num):
+    if day_num == 0:
+        return "Monday"
+    elif day_num == 1:
+        return "Tuesday"
+    elif day_num == 2:
+        return "Wednesday"
+    elif day_num == 3:
+        return "Thursday"
+    elif day_num == 4:
+        return "Friday"
+    else:
+        return "Invalid"` },
+  { id:"15b-p", role:"plus", type:"code", title:"The list shortcut",
+    prompt:"Now write `get_day(day_num)` the short way, using a **list** of day names. It must still return `Invalid` if the number isn't between **0 and 4**.",
+    starter:`def get_day(day_num):
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    `,
+    harness:`print(get_day(0))
+print(get_day(3))
+print(get_day(5))
+print(get_day(-1))`,
+    expected:"Monday\nThursday\nInvalid\nInvalid",
+    require:[{re:"days\\s*\\[", msg:"Use the list: `days[day_num]`."}],
+    hints:["Check the range first: if day_num >= 0 and day_num <= 4:", "Watch out: in Python, days[-1] is Friday! That's why you must check the number first."],
+    solution:`def get_day(day_num):
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    if day_num >= 0 and day_num <= 4:
+        return days[day_num]
+    else:
+        return "Invalid"` }
+  ]}
+];
+
+/* ===== App ===== */
+(function(){
+"use strict";
+const PYODIDE_BASE = "https://cdn.jsdelivr.net/npm/pyodide@0.26.4/";
+const RUN_TIMEOUT = 6000;
+const SALT = "bhoa-y11-winter-2026";
+const ORDER = PARTS.map(p => p.id);           // fixed order for the completion code
+const BOUNDS = DATA.bounds;                   // [[min, grade], ...] ascending
+
+/* ---------- helpers ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function md(s){
+  return esc(s).replace(/`([^`]+)`/g, (m,c)=>"<code>"+c+"</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\*([^*\s][^*]*)\*/g, "<em>$1</em>");
+}
+function el(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()){ if (k == null || k === false) continue; e.append(k.nodeType ? k : document.createTextNode(k)); }
+  return e;
+}
+function cyrb53(str, seed = 0){
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++){ ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+const KW = new Set(["for","in","if","elif","else","while","def","return","and","or","not","True","False","None","break","continue",
+  "then","endif","next","to","endwhile","function","endfunction","switch","case","default","endswitch","AND","OR","NOT","SELECT","FROM","WHERE"]);
+const BI = new Set(["print","range","len","input","str","int","float","sum","append","length"]);
+function hl(src){
+  let out = ""; const re = /(#.*$)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)|(\s+)|([^])/gm;
+  let m;
+  while ((m = re.exec(src))){
+    if (m[1]) out += '<span class="t-com">'+esc(m[1])+'</span>';
+    else if (m[2]) out += '<span class="t-str">'+esc(m[2])+'</span>';
+    else if (m[3]) out += '<span class="t-num">'+esc(m[3])+'</span>';
+    else if (m[4]) out += KW.has(m[4]) ? '<span class="t-kw">'+m[4]+'</span>' : BI.has(m[4]) ? '<span class="t-bi">'+m[4]+'</span>' : esc(m[4]);
+    else out += esc(m[0]);
+  }
+  return out;
+}
+function codeBlock(src, label){ const p = el("pre", {class:"code", "aria-label": label || "Code"}); p.innerHTML = hl(src); return p; }
+function erlBlock(src){ const w = el("div", { class:"erlwrap" }, el("p", { class:"lbl" }, "OCR Exam Reference Language"), codeBlock(src, "Exam Reference Language code")); return w; }
+function expBlock(text){ const p = el("pre", { class:"out exp" }); p.textContent = text; return p; }
+function outBlock(text){ const p = el("pre", {class:"out" + (text ? "" : " empty")}); p.textContent = text || "(nothing printed)"; return p; }
+function normLines(s, ignoreSpaces){
+  let L = String(s).replace(/\r/g,"").split("\n").map(l => l.replace(/\s+$/,""));
+  while (L.length && L[L.length-1] === "") L.pop();
+  if (ignoreSpaces) L = L.map(l => l.replace(/\s+/g,""));
+  return L;
+}
+function normGap(s, ci){ let v = String(s).replace(/\s+/g," ").trim().replace(/'/g,'"'); if (ci) v = v.toLowerCase(); return v.replace(/\s+/g,""); }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function gradeFor(total){ let g = BOUNDS[0][1]; for (const [m, gr] of BOUNDS) if (total >= m) g = gr; return g; }
+function nextGrade(total){ for (const [m, gr] of BOUNDS) if (total < m) return { grade: gr, need: m - total }; return null; }
+
+/* ---------- who is this? ---------- */
+let CODE = null, ME = null, SECTIONS = [], ALL = [], CORE = [], STORE_KEY = null;
+let state = { tasks:{}, view:{ page:"intro", task:0 } };
+function lookup(code){ return DATA.students[cyrb53(SALT + code.toUpperCase()).toString(36)] || null; }
+function login(code){
+  code = code.toUpperCase();
+  const me = lookup(code); if (!me) return false;
+  CODE = code; ME = me; STORE_KEY = "bhoa-y11mock-" + code;
+  state = { tasks:{}, view:{ page:"intro", task:0 } };
+  try { const raw = localStorage.getItem(STORE_KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch(e){}
+  try { localStorage.setItem("bhoa-y11mock-last", code); } catch(e){}
+  SECTIONS = PARTS.map((p, i) => ({ p, mark: me.m[i] })).filter(x => x.mark < x.p.max).map(x => ({ id: "p" + x.p.id, title: x.p.title, part: x.p, mark: x.mark, tasks: x.p.tasks }));
+  ALL = []; SECTIONS.forEach((s,si)=> s.tasks.forEach((t,ti)=> ALL.push({s, si, t, ti})));
+  CORE = ALL.filter(x => x.t.role !== "plus");
+  if (location.hash.slice(1).toUpperCase() !== code) history.replaceState(null, "", "#" + code);
+  return true;
+}
+function logout(){ try { localStorage.removeItem("bhoa-y11mock-last"); } catch(e){} CODE = null; ME = null; history.replaceState(null, "", location.pathname); boot(); }
+
+let saveTimer = null;
+function save(){ if (!STORE_KEY) return; clearTimeout(saveTimer); saveTimer = setTimeout(()=>{ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }, 150); }
+function ts(id){ return state.tasks[id] || (state.tasks[id] = { attempts:0, hints:0 }); }
+function setStatus(id, s){ const t = ts(id); if (t.status === "done") return; if (t.status === "helped" && s === "done") return; t.status = s; save(); refreshChrome(); }
+function isDone(id){ const s = state.tasks[id]; return !!(s && (s.status === "done" || s.status === "helped")); }
+
+/* ---------- Python (Pyodide in a worker) ---------- */
+const PY = { status:"idle", worker:null, pending:null, seq:0, loadTimer:null };
+const WORKER_SRC = `
+let py = null;
+const ready = (async () => {
+  try {
+    importScripts("${PYODIDE_BASE}pyodide.js");
+    py = await loadPyodide({ indexURL: "${PYODIDE_BASE}" });
+    postMessage({ type: "ready" });
+  } catch (e) { postMessage({ type: "fail", msg: String(e) }); }
+})();
+onmessage = async (e) => {
+  await ready;
+  if (!py) return;
+  const { id, code, inputs } = e.data;
+  let out = "";
+  const dec = new TextDecoder();
+  const write = (buf) => { out += dec.decode(buf, { stream: true }); if (out.length > 20000) throw new Error("TOO_MUCH_OUTPUT"); return buf.length; };
+  py.setStdout({ write }); py.setStderr({ write });
+  const g = py.globals.get("dict")();
+  let err = null;
+  const prelude = "def _make_input(q):\\n    def input(prompt=''):\\n        print(prompt, end='')\\n        if not q:\\n            print()\\n            raise EOFError('NO_MORE_INPUT')\\n        v = q.pop(0)\\n        print(v)\\n        return v\\n    return input\\n";
+  try { py.runPython("exec(compile(" + JSON.stringify(prelude) + ", '<inputs>', 'exec'))\\ninput = _make_input(" + JSON.stringify((inputs || []).map(String)) + ")\\ndel _make_input", { globals: g }); }
+  catch (ex) { postMessage({ type: "result", id, out: "", err: String(ex) }); return; }
+  try { py.runPython(code, { globals: g }); }
+  catch (ex) { err = String((ex && ex.message) || ex); }
+  try { py.runPython("import sys\\nsys.stdout.flush()"); } catch (_) {}
+  const sink = { write: (buf) => buf.length };
+  py.setStdout(sink); py.setStderr(sink);
+  try { py.runPython("import sys\\nsys.stdout.flush()\\nsys.stderr.flush()"); } catch (_) {}
+  try { g.destroy(); } catch (_) {}
+  postMessage({ type: "result", id, out, err, tooMuch: out.length > 20000 });
+};`;
+function needsPy(){ return ALL.some(x => x.t.type === "code"); }
+function setPyStatus(s){ PY.status = s; refreshChrome(); document.dispatchEvent(new CustomEvent("pystatus")); }
+function startPy(){
+  try { if (PY.worker) PY.worker.terminate(); } catch(e){}
+  setPyStatus("loading");
+  let w;
+  try { const url = URL.createObjectURL(new Blob([WORKER_SRC], { type:"text/javascript" })); w = new Worker(url); }
+  catch(e){ setPyStatus("offline"); return; }
+  PY.worker = w;
+  w.onmessage = (e) => {
+    const d = e.data;
+    if (d.type === "ready"){ clearTimeout(PY.loadTimer); setPyStatus("ready"); }
+    else if (d.type === "fail"){ clearTimeout(PY.loadTimer); setPyStatus("offline"); }
+    else if (d.type === "result" && PY.pending && PY.pending.id === d.id){ const p = PY.pending; PY.pending = null; clearTimeout(p.timer); p.resolve({ ok: !d.err, out: d.out, err: d.err, tooMuch: d.tooMuch }); }
+  };
+  w.onerror = () => { clearTimeout(PY.loadTimer); if (PY.status === "loading") setPyStatus("offline"); };
+  clearTimeout(PY.loadTimer);
+  PY.loadTimer = setTimeout(()=>{ if (PY.status === "loading"){ try{ w.terminate(); }catch(e){} setPyStatus("offline"); } }, 60000);
+}
+function runPy(code, inputs){
+  return new Promise(resolve => {
+    if (PY.status !== "ready" || !PY.worker){ resolve({ ok:false, offline:true }); return; }
+    const id = ++PY.seq;
+    const timer = setTimeout(()=>{ if (PY.pending && PY.pending.id === id){ PY.pending = null; resolve({ ok:false, timeout:true, out:"" }); startPy(); } }, RUN_TIMEOUT);
+    PY.pending = { id, resolve, timer };
+    PY.worker.postMessage({ id, code, inputs: inputs || [] });
+  });
+}
+
+/* ---------- friendly errors ---------- */
+const ERRS = [
+  [/IndexError: list (assignment )?index out of range/, "That **index doesn't exist**. Indexes start at **0**, so the last one is **one less than the length**."],
+  [/'list' object is not callable/, "Use **square brackets** for an index, like `days[0]`."],
+  [/NO_MORE_INPUT/, "Your program asked for **more input** than there was. Check that your loop stops when 0 is entered, and that you ask for the inputs in the right order."],
+  [/invalid literal for int\(\) with base 10: '([^']*)'/, (m)=>"int() can only turn a **whole number** into a number, but it was given `" + m[1] + "`. Check the order of your inputs: the Inputs box gives them in order."],
+  [/not supported between instances of '(str|int)' and '(str|int)'/, "You compared **text** with a **number**. Did you forget `int()` around `input(...)`?"],
+  [/expected ':'/, "Python expected a **colon** `:` at the end of this line. Lines starting with **def**, **for**, **while**, **if**, **elif** and **else** end with a colon."],
+  [/IndentationError: expected an indented block/, "The line after a colon must be **indented** (4 spaces) so Python knows it belongs inside."],
+  [/IndentationError: unexpected indent/, "This line is **indented** when it shouldn't be. Line it up with the lines around it."],
+  [/unindent does not match|inconsistent use of tabs/, "The indentation doesn't line up. Use exactly 4 spaces for each level."],
+  [/Maybe you meant '=='/, "To **compare** in an if, use `==`. A single `=` stores a value."],
+  [/unterminated string literal|EOL while scanning/, "A piece of text is missing its **closing quote mark**."],
+  [/'\(' was never closed|unexpected EOF|'\[' was never closed/, "A **bracket** is missing. Check every `(` has a matching `)`."],
+  [/unmatched '\)'|unmatched '\]'/, "There is an extra **closing bracket**."],
+  [/NameError: name 'get_day' is not defined/, "Check couldn't find a function called `get_day`. Check the spelling of the **def** line: `def get_day(day_num):`"],
+  [/NameError: name '([^']+)' is not defined/, (m)=>"Python doesn't know the name `"+m[1]+"`. Check the spelling and capital letters, and that you created it **before** using it. If it is meant to be text, put it in \"quotes\"."],
+  [/'return' outside function/, "`return` only works **inside** a function. Check its indentation."],
+  [/can only concatenate str|unsupported operand type\(s\) for \+: 'int' and 'str'|unsupported operand type\(s\) for \+: 'str' and 'int'|unsupported operand type\(s\) for \+: 'float' and 'str'/, "You can't join **text and a number** with `+`. Turn the number into text first with **str()**, e.g. `\"Price: £\" + str(price)`."],
+  [/unsupported operand type\(s\) for \*: /, "You tried to multiply **text**. Did you forget `int()` around the input?"],
+  [/Perhaps you forgot a comma/, "Python couldn't understand this line. Is a **comma** or a **+** missing?"],
+  [/invalid syntax/, "Python couldn't understand this line. Check **colons**, **brackets**, **quote marks**, and `==` versus `=`."],
+  [/invalid character/, "There is a character Python doesn't recognise. Did a curly quote or symbol get pasted in?"],
+  [/ZeroDivisionError/, "Your program divided by **zero**."]
+];
+function explainError(err, code){
+  const lines = String(err).trim().split("\n");
+  let lineNo = null;
+  for (const l of lines){ const m = l.match(/File "<(?:exec|string|code)>", line (\d+)/); if (m) lineNo = +m[1]; }
+  let last = lines[lines.length-1] || "";
+  for (let i = lines.length-1; i >= 0; i--){ if (/^\w*(Error|Exception)\b/.test(lines[i])){ last = lines[i]; break; } }
+  let friendly = "Something went wrong when Python ran your code.";
+  for (const [re, f] of ERRS){ const m = last.match(re) || String(err).match(re); if (m){ friendly = typeof f === "function" ? f(m) : f; break; } }
+  if (lineNo && code && lineNo > code.split("\n").length) lineNo = null;
+  return { lineNo, last, friendly };
+}
+
+/* ---------- chrome ---------- */
+function refreshChrome(){
+  if (!ME) return;
+  const done = CORE.filter(x => isDone(x.t.id)).length;
+  const bar = $("#bar > span"); if (bar) bar.style.width = (CORE.length ? 100*done/CORE.length : 0) + "%";
+  const pt = $("#progtext"); if (pt) pt.textContent = done + " of " + CORE.length + " tasks";
+  const ps = $("#pystatus");
+  if (ps){
+    ps.hidden = PY.status === "idle";
+    ps.className = "pystatus " + PY.status;
+    $("#pytext").textContent = PY.status === "ready" ? "Python ready" : PY.status === "loading" ? "Python loading…" : "Python offline";
+  }
+  document.querySelectorAll("nav.sections button[data-si]").forEach(b => {
+    const s = SECTIONS[+b.dataset.si];
+    const core = s.tasks.filter(t => t.role !== "plus");
+    const n = core.filter(t => isDone(t.id)).length;
+    b.querySelector(".navcount").textContent = n + "/" + core.length;
+    b.classList.toggle("navdone", n === core.length);
+  });
+}
+function buildNav(){
+  const ol = $("#navlist"); ol.innerHTML = "";
+  ol.append(el("li", null, el("button", { "data-page":"intro", onclick: ()=>go("intro") }, el("span",{class:"navnum"},"▶"), el("span",{class:"navlabel"},"Your results"), el("span",{class:"navcount"},""))));
+  SECTIONS.forEach((s, si) => {
+    ol.append(el("li", null, el("button", { "data-si": si, onclick: ()=>go(s.id, 0) }, el("span",{class:"navnum q"}, s.part.q.replace(/[()]/g,"")), el("span",{class:"navlabel"}, s.title), el("span",{class:"navcount"},""))));
+  });
+  ol.append(el("li", null, el("button", { "data-page":"finish", onclick: ()=>go("finish") }, el("span",{class:"navnum"},"✓"), el("span",{class:"navlabel"},"Finish and hand in"), el("span",{class:"navcount"},""))));
+}
+function markNav(){
+  document.querySelectorAll("nav.sections button").forEach(b => {
+    const cur = (b.dataset.page && b.dataset.page === state.view.page) || (b.dataset.si != null && SECTIONS[+b.dataset.si].id === state.view.page);
+    b.setAttribute("aria-current", cur ? "true" : "false");
+  });
+}
+function go(page, task){
+  state.view = { page, task: task || 0 }; save();
+  render(); window.scrollTo({ top: 0 });
+  const h = $("main h1"); if (h){ h.setAttribute("tabindex","-1"); h.focus({ preventScroll:true }); }
+}
+function modeChip(){
+  const s = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3.6" fill="#e05d08"/><path d="M5 22c0-5 3-8.5 7-8.5s7 3.5 7 8.5z" fill="#e05d08"/></svg>';
+  return el("div", { class:"mode" }, el("span", { html: s }), "Individual work");
+}
+
+/* ---------- pages ---------- */
+function render(){
+  markNav(); refreshChrome();
+  const main = $("main"); main.innerHTML = "";
+  const v = state.view;
+  if (v.page === "intro") return renderIntro(main);
+  if (v.page === "finish") return renderFinish(main);
+  const si = SECTIONS.findIndex(s => s.id === v.page);
+  if (si < 0){ state.view = { page:"intro", task:0 }; return renderIntro(main); }
+  renderSection(main, si, Math.min(v.task || 0, SECTIONS[si].tasks.length-1));
+}
+
+function qlaTable(){
+  const tb = el("tbody");
+  PARTS.forEach((p, i) => {
+    const m = ME.m[i], pc = m / p.max;
+    const cls = m === p.max ? "full" : pc >= 0.5 ? "part" : "low";
+    const sec = SECTIONS.find(s => s.part === p);
+    tb.append(el("tr", { class: cls },
+      el("td", null, p.q), el("td", null, p.title), el("td", { class:"n" }, m + "/" + p.max),
+      el("td", null, sec ? el("button", { class:"linkbtn", onclick: ()=>go(sec.id, 0) }, "Practise →") : el("span", { class:"fulltag" }, "Full marks ✓"))));
+  });
+  return el("table", { class:"summary qla" }, el("thead", null, el("tr", null, el("th", null, "Question"), el("th", null, "Topic"), el("th", null, "Your mark"), el("th", null, ""))), tb);
+}
+function priorities(){
+  return SECTIONS.map(s => ({ s, lost: s.part.max - s.mark })).sort((a, b) => b.lost - a.lost || a.s.mark / a.s.part.max - b.s.mark / b.s.part.max).slice(0, 3);
+}
+function renderIntro(main){
+  const total = ME.m.reduce((a, b) => a + b, 0), max = PARTS.reduce((a, p) => a + p.max, 0);
+  const g = gradeFor(total), ng = nextGrade(total);
+  main.append(el("div", { class:"sechead" }, el("div", null, el("p", { class:"kicker" }, "GCSE Computer Science · Year 11 Winter Assessment · Code " + CODE), el("h1", { class:"title" }, "Your mock feedback")), modeChip()));
+  main.append(el("div", { class:"card" },
+    el("div", { class:"bigstat" },
+      el("div", null, el("b", null, total + "/" + max), "marks"),
+      el("div", null, el("b", null, "Grade " + g), "this paper"),
+      ng ? el("div", null, el("b", null, ng.need + (ng.need === 1 ? " mark" : " marks")), "more for grade " + ng.grade) : el("div", null, el("b", null, "Top grade"), "keep it there"),
+      el("div", null, el("b", null, String(SECTIONS.length)), "questions to practise")),
+    el("h2", null, "Start with these"),
+    el("ol", { class:"prio" }, priorities().map(x => el("li", null, el("button", { class:"linkbtn", onclick: ()=>go(x.s.id, 0) }, x.s.part.q + " " + x.s.title), " — you dropped " + x.lost + (x.lost === 1 ? " mark" : " marks"))))));
+  main.append(el("div", { class:"plain" },
+    el("h2", null, "How it works"),
+    el("ol", { class:"steps" },
+      el("li", null, el("span", { html: md("Each question where you **dropped marks** has its own section. They are listed on the left, in paper order.") })),
+      el("li", null, el("span", { html: md("Read **How to tackle it** first. It shows what the mark scheme wants.") })),
+      el("li", null, el("span", { html: md("Do the **With help** task, then the **On your own** task. **+1** tasks are extra challenges.") })),
+      el("li", null, el("span", { html: md("Press **Check**. If you're stuck, open a **hint**. After 3 tries you can see an answer.") })),
+      el("li", null, el("span", { html: md("When you've finished (or at the end of the lesson), open **Finish and hand in** and copy your **completion code** into Teams.") })))));
+  main.append(el("div", { class:"plain" },
+    el("h2", null, "Exam tips for every paper"),
+    el("ul", { class:"qs" }, GENERAL.tips.map(t => el("li", { html: md(t) }))),
+    el("h2", { class:"mt" }, "The marking codes on your paper"),
+    el("table", { class:"rt" }, el("tbody", null, GENERAL.codes.map(c => el("tr", null, el("th", null, c[0]), el("td", null, el("strong", null, c[1]), ": " + c[2])))))));
+  main.append(el("div", { class:"plain" }, el("h2", null, "Your marks, question by question"), qlaTable()));
+  const row = el("div", { class:"btnrow" });
+  if (SECTIONS.length) row.append(el("button", { class:"btn primary", onclick: ()=>go(SECTIONS[0].id, 0) }, "Start with " + SECTIONS[0].part.q + " →"));
+  row.append(el("button", { class:"btn quiet", onclick: logout }, "Not you? Change code"));
+  main.append(row);
+}
+
+/* ---------- visuals ---------- */
+const GATE_PATH = {
+  AND: '<path d="M22 10 H55 A25 25 0 0 1 55 60 H22 Z" class="gate"/>',
+  OR:  '<path d="M18 10 Q50 10 84 35 Q50 60 18 60 Q32 35 18 10 Z" class="gate"/>',
+  NOT: '<path d="M24 12 L74 35 L24 58 Z" class="gate"/><circle cx="80" cy="35" r="6" class="gate"/>'
+};
+function gateSVG(type, x, y){
+  const inner = type && GATE_PATH[type] ? GATE_PATH[type] : '<rect x="12" y="6" width="80" height="58" rx="6" class="emptybox"/><text x="52" y="40" text-anchor="middle" class="qmark">?</text>';
+  return '<g transform="translate(' + x + ',' + y + ')">' + inner + '</g>';
+}
+function circuitSVG(boxes, choices, final, finalChoice){
+  // box geometry: b1 at (190,20), b2 at (190,150), final at (400,85); each 104x70
+  const B = [[190,20],[190,150]], F = [400,85];
+  let s = '<svg viewBox="0 0 600 250" class="circuit" role="img" aria-label="Logic circuit">';
+  boxes.forEach((b, i) => {
+    const [bx, by] = B[i];
+    const ys = b.ins.length === 2 ? [by+22, by+48] : [by+35];
+    b.ins.forEach((name, k) => { s += '<text x="40" y="' + (ys[k]+6) + '" class="lab">' + name + '</text><line x1="62" y1="' + ys[k] + '" x2="' + (bx+24) + '" y2="' + ys[k] + '" class="wire"/>'; });
+    s += gateSVG(choices[i], bx, by);
+    s += '<line x1="' + (bx+86) + '" y1="' + (by+35) + '" x2="' + (F[0]-30) + '" y2="' + (by+35) + '" class="wire"/>';
+    s += '<line x1="' + (F[0]-30) + '" y1="' + (by+35) + '" x2="' + (F[0]-30) + '" y2="' + (F[1] + (i ? 48 : 22)) + '" class="wire"/>';
+    s += '<line x1="' + (F[0]-30) + '" y1="' + (F[1] + (i ? 48 : 22)) + '" x2="' + (F[0]+24) + '" y2="' + (F[1] + (i ? 48 : 22)) + '" class="wire"/>';
+  });
+  s += gateSVG(finalChoice, F[0], F[1]);
+  s += '<line x1="' + (F[0]+86) + '" y1="' + (F[1]+35) + '" x2="560" y2="' + (F[1]+35) + '" class="wire"/><text x="566" y="' + (F[1]+41) + '" class="lab">P</text>';
+  return s + '</svg>';
+}
+function visual(kind){
+  if (kind === "gates"){
+    const w = el("div", { class:"gatekey" });
+    ["AND","OR","NOT"].forEach(g => w.append(el("figure", null, el("span", { html: '<svg viewBox="0 0 104 70" width="120" height="80">' + gateSVG(g, 0, 0) + '</svg>' }), el("figcaption", null, g + (g === "NOT" ? " (circle on the point)" : " (no circle)")))));
+    return el("div", null, el("p", { class:"lbl" }, "The three gate symbols"), w,
+      el("p", { class:"lbl" }, "The answer for P = (A OR B) AND NOT C"),
+      el("div", { class:"circwrap", html: circuitSVG([{ins:["A","B"]},{ins:["C"]}], ["OR","NOT"], null, "AND") }));
+  }
+  if (kind === "hexMethod") return el("div", null,
+    el("p", { class:"lbl" }, "The working for 3E, laid out like this"), hexGridStatic("3E"),
+    el("div", { class:"altbox" }, el("p", { class:"tlab" }, "Another way: × 16"), el("p", { html: md("The left digit counts **16s** and the right digit counts **1s**. For 3E: 3 × 16 = 48, E = 14, and 48 + 14 = **62**. Use whichever method you prefer, or use one to check the other.") })));
+  if (kind === "merge") return mergeLayout([[[45],[12],[-99],[100],[-13],[0],[17],[-27]],[[12,45],[-99,100],[-13,0],[-27,17]],[[-99,12,45,100],[-27,-13,0,17]],[[-99,-27,-13,0,12,17,45,100]]], "How the exam board want it to look");
+  if (kind === "binaryAdd") return el("div", null, el("p", { class:"lbl" }, "The paper's question, worked through"),
+    el("pre", { class:"code" }, "carry    1111 1100\n         0110 1010\n       + 1001 0110\n         ---------\n       1 0000 0000\n\n8-bit answer: 0000 0000   (the 1 that falls off is the overflow)"));
+  return null;
+}
+function mergeLayout(levels, caption){
+  const w = el("div", { class:"merge" });
+  if (caption) w.append(el("p", { class:"lbl" }, caption));
+  levels.forEach(lv => {
+    const row = el("div", { class:"mrow" }, el("span", { class:"mlab" }, lv.length + (lv.length === 1 ? " list of " : " lists of ") + lv[0].length));
+    lv.forEach(list => row.append(el("span", { class:"mlist" }, list.map(v => el("span", { class:"mcell" }, String(v))))));
+    w.append(row);
+  });
+  return w;
+}
+
+function keyCard(s, ti){
+  const p = s.part;
+  state.keyOpen = state.keyOpen || {};
+  const open = ti === 0 ? state.keyOpen[s.id] !== false : state.keyOpen[s.id] === true;
+  const d = el("details", { class:"card key", open: open });
+  const sum = el("summary", null, "How to tackle it");
+  const hintTxt = el("span", { class:"keyhint" }, "(click to open)");
+  sum.append(hintTxt); d.append(sum);
+  d.addEventListener("toggle", ()=>{ hintTxt.hidden = d.open; });
+  sum.addEventListener("click", ()=>{ setTimeout(()=>{ state.keyOpen[s.id] = d.open; save(); }, 0); });
+  hintTxt.hidden = open;
+  d.append(el("p", { class:"asked", html: "<strong>The question asked:</strong> " + md(p.asked) + " <span class='mx'>[" + p.max + "]</span>" }));
+  p.how.forEach(h => d.append(el("p", { html: md(h) })));
+  if (p.teacher) d.append(el("div", { class:"teacher" }, el("p", { class:"tlab" }, "Teacher's tip"), el("p", { html: md(p.teacher) })));
+  if (p.visual) d.append(visual(p.visual));
+  d.append(el("div", { class:"marksbox" }, el("p", { class:"lbl" }, "What gets the marks"), el("ul", null, p.marks.map(m => el("li", { html: md(m) })))));
+  if (p.model){
+    const mm = el("div", { class:"model" }, el("p", { class:"lbl" }, p.model.label));
+    if (p.model.code) mm.append(codeBlock(p.model.code));
+    else if (p.model.table) mm.append(el("table", { class:"rt" }, el("thead", null, el("tr", null, p.model.table.cols.map(c => el("th", null, c)))), el("tbody", null, p.model.table.rows.map(r => el("tr", null, r.map(c => el("td", { class:"m" }, c)))))));
+    else mm.append(el("pre", { class:"model-text" }, p.model.text));
+    d.append(mm);
+  }
+  if (p.ideas){
+    d.append(el("p", { class:"lbl" }, "Ideas you could use (from the mark scheme)"),
+      el("table", { class:"rt ideas" }, el("thead", null, el("tr", null, el("th", null, "Area"), el("th", null, "Positive"), el("th", null, "Negative"))),
+        el("tbody", null, p.ideas.map(r => el("tr", null, el("th", null, r[0]), el("td", null, r[1].replace(/^\+ /, "")), el("td", null, r[2].replace(/^− /, "")))))));
+  }
+  return d;
+}
+
+function roleLabel(t){ return t.role === "help" ? "With help" : t.role === "own" ? "On your own" : "+1 challenge"; }
+function renderSection(main, si, ti){
+  const s = SECTIONS[si], t = s.tasks[ti];
+  main.append(el("div", { class:"sechead" }, el("div", null,
+    el("p", { class:"kicker" }, "Question " + s.part.q + " · " + s.part.topic + " · You got " + s.mark + "/" + s.part.max),
+    el("h1", { class:"title" }, s.title)), modeChip()));
+  main.append(keyCard(s, ti));
+  const st = el("div", { class:"stepper", role:"navigation", "aria-label":"Tasks in this question" });
+  s.tasks.forEach((tt, i) => {
+    const r = state.tasks[tt.id] || {};
+    const cls = [i === ti ? "cur" : "", r.status === "done" ? "done" : r.status === "helped" ? "helped" : "", tt.role === "plus" ? "plus" : ""].join(" ");
+    st.append(el("button", { class: cls, "aria-label": roleLabel(tt) + (r.status ? ", done" : ""), "aria-current": i === ti ? "step" : null, onclick: ()=>go(s.id, i) },
+      tt.role === "plus" ? "+1" : tt.role === "help" ? "Help" : "Own"));
+  });
+  main.append(st);
+  const card = el("section", { class:"plain", "aria-labelledby":"taskh" });
+  const head = el("div", { class:"taskhead" });
+  if (t.role === "plus") head.append(el("span", { class:"plusbadge", "aria-hidden":"true" }, "+1"));
+  head.append(el("h2", { id:"taskh" }, t.title));
+  head.append(el("span", { class:"tag " + t.role }, roleLabel(t)));
+  card.append(head);
+  const ctx = { s, si, t, ti, card };
+  ({ choice: taskChoice, multi: taskMulti, match: taskMatch, gap: taskGap, parsons: taskParsons, table: taskTable, trace2: taskTrace2,
+     gates: taskGates, merge: taskMerge, hexgrid: taskHex, sql: taskSql, code: taskCode, essay: taskEssay })[t.type](card, ctx);
+  main.append(card);
+  const prev = ti > 0 ? ()=>go(s.id, ti-1) : si > 0 ? ()=>go(SECTIONS[si-1].id, SECTIONS[si-1].tasks.length-1) : ()=>go("intro");
+  main.append(el("div", { class:"nav-next" },
+    el("button", { class:"btn quiet", onclick: prev }, "← Back"),
+    el("button", { class:"btn quiet", id:"skipbtn", onclick: ()=>next(ctx) }, isDone(t.id) ? nextLabel(ctx) : "Skip for now →")));
+}
+function nextLabel(ctx){ return ctx.ti < ctx.s.tasks.length-1 ? "Next task →" : ctx.si < SECTIONS.length-1 ? "Next question →" : "Finish →"; }
+function next(ctx){
+  if (ctx.ti < ctx.s.tasks.length-1) go(ctx.s.id, ctx.ti+1);
+  else if (ctx.si < SECTIONS.length-1) go(SECTIONS[ctx.si+1].id, 0);
+  else go("finish");
+}
+
+/* ---------- shared task bits ---------- */
+function fbBox(){ return el("div", { class:"fb", "aria-live":"polite" }); }
+function showMsg(box, kind, title, bodyHtml, extra){
+  box.innerHTML = "";
+  const m = el("div", { class:"msg " + kind }, el("h3", null, kind === "ok" ? "✓ " + title : kind === "bad" ? "✗ " + title : title));
+  if (bodyHtml) m.append(el("div", { html: bodyHtml }));
+  if (extra) m.append(extra);
+  box.append(m);
+}
+function success(ctx, box, bodyHtml, extra){
+  setStatus(ctx.t.id, "done");
+  const nb = el("button", { class:"btn primary", onclick: ()=>next(ctx) }, nextLabel(ctx));
+  const wrap = el("div", null); if (extra) wrap.append(extra); wrap.append(el("div", { class:"btnrow" }, nb));
+  showMsg(box, "ok", ctx.t.role === "plus" ? "Challenge complete!" : pick(["Correct!", "Well done!", "Spot on!", "That's the marks!"]), bodyHtml, wrap);
+  const sk = $("#skipbtn"); if (sk) sk.textContent = nextLabel(ctx);
+  refreshStepper(ctx);
+  setTimeout(()=>nb.focus({ preventScroll:false }), 50);
+}
+function refreshStepper(ctx){
+  const btns = document.querySelectorAll(".stepper button");
+  ctx.s.tasks.forEach((tt, i) => { const r = state.tasks[tt.id] || {}; if (btns[i]){ btns[i].classList.toggle("done", r.status === "done"); btns[i].classList.toggle("helped", r.status === "helped"); } });
+}
+function attempt(ctx){ const r = ts(ctx.t.id); r.attempts = (r.attempts||0) + 1; save(); return r.attempts; }
+function hintArea(ctx, revealFn){
+  const t = ctx.t, r = ts(t.id);
+  const list = el("div", { class:"hints" });
+  const hints = t.hints || [];
+  const hb = el("button", { class:"btn quiet" });
+  const ab = el("button", { class:"btn quiet", hidden: true }, "Show me an answer");
+  function draw(){
+    list.innerHTML = "";
+    for (let i = 0; i < Math.min(r.hints||0, hints.length); i++) list.append(el("div", { class:"hint", html: "<b class='hl'>Hint " + (i+1) + ":</b> " + md(hints[i]) }));
+    hb.textContent = (r.hints||0) < hints.length ? "Show a hint (" + ((r.hints||0)+1) + " of " + hints.length + ")" : "No more hints";
+    hb.disabled = (r.hints||0) >= hints.length;
+    hb.hidden = hints.length === 0;
+    ab.hidden = !(revealFn && (r.attempts||0) >= 3 && !r.revealed);
+  }
+  hb.onclick = () => { r.hints = Math.min((r.hints||0)+1, hints.length); save(); draw(); };
+  ab.onclick = () => { r.revealed = true; setStatus(t.id, "helped"); save(); revealFn(); draw(); refreshStepper(ctx); const sk = $("#skipbtn"); if (sk) sk.textContent = nextLabel(ctx); };
+  draw();
+  return { node: list, buttons: [hb, ab], update: draw };
+}
+function promptBits(card, t){
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  if (t.pre) card.append(t.erl ? erlBlock(t.pre) : codeBlock(t.pre));
+}
+function checkRow(card, check, hints){ card.append(el("div", { class:"btnrow" }, el("button", { class:"btn primary", onclick: check }, "Check"), hints.buttons)); }
+
+/* ---------- single choice ---------- */
+function taskChoice(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  promptBits(card, t);
+  if (t.code) card.append(t.erl ? erlBlock(t.code) : codeBlock(t.code));
+  const box = fbBox();
+  const grid = el("div", { class:"options text", role:"group", "aria-label":"Choices" });
+  r.wrong = r.wrong || [];
+  t.options.forEach((o, i) => {
+    const b = el("button", { class:"opt" }, el("span", { class:"olabel" }, "ABCDEF"[i]), el("span", { class:"otext", html: md(o.t) }));
+    if (r.wrong.includes(i)) b.classList.add("wrong");
+    if (isDone(t.id) && i === t.answer) b.classList.add("right");
+    b.onclick = () => {
+      if (i === t.answer){ b.classList.add("right"); success(ctx, box, md(o.fb || "")); }
+      else { attempt(ctx); if (!r.wrong.includes(i)) r.wrong.push(i); save(); b.classList.add("wrong"); showMsg(box, "bad", "Not this one", md(o.fb || "") + "<p>Try again.</p>"); }
+    };
+    grid.append(b);
+  });
+  card.append(grid, box);
+  if (isDone(t.id)) showMsg(box, "ok", "Done", md(t.options[t.answer].fb || ""));
+}
+
+/* ---------- multi select ---------- */
+function taskMulti(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.sel = r.sel || [];
+  promptBits(card, t);
+  const box = fbBox();
+  const list = el("div", { class:"checks", role:"group" });
+  const boxes = t.options.map((o, i) => {
+    const cb = el("input", { type:"checkbox", id: t.id + "-c" + i });
+    cb.checked = r.sel.includes(i);
+    cb.addEventListener("change", ()=>{ r.sel = boxes.map((b, k) => b.checked ? k : -1).filter(k => k >= 0); save(); lab.classList.remove("wrong","right"); });
+    const lab = el("label", { class:"check", for: t.id + "-c" + i }, cb, el("span", { html: md(o.t) }));
+    list.append(lab);
+    return cb;
+  });
+  card.append(list);
+  const labs = () => list.querySelectorAll("label.check");
+  const hints = hintArea(ctx, ()=>{
+    boxes.forEach((b, i) => { b.checked = isOk(t.options[i]) && (t.dimRule ? solutionPick().includes(i) : true); });
+    r.sel = boxes.map((b, k) => b.checked ? k : -1).filter(k => k >= 0); save();
+    showMsg(box, "info", "Here is an answer", "<p>Read why each ticked answer gets a mark.</p>");
+  });
+  function isOk(o){ return o.ok === true || o.ok === "dim"; }
+  function solutionPick(){ const out = []; let dims = 0; t.options.forEach((o, i) => { if (o.ok === "dim" && dims < 1){ out.push(i); dims++; } else if (o.ok === true && out.length < (t.exact || 99)) out.push(i); }); return out.slice(0, t.exact || 99); }
+  function check(){
+    const sel = boxes.map((b, i) => b.checked ? i : -1).filter(i => i >= 0);
+    labs().forEach(l => l.classList.remove("wrong","right"));
+    if (!sel.length){ showMsg(box, "bad", "Nothing ticked", "<p>Tick the answers you think are right.</p>"); return; }
+    let msgs = [];
+    const wrongSel = sel.filter(i => !isOk(t.options[i]));
+    wrongSel.forEach(i => { labs()[i].classList.add("wrong"); if (t.options[i].fb) msgs.push(md(t.options[i].fb)); });
+    let ok;
+    if (t.dimRule){
+      const dims = sel.filter(i => t.options[i].ok === "dim").length;
+      ok = !wrongSel.length && sel.length === t.exact && dims <= t.dimRule;
+      if (!wrongSel.length && dims > t.dimRule) msgs.push("Height, width and resolution together can only get **2** marks. Swap one for a different piece of metadata.");
+      else if (!wrongSel.length && sel.length !== t.exact) msgs.push("Choose exactly **" + t.exact + "**.");
+    } else {
+      const need = t.options.map((o, i) => isOk(o) ? i : -1).filter(i => i >= 0);
+      const missing = need.filter(i => !sel.includes(i));
+      ok = !wrongSel.length && !missing.length;
+      if (!wrongSel.length && missing.length) msgs.push(missing.length === 1 ? "You're missing **one** correct answer." : "You're missing **" + missing.length + "** correct answers.");
+    }
+    if (ok){
+      sel.forEach(i => labs()[i].classList.add("right"));
+      success(ctx, box, "<p>" + (t.exact ? "Those " + t.exact + " would get full marks." : "You found them all.") + "</p>");
+    } else {
+      attempt(ctx);
+      showMsg(box, "bad", "Not yet", msgs.map(m => "<p>" + m + "</p>").join(""));
+    }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete.</p>");
+}
+
+/* ---------- match (dropdowns) ---------- */
+function taskMatch(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.mv = r.mv || {};
+  promptBits(card, t);
+  const box = fbBox();
+  const table = el("table", { class:"matcht" });
+  const sels = t.rows.map((row, i) => {
+    const sel = el("select", { "aria-label": row[0] }, el("option", { value:"" }, "— choose —"), t.choices.map((c, k) => el("option", { value: String(k) }, c)));
+    if (r.mv[i] != null) sel.value = r.mv[i];
+    sel.addEventListener("change", ()=>{ r.mv[i] = sel.value; save(); sel.classList.remove("bad","good"); });
+    table.append(el("tr", null, el("td", { html: md(row[0]) }), el("td", null, sel)));
+    return sel;
+  });
+  card.append(table);
+  const hints = hintArea(ctx, ()=>{ sels.forEach((s, i) => { s.value = String(t.rows[i][1]); r.mv[i] = s.value; s.classList.add("good"); }); save(); showMsg(box, "info", "Here are the answers", "<p>Read each pair through.</p>"); });
+  function check(){
+    let bad = 0;
+    sels.forEach((s, i) => { const ok = s.value === String(t.rows[i][1]); s.classList.toggle("good", ok); s.classList.toggle("bad", !ok); if (!ok) bad++; });
+    if (!bad) success(ctx, box, "<p>All matched.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + bad + (bad === 1 ? " answer needs" : " answers need") + " another look (the dashed ones).</p>"); }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ sels.forEach(s => s.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- gap fill ---------- */
+function taskGap(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.gapv = r.gapv || [];
+  promptBits(card, t);
+  const pre = el(t.prose ? "p" : "pre", { class: t.prose ? "gapprose" : "code gapcode" });
+  const inputs = [];
+  t.code.split(/(\[\[\d+\]\])/).forEach(part => {
+    const m = part.match(/^\[\[(\d+)\]\]$/);
+    if (m){
+      const gi = +m[1], g = t.gaps[gi];
+      const inp = el("input", { type:"text", size: g.w || 4, "aria-label": "Gap " + (gi+1), autocomplete:"off", autocapitalize:"off", spellcheck:"false" });
+      inp.value = r.gapv[gi] || "";
+      inp.addEventListener("input", ()=>{ r.gapv[gi] = inp.value; inp.classList.remove("bad","good"); save(); });
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+      inputs[gi] = inp; pre.append(inp);
+    } else if (t.prose) pre.append(document.createTextNode(part));
+    else { const sp = el("span"); sp.innerHTML = hl(part); pre.append(sp); }
+  });
+  card.append(pre);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ t.gaps.forEach((g, i) => { inputs[i].value = g.accept[0]; r.gapv[i] = g.accept[0]; inputs[i].classList.add("good"); }); save();
+    showMsg(box, "info", "Here is the answer", "<p>Read it through, then cover it and try to write it from memory.</p>"); });
+  function check(){
+    let bad = [];
+    t.gaps.forEach((g, i) => {
+      const ok = g.accept.some(a => normGap(a, g.ci) === normGap(inputs[i].value, g.ci));
+      inputs[i].classList.toggle("good", ok); inputs[i].classList.toggle("bad", !ok);
+      if (!ok) bad.push(i+1);
+    });
+    if (!bad.length) success(ctx, box, t.output ? "<p>" + esc(t.outputNote || "") + "</p>" : "<p>Every gap is right.</p>", t.output ? outBlock(t.output) : null);
+    else {
+      attempt(ctx);
+      const empty = bad.filter(i => !inputs[i-1].value.trim());
+      showMsg(box, "bad", "Not yet", "<p>" + (bad.length === 1 ? "One gap isn't right yet." : bad.length + " gaps aren't right yet.") + (empty.length ? " Fill in every gap." : "") + " The dashed boxes need another look.</p>");
+    }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ inputs.forEach(i => i.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- parsons ---------- */
+function taskParsons(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  if (!r.order || r.order.length !== t.lines.length) r.order = t.start.slice();
+  if (!r.indent) r.indent = t.lines.map(() => 0);
+  promptBits(card, t);
+  if (t.output) card.append(el("div", { class:"expected" }, el("p", { class:"lbl" }, "The program should print:"), expBlock(t.output)));
+  if (t.given) card.append(el("p", { class:"lbl" }, "Already at the top of the program"), codeBlock(t.given));
+  const ul = el("ol", { class:"parsons", "aria-label":"Program lines" });
+  card.append(el("p", { class:"lbl" }, "Your lines"), ul);
+  function draw(){
+    ul.innerHTML = "";
+    r.order.forEach((li, pos) => {
+      const ind = r.indent[li];
+      const line = el("span", { class:"pline" });
+      if (ind) line.append(el("span", { class:"ind", style:"width:" + (ind*2.4) + "em" }));
+      const code = el("span"); code.innerHTML = hl(t.lines[li][0]); line.append(code);
+      const ctl = el("span", { class:"ctl" },
+        el("button", { "aria-label":"Move line up", disabled: pos === 0, onclick: ()=>move(pos, pos-1) }, "▲"),
+        el("button", { "aria-label":"Move line down", disabled: pos === r.order.length-1, onclick: ()=>move(pos, pos+1) }, "▼"),
+        el("button", { "aria-label":"Indent less", disabled: ind === 0, onclick: ()=>{ r.indent[li] = Math.max(0, ind-1); changed(); } }, "←"),
+        el("button", { "aria-label":"Indent more", disabled: ind >= 2, onclick: ()=>{ r.indent[li] = Math.min(2, ind+1); changed(); } }, "→"));
+      ul.append(el("li", null, line, ctl));
+    });
+  }
+  function move(a, b){ const [x] = r.order.splice(a, 1); r.order.splice(b, 0, x); changed(b); }
+  function changed(focusPos){
+    save(); draw(); box.innerHTML = "";
+    if (focusPos != null){ const btns = ul.children[focusPos] && ul.children[focusPos].querySelectorAll("button"); if (btns && btns.length){ (btns[0].disabled ? btns[1] : btns[0]).focus(); } }
+  }
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ r.order = t.solutions[0].slice(); r.indent = t.lines.map(l => l[1]); save(); draw(); showMsg(box, "info", "Here is the answer", "<p>Notice which lines are indented, and why.</p>"); });
+  function check(){
+    const sol = t.solutions.find(s => s.every((v, i) => v === r.order[i]));
+    const indOK = t.lines.every((l, i) => r.indent[i] === l[1]);
+    if (sol && indOK) success(ctx, box, "<p>That's the nesting, the total and the average, all in the right place.</p>");
+    else {
+      attempt(ctx);
+      if (sol) showMsg(box, "bad", "Nearly", "<p>The <strong>order</strong> is right. Now check the <strong>indentation</strong>: what is inside each loop, and what happens after both loops?</p>");
+      else { const best = Math.max(...t.solutions.map(s => s.filter((v, i) => v === r.order[i]).length)); showMsg(box, "bad", "Not yet", "<p>" + best + " of " + t.lines.length + " lines are in the right place.</p>"); }
+    }
+    hints.update();
+  }
+  draw();
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete.</p>");
+}
+
+/* ---------- fill-in table (truth table) ---------- */
+function cellOK(given, accept){
+  const v = String(given).trim().replace(/^["']|["']$/g, "").replace(/["']/g, "");
+  const a = String(accept);
+  if (v.toLowerCase() === a.toLowerCase()) return "ok";
+  if (v.replace(/\s+/g, "").toLowerCase() === a.replace(/\s+/g, "").toLowerCase() && a !== "") return "space";
+  return "no";
+}
+function taskTable(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.cells = r.cells || {};
+  promptBits(card, t);
+  const table = el("table", { class:"trace" });
+  table.append(el("thead", null, el("tr", null, t.columns.map(c => el("th", { scope:"col" }, c)))));
+  const tb = el("tbody"), inputs = [];
+  t.rows.forEach((row, ri) => {
+    const tr = el("tr");
+    row.forEach((v, ci) => {
+      if (!t.blanks.includes(ci)) tr.append(el("td", { class:"given" }, v));
+      else {
+        const key = ri + "-" + ci;
+        const inp = el("input", { type:"text", class:"sm", "aria-label": t.columns[ci] + " row " + (ri+1), autocomplete:"off" });
+        inp.value = r.cells[key] || "";
+        inp.addEventListener("input", ()=>{ r.cells[key] = inp.value; inp.classList.remove("bad","good"); save(); });
+        inputs.push({ inp, accept: v, key }); tr.append(el("td", null, inp));
+      }
+    });
+    tb.append(tr);
+  });
+  table.append(tb); card.append(table);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ inputs.forEach(x => { x.inp.value = x.accept; r.cells[x.key] = x.accept; x.inp.classList.add("good"); }); save(); showMsg(box, "info", "Here is the completed table", "<p>Check each row against the expression.</p>"); });
+  function check(){
+    let bad = 0;
+    inputs.forEach(x => { const ok = cellOK(x.inp.value, x.accept) === "ok"; x.inp.classList.toggle("good", ok); x.inp.classList.toggle("bad", !ok); if (!ok) bad++; });
+    if (!bad) success(ctx, box, "<p>All " + t.rows.length + " rows correct.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + bad + (bad === 1 ? " box needs" : " boxes need") + " another look.</p>"); }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ inputs.forEach(x => x.inp.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- exam-style trace table ---------- */
+function taskTrace2(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.cells = r.cells || {};
+  promptBits(card, t);
+  const tw = el("div", { class:"stack" });
+  const table = el("table", { class:"trace exam" });
+  table.append(el("thead", null, el("tr", null, t.columns.map(c => el("th", { scope:"col" }, c)))));
+  const tb = el("tbody"), inputs = [];
+  t.rows.forEach((row, ri) => {
+    const tr = el("tr");
+    row.forEach((cell, ci) => {
+      if (cell[1]) tr.append(el("td", { class:"given" }, cell[0]));
+      else {
+        const key = ri + "-" + ci;
+        const inp = el("input", { type:"text", class: t.columns[ci] === "Line" ? "sm" : (t.columns[ci] === "Output" ? "wide" : ""), "aria-label": t.columns[ci] + ", row " + (ri+1), autocomplete:"off", spellcheck:"false" });
+        inp.value = r.cells[key] || "";
+        inp.addEventListener("input", ()=>{ r.cells[key] = inp.value; inp.classList.remove("bad","good"); save(); });
+        inputs.push({ inp, accept: cell[0], key, line: t.columns[ci] === "Line" });
+        tr.append(el("td", null, inp));
+      }
+    });
+    tb.append(tr);
+  });
+  table.append(tb);
+  tw.append(el("div", null, erlBlock(t.code)), el("div", { class:"tracewrap" }, el("p", { class:"lbl" }, "Trace table"), table));
+  card.append(tw);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ inputs.forEach(x => { x.inp.value = x.accept; r.cells[x.key] = x.accept; x.inp.classList.add("good"); }); save(); showMsg(box, "info", "Here is the completed table", "<p>Follow it row by row against the code. Notice that the loop condition line gets no row of its own.</p>"); });
+  function check(){
+    let bad = 0, spaces = 0;
+    inputs.forEach(x => {
+      let res = cellOK(x.inp.value, x.accept);
+      if (x.line && res !== "ok" && x.accept && String(+x.inp.value.trim()) === String(+x.accept)) res = "ok";
+      const ok = res === "ok";
+      x.inp.classList.toggle("good", ok); x.inp.classList.toggle("bad", !ok);
+      if (!ok){ bad++; if (res === "space") spaces++; }
+    });
+    if (!bad) success(ctx, box, "<p>You kept going round the loop and got every value. That's the 4 marks.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + bad + (bad === 1 ? " box needs" : " boxes need") + " another look (the dashed ones). Work down one row at a time." + (spaces ? " <strong>" + (spaces === 1 ? (bad === 1 ? "It only differs" : "One of them only differs") : spaces + " of them only differ") + " by spaces</strong>: spaces matter in strings." : "") + "</p>"); }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ inputs.forEach(x => x.inp.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- hex → denary grid (nibbles copied up into 8 bits) ---------- */
+const HEXV = h => parseInt(h, 16);
+const nib = d => HEXV(d).toString(2).padStart(4, "0");
+function hexGridTable(hex, cell){
+  // cell(kind, i) returns a node for kind "byte"/"nib", i = 0..7
+  const t = el("table", { class:"hexg" });
+  const H = [128,64,32,16,8,4,2,1], N = [8,4,2,1,8,4,2,1];
+  t.append(el("tr", { class:"hh" }, H.map((h, i) => el("th", { class: i === 4 ? "split" : null }, String(h)))));
+  t.append(el("tr", null, H.map((h, i) => el("td", { class: i === 4 ? "split" : null }, cell("byte", i)))));
+  t.append(el("tr", { class:"arrows" }, H.map((h, i) => el("td", { class: i === 4 ? "split" : null, "aria-hidden":"true" }, "↑"))));
+  t.append(el("tr", { class:"hh" }, N.map((h, i) => el("th", { class: i === 4 ? "split" : null }, String(h)))));
+  t.append(el("tr", null, N.map((h, i) => el("td", { class: i === 4 ? "split" : null }, cell("nib", i)))));
+  t.append(el("tr", { class:"digits" }, el("td", { colspan:"4" }, hex[0] + (HEXV(hex[0]) > 9 ? " = " + HEXV(hex[0]) : "")), el("td", { colspan:"4", class:"split" }, hex[1] + (HEXV(hex[1]) > 9 ? " = " + HEXV(hex[1]) : ""))));
+  return t;
+}
+function hexGridStatic(hex){
+  const bits = nib(hex[0]) + nib(hex[1]);
+  const t = hexGridTable(hex, (k, i) => el("span", { class:"bit" + (bits[i] === "1" && k === "byte" ? " one" : "") }, bits[i]));
+  const sum = [128,64,32,16,8,4,2,1].filter((h, i) => bits[i] === "1");
+  return el("div", { class:"hexwrap" }, t, el("p", { class:"hexsum" }, sum.join(" + ") + " = ", el("b", null, String(HEXV(hex)))));
+}
+function taskHex(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.cells = r.cells || {};
+  promptBits(card, t);
+  const all = [];
+  t.items.forEach((it, k) => {
+    const bits = nib(it.hex[0]) + nib(it.hex[1]);
+    const mk = (kind, i) => {
+      if (kind === "nib" && it.given) return el("span", { class:"bit" }, bits[i]);
+      const key = k + kind + i;
+      const inp = el("input", { type:"text", maxlength:"1", inputmode:"numeric", class:"bitin", "aria-label": it.hex + (kind === "byte" ? " 8-bit row, column " : " nibble row, column ") + (i+1), autocomplete:"off" });
+      inp.value = r.cells[key] || "";
+      inp.addEventListener("input", ()=>{ inp.value = inp.value.replace(/[^01]/g, "").slice(0, 1); r.cells[key] = inp.value; inp.classList.remove("bad","good"); save(); });
+      all.push({ inp, accept: bits[i], key, kind, item: it });
+      return inp;
+    };
+    const tbl = hexGridTable(it.hex, mk);
+    const akey = k + "ans";
+    const ans = el("input", { type:"text", inputmode:"numeric", class:"hexans", "aria-label": it.hex + " in denary", autocomplete:"off" });
+    ans.value = r.cells[akey] || "";
+    ans.addEventListener("input", ()=>{ r.cells[akey] = ans.value; ans.classList.remove("bad","good"); save(); });
+    all.push({ inp: ans, accept: String(HEXV(it.hex)), key: akey, kind: "ans", item: it });
+    card.append(el("div", { class:"hexwrap" }, el("p", { class:"hexq" }, "Hex ", el("b", null, it.hex)), tbl, el("p", { class:"hexsum" }, "Add the headings with a 1 under them: ", el("b", null, it.hex + " = "), ans)));
+  });
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ all.forEach(x => { x.inp.value = x.accept; r.cells[x.key] = x.accept; x.inp.classList.add("good"); }); save(); showMsg(box, "info", "Here are the answers", "<p>Check each nibble, then see how the bits are copied straight up.</p>"); });
+  function check(){
+    let bad = { nib:0, byte:0, ans:0 };
+    all.forEach(x => { const ok = x.inp.value.trim() === x.accept; x.inp.classList.toggle("good", ok); x.inp.classList.toggle("bad", !ok); if (!ok) bad[x.kind]++; });
+    const n = bad.nib + bad.byte + bad.ans;
+    if (!n){ success(ctx, box, "<p>Nibbles, 8-bit row and answer all correct. That grid is your working mark.</p>"); hints.update(); return; }
+    attempt(ctx);
+    const msgs = [];
+    if (bad.nib) msgs.push("Check the <strong>nibbles</strong>: each hex digit becomes 4 bits under 8 4 2 1 (A=10 … F=15).");
+    if (bad.byte) msgs.push("Check the <strong>8-bit row</strong>: copy each bit straight up from the nibble below it.");
+    if (bad.ans) msgs.push("Check the <strong>answer</strong>: add only the headings that have a 1 under them.");
+    showMsg(box, "bad", "Not yet", msgs.map(m => "<p>" + m + "</p>").join(""));
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ all.forEach(x => x.inp.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- logic gates ---------- */
+function taskGates(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.g = r.g || [null, null, t.final ? null : null];
+  promptBits(card, t);
+  const wrap = el("div", { class:"circwrap" });
+  const finalFixed = false;
+  const sels = [];
+  const ctl = el("div", { class:"gatesel" });
+  const labels = ["Top box", "Bottom box", "Final box"];
+  const answers = [t.boxes[0].ans, t.boxes[1].ans, t.final];
+  answers.forEach((ans, i) => {
+    const s = el("select", { "aria-label": labels[i] }, el("option", { value:"" }, "— choose —"), ["AND","OR","NOT"].map(g => el("option", { value:g }, g)));
+    if (r.g[i]) s.value = r.g[i];
+    s.addEventListener("change", ()=>{ r.g[i] = s.value || null; save(); s.classList.remove("bad","good"); draw(); });
+    sels.push(s);
+    ctl.append(el("label", null, labels[i], s));
+  });
+  function draw(){ wrap.innerHTML = circuitSVG(t.boxes, [r.g[0], r.g[1]], null, r.g[2]); }
+  draw();
+  card.append(wrap, ctl);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ answers.forEach((a, i) => { r.g[i] = a; sels[i].value = a; sels[i].classList.add("good"); }); save(); draw(); showMsg(box, "info", "Here is the answer", "<p>Check the shapes: only NOT has a circle.</p>"); });
+  function check(){
+    let bad = 0;
+    sels.forEach((s, i) => { const ok = s.value === answers[i]; s.classList.toggle("good", ok); s.classList.toggle("bad", !ok); if (!ok) bad++; });
+    if (!bad) success(ctx, box, "<p>All three gates are right. In the exam, draw the shapes carefully: only NOT has a circle.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + bad + (bad === 1 ? " gate is" : " gates are") + " wrong. Work from the brackets outwards.</p>"); }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ sels.forEach(s => s.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- merge sort ---------- */
+function taskMerge(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  r.cells = r.cells || {};
+  promptBits(card, t);
+  const w = el("div", { class:"merge" });
+  const inputs = [];
+  t.levels.forEach((lv, li) => {
+    const row = el("div", { class:"mrow" }, el("span", { class:"mlab" }, lv.length + (lv.length === 1 ? " list of " : " lists of ") + lv[0].length));
+    lv.forEach((list, ki) => {
+      const lb = el("span", { class:"mlist" });
+      list.forEach((v, vi) => {
+        if (t.given.includes(li)) lb.append(el("span", { class:"mcell" }, String(v)));
+        else {
+          const key = li + "-" + ki + "-" + vi;
+          const inp = el("input", { type:"text", class:"mcell", inputmode:"numeric", "aria-label": "Stage " + (li+1) + ", list " + (ki+1) + ", item " + (vi+1), autocomplete:"off" });
+          inp.value = r.cells[key] || "";
+          inp.addEventListener("input", ()=>{ r.cells[key] = inp.value; inp.classList.remove("bad","good"); save(); });
+          inputs.push({ inp, accept: String(v), key }); lb.append(inp);
+        }
+      });
+      row.append(lb);
+    });
+    w.append(row);
+  });
+  card.append(w);
+  const box = fbBox();
+  const hints = hintArea(ctx, ()=>{ inputs.forEach(x => { x.inp.value = x.accept; r.cells[x.key] = x.accept; x.inp.classList.add("good"); }); save(); showMsg(box, "info", "Here is the answer", "<p>Each row merges pairs of lists from the row above, and every list is in order.</p>"); });
+  function check(){
+    let bad = 0;
+    inputs.forEach(x => { const ok = x.inp.value.trim().replace(/[−–]/g, "-") === x.accept; x.inp.classList.toggle("good", ok); x.inp.classList.toggle("bad", !ok); if (!ok) bad++; });
+    if (!bad) success(ctx, box, "<p>Every merge is in order and the sizes are clear. That's how to lay it out in the exam.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + bad + (bad === 1 ? " box needs" : " boxes need") + " another look. Each new list is made by merging <strong>two</strong> neighbouring lists from the row above, smallest first. Remember that -12 is smaller than -4.</p>"); }
+    hints.update();
+  }
+  checkRow(card, check, hints);
+  card.append(hints.node, box);
+  if (isDone(t.id)){ inputs.forEach(x => x.inp.classList.add("good")); showMsg(box, "ok", "Done", "<p>This task is complete.</p>"); }
+}
+
+/* ---------- SQL (tiny built-in engine: SELECT … FROM … WHERE …) ---------- */
+function runSQL(q, table){
+  const toks = []; const re = /\s*(>=|<=|<>|!=|=|<|>|\*|,|;|\(|\)|"[^"]*"|'[^']*'|-?\d+(?:\.\d+)?|[A-Za-z_]\w*)/y;
+  let m, pos = 0; q = q.trim();
+  while (pos < q.length){ re.lastIndex = pos; m = re.exec(q); if (!m) return { error: "I don't understand \"" + q.slice(pos).trim().split(/\s/)[0] + "\"" }; toks.push(m[1]); pos = re.lastIndex; while (pos < q.length && /\s/.test(q[pos])) pos++; }
+  let i = 0; const up = () => (toks[i] || "").toUpperCase();
+  if (up() !== "SELECT") return { error: "A query starts with SELECT" }; i++;
+  const colIdx = name => table.cols.findIndex(c => c.toLowerCase() === String(name).toLowerCase());
+  let cols = [];
+  if (toks[i] === "*"){ cols = table.cols.map((c, k) => k); i++; }
+  else {
+    while (true){ const k = colIdx(toks[i]); if (k < 0) return { error: toks[i] ? "There is no field called " + toks[i] : "Which fields? Put them after SELECT" }; cols.push(k); i++; if (toks[i] === ","){ i++; continue; } break; }
+  }
+  if (up() !== "FROM") return { error: "Expected FROM after the fields" }; i++;
+  if ((toks[i] || "").toLowerCase() !== table.name.toLowerCase()) return { error: "There is no table called " + (toks[i] || "(missing)") }; i++;
+  let cond = () => true;
+  if (up() === "WHERE"){
+    i++;
+    const atom = () => {
+      const k = colIdx(toks[i]); if (k < 0) return { error: "There is no field called " + toks[i] }; i++;
+      const op = toks[i]; if (!["=","!=","<>","<",">","<=",">="].includes(op)) return { error: "Expected a comparison like > or = after " + table.cols[k] }; i++;
+      let v = toks[i]; if (v == null) return { error: "Missing a value to compare with" }; i++;
+      if (/^["']/.test(v)) v = v.slice(1, -1); else if (/^-?\d/.test(v)) v = +v; else return { error: "Text values need quotes, e.g. \"Red\"" };
+      return { f: row => { const a = row[k]; const x = typeof a === "number" ? +v : String(v).toLowerCase(), y = typeof a === "number" ? a : String(a).toLowerCase();
+        return op === "=" ? y === x : op === "!=" || op === "<>" ? y !== x : op === "<" ? y < x : op === ">" ? y > x : op === "<=" ? y <= x : y >= x; } };
+    };
+    let a = atom(); if (a.error) return a; let f = a.f;
+    while (up() === "AND" || up() === "OR"){ const j = up(); i++; const b = atom(); if (b.error) return b; const f1 = f, f2 = b.f; f = j === "AND" ? r => f1(r) && f2(r) : r => f1(r) || f2(r); }
+    cond = f;
+  }
+  if (toks[i] === ";") i++;
+  if (i < toks.length) return { error: "Unexpected \"" + toks[i] + "\"" + (/^if$/i.test(toks[i]) ? ": IF isn't SQL" : "") };
+  const idx = table.rows.map((r, k) => k).filter(k => cond(table.rows[k]));
+  return { cols: cols.map(k => table.cols[k]), rows: idx.map(k => cols.map(c => table.rows[k][c])), idx };
+}
+function taskSql(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  promptBits(card, t);
+  card.append(el("p", { class:"lbl" }, "The wrong SQL"), codeBlock(t.wrong));
+  card.append(el("p", { class:"lbl" }, "The table " + t.table.name),
+    el("table", { class:"rt" }, el("thead", null, el("tr", null, t.table.cols.map(c => el("th", null, c)))), el("tbody", null, t.table.rows.map(rw => el("tr", null, rw.map(v => el("td", null, String(v))))))));
+  card.append(el("p", { class:"lbl" }, "Your corrected SQL"));
+  const ed = makeEditor(r.code != null ? r.code : "", v => { r.code = v; save(); });
+  card.append(ed.node);
+  const runBtn = el("button", { class:"btn" }, "▶ Run");
+  const out = el("div", { class:"sqlout" });
+  const box = fbBox();
+  const solWrap = el("div", { class:"solution" });
+  const hints = hintArea(ctx, ()=>{ solWrap.innerHTML = ""; solWrap.append(el("p", { class:"lbl" }, "A model answer"), codeBlock("SELECT *\nFROM TblMembers\nWHERE Age >= 18")); box.innerHTML = ""; });
+  function resultTable(res){
+    if (res.error) return el("div", { class:"msg bad" }, "SQL problem: " + res.error);
+    if (!res.rows.length) return el("p", { class:"inote" }, "(no records match)");
+    return el("table", { class:"rt" }, el("thead", null, el("tr", null, res.cols.map(c => el("th", null, c)))), el("tbody", null, res.rows.map(rw => el("tr", null, rw.map(v => el("td", null, String(v)))))));
+  }
+  function preCheck(q){
+    if (/select\s+all\b/i.test(q)) return "**SELECT ALL** isn't allowed. To show every field, use **SELECT ***.";
+    if (/\bif\b/i.test(q)) return "**IF** isn't an SQL keyword. Use **WHERE** for the condition.";
+    if (!/\bwhere\b/i.test(q)) return "You need a **WHERE** clause for the condition.";
+    return null;
+  }
+  runBtn.onclick = () => { box.innerHTML = ""; out.innerHTML = ""; if (!ed.value.trim()) return; out.append(el("p", { class:"lbl" }, "Result"), resultTable(runSQL(ed.value, t.table))); };
+  function check(){
+    const q = ed.value;
+    if (!q.trim()){ showMsg(box, "bad", "Nothing written yet", "<p>Write your SQL in the box.</p>"); return; }
+    const pc = preCheck(q);
+    if (pc){ attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + md(pc) + "</p>"); hints.update(); return; }
+    const a = runSQL(q, t.table);
+    out.innerHTML = ""; out.append(el("p", { class:"lbl" }, "Your result"), resultTable(a));
+    if (a.error){ attempt(ctx); showMsg(box, "bad", "Not yet", "<p>" + esc(a.error) + ". Check the order: SELECT, FROM, WHERE.</p>"); hints.update(); return; }
+    const ok = a.cols.length === t.expect.cols && a.idx.join() === t.expect.rows.join();
+    if (ok) success(ctx, box, "<p>SELECT, FROM, WHERE in the right order with the right condition: that's the 4 marks.</p>");
+    else { attempt(ctx); showMsg(box, "bad", "Not quite", "<p>Your SQL runs, but doesn't show the right result. Check you show <strong>every</strong> field, and the condition is <strong>18 or over</strong> (Ben is 18).</p>"); }
+    hints.update();
+  }
+  card.append(el("div", { class:"btnrow" }, runBtn, el("button", { class:"btn primary", onclick: check }, "✓ Check"), hints.buttons), out, hints.node, box, solWrap);
+  if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete.</p>");
+}
+
+/* ---------- code editor ---------- */
+function makeEditor(initial, onChange){
+  const wrap = el("div", { class:"editor" });
+  const gutter = el("div", { class:"gutter", "aria-hidden":"true" });
+  const ta = el("textarea", { spellcheck:"false", autocapitalize:"off", autocomplete:"off", autocorrect:"off", "aria-label":"Code editor", wrap:"off" });
+  ta.value = initial;
+  wrap.append(gutter, ta);
+  let errLine = null;
+  function size(){
+    const n = ta.value.split("\n").length;
+    ta.rows = Math.max(6, n + 1);
+    let g = ""; for (let i = 1; i <= Math.max(n, ta.rows); i++) g += (i === errLine ? '<span class="errline">'+i+'</span>' : i) + "\n";
+    gutter.innerHTML = g;
+  }
+  function insert(s){
+    ta.focus();
+    let ok = false; try { ok = document.execCommand("insertText", false, s); } catch(e){}
+    if (!ok){ ta.setRangeText(s, ta.selectionStart, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input")); }
+  }
+  ta.addEventListener("keydown", e => {
+    const v = ta.value, a = ta.selectionStart, b = ta.selectionEnd;
+    const lineStart = v.lastIndexOf("\n", a-1) + 1;
+    const lineBefore = v.slice(lineStart, a);
+    if (e.key === "Tab" && !e.ctrlKey && !e.altKey && !e.metaKey){
+      if (e.shiftKey){
+        e.preventDefault();
+        const m = v.slice(lineStart).match(/^ {1,4}/);
+        if (m){ ta.setSelectionRange(lineStart, lineStart + m[0].length); insert(""); ta.setSelectionRange(Math.max(lineStart, a - m[0].length), Math.max(lineStart, b - m[0].length)); }
+      } else if (a === b){ e.preventDefault(); insert("    ".slice((lineBefore.length) % 4)); }
+      else { e.preventDefault(); insert("    "); }
+    } else if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey){
+      e.preventDefault();
+      let ind = (lineBefore.match(/^ */) || [""])[0];
+      if (/:\s*$/.test(lineBefore)) ind += "    ";
+      insert("\n" + ind);
+    } else if (e.key === "Backspace" && a === b && a > lineStart && /^ +$/.test(lineBefore) && lineBefore.length % 4 === 0){
+      e.preventDefault(); ta.setSelectionRange(a-4, a); insert("");
+    }
+  });
+  ta.addEventListener("input", ()=>{ errLine = null; size(); onChange && onChange(ta.value); });
+  ta.addEventListener("scroll", ()=>{ gutter.scrollTop = ta.scrollTop; });
+  size();
+  return { node: wrap, get value(){ return ta.value; }, set value(v){ ta.value = v; errLine = null; size(); onChange && onChange(v); }, markLine(n){ errLine = n; size(); }, focus(){ ta.focus(); } };
+}
+
+/* ---------- code task ---------- */
+function taskTests(t){ return t.tests || [{ inputs: [], expected: t.expected }]; }
+function inputList(a){ return a.map(x => "<code>" + esc(x) + "</code>").join(", "); }
+function taskCode(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  const tests = taskTests(t), usesInput = tests.some(x => x.inputs.length);
+  const full = src => t.harness ? src + "\n\n" + t.harness : src;
+  promptBits(card, t);
+  if (usesInput){
+    card.append(el("div", { class:"expected" },
+      el("p", { class:"lbl", html: "For example, when the user types " + inputList(tests[0].inputs) + ", your program should print:" }),
+      expBlock(tests[0].expected),
+      tests.length > 1 ? el("p", { class:"inote" }, "Check will also try your program with " + (tests.length - 1) + " other set" + (tests.length > 2 ? "s" : "") + " of inputs.") : null));
+  } else if (t.harness){
+    card.append(el("div", { class:"expected twocol" },
+      el("div", null, el("p", { class:"lbl" }, "Check adds these lines to the end of your code"), codeBlock(t.harness)),
+      el("div", null, el("p", { class:"lbl" }, "They should print"), expBlock(tests[0].expected))));
+  } else card.append(el("div", { class:"expected" }, el("p", { class:"lbl" }, "Your program should print:"), expBlock(tests[0].expected)));
+  const offNote = el("div", { class:"offline-note", hidden: true });
+  card.append(offNote);
+  const ed = makeEditor(r.code != null ? r.code : t.starter, v => { r.code = v; save(); });
+  const inTa = el("textarea", { id: "inputs-" + t.id, spellcheck:"false", autocomplete:"off", autocapitalize:"off", rows: 5 });
+  inTa.value = r.inputs != null ? r.inputs : tests[0].inputs.join("\n");
+  inTa.addEventListener("input", ()=>{ r.inputs = inTa.value; save(); });
+  if (usesInput){
+    card.append(el("div", { class:"edgrid" },
+      el("div", null, el("p", { class:"lbl" }, "Your Python code"), ed.node),
+      el("div", { class:"inputs" }, el("label", { class:"lbl", for: "inputs-" + t.id }, "Inputs (one per line)"), inTa,
+        el("p", { class:"inote" }, "What the user types, in order. Run uses these."))));
+  } else card.append(el("p", { class:"lbl" }, "Your Python code"), ed.node);
+  const runBtn = el("button", { class:"btn" }, "▶ Run");
+  const checkBtn = el("button", { class:"btn primary" }, "✓ Check");
+  const resetBtn = el("button", { class:"btn quiet" }, "Reset code");
+  const actionRow = el("div", { class:"btnrow" }, runBtn, checkBtn);
+  card.append(actionRow);
+  const pasteWrap = el("div", { class:"paste", hidden: true });
+  const pasteTa = el("textarea", { "aria-label":"Output from Thonny", spellcheck:"false" });
+  pasteTa.value = r.pasted || "";
+  pasteTa.addEventListener("input", ()=>{ r.pasted = pasteTa.value; save(); });
+  pasteWrap.append(el("p", { class:"lbl" }, "Paste what your program printed in Thonny:"), pasteTa);
+  card.append(pasteWrap);
+  const outLbl = el("p", { class:"lbl" }, "Output");
+  const outWrap = el("div", { class:"outwrap" }, outLbl);
+  const outPre = outBlock(""); outPre.textContent = "Press Run to see what your code prints."; outPre.classList.add("empty");
+  outWrap.append(outPre); card.append(outWrap);
+  const box = fbBox();
+  const solWrap = el("div", { class:"solution" });
+  const hints = hintArea(ctx, ()=>{
+    solWrap.innerHTML = "";
+    solWrap.append(el("p", { class:"lbl" }, "A model answer"), codeBlock(t.solution),
+      el("div", { class:"btnrow" }, el("button", { class:"btn", onclick: ()=>{ ed.value = t.solution; ed.focus(); } }, "Put it in the editor")));
+    box.innerHTML = "";
+  });
+  actionRow.append(...hints.buttons, resetBtn);
+  card.append(hints.node, box, solWrap);
+  function modeUpdate(){
+    const off = PY.status === "offline", loading = PY.status === "loading" || PY.status === "idle";
+    runBtn.hidden = off; outWrap.hidden = off; pasteWrap.hidden = !off;
+    runBtn.disabled = loading; checkBtn.disabled = loading;
+    offNote.hidden = !(off || loading);
+    if (off){ offNote.innerHTML = md("Python couldn't load on this computer. **Copy your code into Thonny**" + (t.harness ? " (with the extra lines above at the end)" : "") + ", run it there, then paste what it printed into the box below and press **Check**. ") + (usesInput ? md("When it asks, type ") + inputList(tests[0].inputs) + ". " : "");
+      offNote.append(el("button", { class:"btn quiet", onclick: startPy }, "Try loading Python again")); }
+    else if (loading) offNote.innerHTML = md("Python is **loading**… Run and Check will work in a moment.");
+  }
+  modeUpdate();
+  document.addEventListener("pystatus", modeUpdate);
+  const obs = new MutationObserver(()=>{ if (!document.body.contains(card)){ document.removeEventListener("pystatus", modeUpdate); obs.disconnect(); } });
+  obs.observe($("main"), { childList:true });
+  function boxInputs(){ const L = inTa.value.replace(/\r/g, "").split("\n"); while (L.length && L[L.length-1] === "") L.pop(); return L; }
+  async function execute(inputs, label){
+    runBtn.disabled = checkBtn.disabled = true;
+    outLbl.textContent = label || "Output";
+    outPre.className = "out empty"; outPre.textContent = "Running…";
+    const res = await runPy(full(ed.value), inputs);
+    runBtn.disabled = checkBtn.disabled = PY.status !== "ready";
+    if (res.offline){ modeUpdate(); return null; }
+    if (res.timeout){ outPre.className = "out"; outPre.textContent = "(stopped)"; return { kind:"timeout" }; }
+    outPre.className = "out" + (res.out ? "" : " empty");
+    outPre.textContent = res.out || "(nothing printed)";
+    if (res.tooMuch) return { kind:"toomuch" };
+    if (!res.ok){
+      const ex = explainError(res.err, ed.value); if (ex.lineNo) ed.markLine(ex.lineNo);
+      if (/NO_MORE_INPUT/.test(res.err)){ outPre.textContent = (res.out || "").replace(/\n$/, "") + "\n(no more input)"; outPre.className = "out"; return { kind:"noinput", ex }; }
+      outPre.textContent = (res.out || "") + (res.out ? "\n" : "") + ex.last; outPre.className = "out"; return { kind:"error", ex };
+    }
+    return { kind:"ok", out: res.out };
+  }
+  function errorMsg(res, checking){
+    if (res.kind === "timeout") showMsg(box, "bad", "Your program ran for ever", "<p>It ran for more than 6 seconds and was stopped. That usually means an <strong>infinite loop</strong>: are the inputs asked again <strong>inside</strong> the loop? Python is restarting, which takes a few seconds.</p>");
+    else if (res.kind === "toomuch") showMsg(box, "bad", "Too much output", "<p>Your program printed a huge amount, so it was stopped. Is your loop running <strong>for ever</strong>?</p>");
+    else if (res.kind === "noinput") showMsg(box, "bad", "Your program wanted more input", "<p>" + (checking ? md("Your program kept asking after the last input. Check that it **stops** when 0 is entered.") : md("Your program asked for more input than there is in the **Inputs** box.")) + "</p>");
+    else if (res.kind === "error") showMsg(box, "bad", "Python found an error" + (res.ex.lineNo ? " on line " + res.ex.lineNo : ""), "<p>" + md(res.ex.friendly) + "</p><p class='raw'>" + esc(res.ex.last) + "</p>");
+  }
+  function testLabel(x){ return x.inputs.length ? "Output, when the user types " + x.inputs.join(", ") : "Output"; }
+  runBtn.onclick = async () => { box.innerHTML = ""; const inp = boxInputs(); const res = await execute(inp, usesInput ? testLabel({ inputs: inp }) : "Output"); if (res && res.kind !== "ok") errorMsg(res, false); };
+  resetBtn.onclick = () => { if (ed.value === t.starter || confirm("Put the starting code back? Your changes will be lost.")){ ed.value = t.starter; box.innerHTML = ""; } };
+  checkBtn.onclick = async () => {
+    const code = ed.value;
+    let results = [];
+    for (const f of (t.forbid || [])) if (new RegExp(f.re).test(code)){ attempt(ctx); showMsg(box, "info", "Try another way", "<p>" + md(f.msg) + "</p>"); hints.update(); return; }
+    if (PY.status === "offline"){
+      if (!pasteTa.value.trim()){ showMsg(box, "bad", "Nothing pasted yet", "<p>Run your code in Thonny, then copy what it printed into the box above.</p>"); return; }
+      results = [{ test: tests[0], out: pasteTa.value }];
+    } else {
+      for (const x of tests){
+        const res = await execute(x.inputs, testLabel(x));
+        if (!res) return;
+        if (res.kind !== "ok"){ attempt(ctx); errorMsg(res, true); if (x.inputs.length) box.querySelector(".msg").append(el("p", { html: "This happened when the user typed " + inputList(x.inputs) + "." })); hints.update(); return; }
+        results.push({ test: x, out: res.out });
+        if (!sameOut(x.expected, res.out)) break;
+      }
+    }
+    if (printUsesComma(code)){ showMsg(box, "info", "Use + to join, not commas", "<p>" + md("In our lessons we join the parts of a print with **+**, not commas. Put spaces **inside the quotes**, and turn numbers into text with **str()**: `print(\"Price: £\" + str(price))`") + "</p>"); return; }
+    const fail = results.find(x => !sameOut(x.test.expected, x.out));
+    if (!fail){
+      const missing = (t.require || []).find(q => !new RegExp(q.re).test(code));
+      if (missing){ showMsg(box, "info", "Right output, but…", "<p>" + md(missing.msg) + "</p>"); return; }
+      success(ctx, box, "<p>" + (tests.length > 1 && PY.status !== "offline" ? "Your program passed all " + tests.length + " tests." : "Your output matches exactly.") + "</p>");
+      hints.update(); return;
+    }
+    attempt(ctx);
+    const exp = normLines(fail.test.expected), got = normLines(fail.out);
+    const which = fail.test.inputs.length ? "<p>" + (tests.length > 1 ? "Test " + (tests.indexOf(fail.test) + 1) + " of " + tests.length + ": " : "") + "the user typed " + inputList(fail.test.inputs) + ".</p>" : "";
+    showMsg(box, "bad", "Not quite", which + "<p>" + diffSummary(exp, got) + "</p>", diffView(exp, got));
+    hints.update();
+  };
+  if (isDone(t.id)) showMsg(box, "ok", "Done", "<p>This task is complete. You can still run and change your code.</p>");
+}
+function sameOut(expected, out){ const a = normLines(expected), b = normLines(out); return a.length === b.length && a.every((l, i) => l === b[i]); }
+function printUsesComma(code){
+  const src = code.replace(/#.*$/gm, "").replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, '""');
+  const re = /\bprint\s*\(/g; let m;
+  while ((m = re.exec(src))){
+    let depth = 1;
+    for (let i = m.index + m[0].length; i < src.length && depth > 0; i++){
+      const c = src[i];
+      if (c === "(" || c === "[") depth++; else if (c === ")" || c === "]") depth--; else if (c === "," && depth === 1) return true;
+    }
+  }
+  return false;
+}
+function diffSummary(exp, got){
+  if (!got.length) return "Your program didn't print anything.";
+  const squash = L => L.map(l => l.replace(/\s+/g, ""));
+  if (exp.length === got.length && squash(exp).every((l, i) => l === squash(got)[i])) return "Nearly! Only the <strong>spaces</strong> are different. Check for a space <strong>inside the quotes</strong>, next to each +.";
+  for (let i = 0; i < Math.max(exp.length, got.length); i++){
+    if (exp[i] !== got[i]){
+      if (i >= got.length) return "Your output stops too early: line " + (i+1) + " is missing.";
+      if (i >= exp.length) return "Your program prints <strong>too many lines</strong>. Line " + (i+1) + " shouldn't be there.";
+      return "Line " + (i+1) + " is different. Compare the two outputs below.";
+    }
+  }
+  return "Compare the two outputs below.";
+}
+function diffView(exp, got){
+  const d = el("div", { class:"diff" });
+  const a = el("pre"), b = el("pre");
+  let first = -1; for (let i = 0; i < Math.max(exp.length, got.length); i++) if (exp[i] !== got[i]){ first = i; break; }
+  a.innerHTML = exp.map((l, i) => i === first ? "<mark>" + esc(l || " ") + "</mark>" : esc(l)).join("\n");
+  b.innerHTML = got.map((l, i) => i === first ? "<mark>" + esc(l || " ") + "</mark>" : esc(l)).join("\n") || "(nothing)";
+  if (first >= got.length && first >= 0) b.innerHTML += "\n<mark>(missing)</mark>";
+  d.append(el("div", null, el("p", { class:"lbl" }, "Should print"), a), el("div", null, el("p", { class:"lbl" }, "Your program printed"), b));
+  return d;
+}
+
+/* ---------- extended writing ---------- */
+function taskEssay(card, ctx){
+  const t = ctx.t, r = ts(t.id);
+  card.append(el("p", { class:"prompt", html: md(t.prompt) }));
+  card.append(el("div", { class:"examq" }, el("p", { html: md(t.question) })));
+  const ta = el("textarea", { class:"essay", "aria-label":"Your answer", spellcheck:"true" });
+  ta.value = r.text != null ? r.text : t.frame;
+  ta.addEventListener("input", ()=>{ r.text = ta.value; save(); });
+  card.append(el("p", { class:"lbl" }, "Your answer (the headings are there to help: keep them)"), ta);
+  r.ticks = r.ticks || [];
+  const ticks = t.checklist.map((c, i) => {
+    const cb = el("input", { type:"checkbox", id: t.id + "-k" + i }); cb.checked = !!r.ticks[i];
+    cb.addEventListener("change", ()=>{ r.ticks[i] = cb.checked; save(); });
+    return el("label", { class:"check", for: t.id + "-k" + i }, cb, el("span", { html: md(c) }));
+  });
+  card.append(el("p", { class:"lbl" }, "Mark it: tick each one that is true"), el("div", { class:"checks" }, ticks));
+  const lv = el("div", { class:"levels", role:"radiogroup", "aria-label":"Level" });
+  t.levels.forEach((L, i) => {
+    const rb = el("input", { type:"radio", name: t.id + "-lv", id: t.id + "-lv" + i, value: String(i+1) }); rb.checked = r.level === i+1;
+    rb.addEventListener("change", ()=>{ r.level = i+1; save(); });
+    lv.append(el("label", { class:"lvl", for: t.id + "-lv" + i }, rb, el("b", null, L[0] + " marks"), el("span", null, L[1])));
+  });
+  card.append(el("p", { class:"lbl" }, "Which level do you think it reaches?"), lv);
+  const box = fbBox();
+  card.append(el("div", { class:"btnrow" }, el("button", { class:"btn primary", onclick: ()=>{
+    const words = (ta.value.replace(t.frame, "").match(/[A-Za-z']+/g) || []).length;
+    const ticked = t.checklist.filter((c, i) => r.ticks[i]).length;
+    if (words < 80){ showMsg(box, "bad", "Keep writing", "<p>Your answer has about " + words + " words. An 8-mark answer usually needs at least 150, with every point explained.</p>"); return; }
+    if (!r.level){ showMsg(box, "bad", "Choose a level", "<p>Pick the level you think your answer reaches.</p>"); return; }
+    if (ticked < t.checklist.length){ attempt(ctx); }
+    r.words = words; save();
+    success(ctx, box, "<p>" + (ticked < t.checklist.length ? "You left " + (t.checklist.length - ticked) + " checklist item" + (t.checklist.length - ticked === 1 ? "" : "s") + " unticked. Improve those parts, then tick them. " : "Every checklist item is ticked. ") + "Your teacher will see the level you chose.</p>");
+  } }, "Save my answer")), box);
+  if (isDone(t.id)) showMsg(box, "ok", "Saved", "<p>You can keep improving it: your changes are saved as you type.</p>");
+}
+
+/* ---------- completion code ---------- */
+const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+function partStatus(p, i){
+  if (ME.m[i] >= p.max) return 7;
+  const own = p.tasks.find(t => t.role === "own"), help = p.tasks.find(t => t.role === "help");
+  const o = state.tasks[own.id] || {};
+  if (o.revealed) return 4;
+  if (o.status === "done") return (o.attempts || 0) > 0 || (o.hints || 0) > 0 ? 3 : 2;
+  if (help && isDone(help.id)) return 1;
+  return 0;
+}
+function completionCode(){
+  let bits = 0n;
+  PARTS.forEach((p, i) => { bits = (bits << 3n) | BigInt(partStatus(p, i)); });
+  const ess = state.tasks["10-o"] || {};
+  bits = (bits << 2n) | BigInt(ess.status === "done" ? (ess.level || 0) : 0);
+  const day = Math.max(0, Math.min(1023, Math.floor((Date.now() - Date.UTC(2026, 10, 1)) / 86400000)));
+  bits = (bits << 10n) | BigInt(day);
+  const chk = cyrb53(CODE + bits.toString(36) + SALT) % 1024;
+  bits = (bits << 10n) | BigInt(chk);
+  let s = ""; const n = 21;
+  for (let i = 0; i < n; i++){ s = B32[Number(bits & 31n)] + s; bits >>= 5n; }
+  return CODE + "-" + s.match(/.{1,7}/g).join("-");
+}
+function renderFinish(main){
+  main.append(el("div", { class:"sechead" }, el("div", null, el("p", { class:"kicker" }, "Finish and hand in"), el("h1", { class:"title" }, "Your completion code")), modeChip()));
+  const code = completionCode();
+  const codeEl = el("p", { class:"ccode" }, code);
+  const copyBtn = el("button", { class:"btn primary", onclick: async ()=>{ try { await navigator.clipboard.writeText(code); copyBtn.textContent = "Copied ✓"; } catch(e){ const rg = document.createRange(); rg.selectNodeContents(codeEl); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg); copyBtn.textContent = "Selected: press Ctrl+C"; } } }, "Copy code");
+  main.append(el("div", { class:"card" },
+    el("h2", null, "Copy this code into your Teams assignment"),
+    codeEl, el("div", { class:"btnrow" }, copyBtn),
+    el("p", { class:"inote" }, "It tells your teacher which questions you've practised and how they went. If you do more later, come back and hand in the new code.")));
+  const coreDone = CORE.filter(x => isDone(x.t.id)).length;
+  const tb = el("tbody");
+  SECTIONS.forEach((s, si) => {
+    const i = PARTS.indexOf(s.part), st = partStatus(s.part, i);
+    const label = ["Not started","Help task done","On your own: first try ✓","On your own: done ✓","Answer shown"][st];
+    tb.append(el("tr", null, el("td", null, s.part.q + " " + s.title), el("td", null, label)));
+  });
+  main.append(el("div", { class:"bigstat" }, el("div", null, el("b", null, coreDone + "/" + CORE.length), "tasks done")));
+  main.append(el("table", { class:"summary" }, el("thead", null, el("tr", null, el("th", null, "Question"), el("th", null, "Progress"))), tb));
+  const firstGap = CORE.find(x => !isDone(x.t.id));
+  const row = el("div", { class:"btnrow" });
+  if (firstGap) row.append(el("button", { class:"btn", onclick: ()=>go(firstGap.s.id, firstGap.ti) }, "Go to your first unfinished task"));
+  row.append(el("button", { class:"btn quiet", onclick: ()=>{ if (confirm("Clear all your answers on this computer and start again?")){ state = { tasks:{}, view:{ page:"intro", task:0 } }; try{ localStorage.removeItem(STORE_KEY); }catch(e){} render(); } } }, "Start again"));
+  main.append(row);
+  main.append(el("p", { class:"stamp" }, "Progress is saved in this browser only. Use the same computer and browser to carry on."));
+}
+
+/* ---------- login ---------- */
+function renderLogin(){
+  document.body.classList.add("loggedout");
+  const main = $("main"); main.innerHTML = "";
+  const inp = el("input", { type:"text", id:"codein", maxlength:"3", autocomplete:"off", autocapitalize:"characters", spellcheck:"false", "aria-describedby":"codehelp" });
+  const box = fbBox();
+  const goBtn = el("button", { class:"btn primary" }, "Open my feedback →");
+  function attemptLogin(){
+    const v = inp.value.trim().toUpperCase();
+    if (v.length !== 3){ showMsg(box, "bad", "Three characters", "<p>Your code has 3 characters, like <code>K7Q</code>. It's on your feedback sheet.</p>"); return; }
+    if (!login(v)){ showMsg(box, "bad", "Code not found", "<p>Check it against your feedback sheet. Letters and a number, e.g. <code>K7Q</code>.</p>"); return; }
+    document.body.classList.remove("loggedout"); start();
+  }
+  goBtn.onclick = attemptLogin;
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
+  main.append(el("div", { class:"login" },
+    el("p", { class:"kicker" }, "GCSE Computer Science · Year 11"),
+    el("h1", { class:"title" }, "Winter Assessment feedback"),
+    el("div", { class:"card" },
+      el("label", { for:"codein", class:"lbl big" }, "Type your 3-character code"),
+      el("p", { id:"codehelp", class:"inote" }, "It's at the top of your feedback sheet."),
+      el("div", { class:"btnrow" }, inp, goBtn), box)));
+  setTimeout(()=>inp.focus(), 50);
+}
+function start(){
+  buildNav();
+  render();
+  if (needsPy() && PY.status === "idle") startPy();
+}
+function boot(){
+  const fromHash = location.hash.slice(1).toUpperCase();
+  let last = null; try { last = localStorage.getItem("bhoa-y11mock-last"); } catch(e){}
+  if ((fromHash && login(fromHash)) || (!fromHash && last && login(last))){ document.body.classList.remove("loggedout"); start(); }
+  else renderLogin();
+}
+boot();
+window.__app = { get SECTIONS(){ return SECTIONS; }, get state(){ return state; }, PY, runPy, go, completionCode, login, PARTS };
+})();
+
+</script>
+</body>
+</html>
